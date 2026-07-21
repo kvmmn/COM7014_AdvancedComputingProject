@@ -23,6 +23,7 @@ __pycache__/
 
 # Arden-owned or restricted teaching and assessment material
 _lessons_docs/
+_scopus_analysis/
 brief/
 rubric/
 module_materials/
