@@ -1,0 +1,53 @@
+# Operating-system and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.tmp
+~$*
+
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Arden-owned or restricted teaching and assessment material
+_lessons_docs/
+brief/
+rubric/
+module_materials/
+references/
+
+# Internal project control and sensitive records
+PROJECT_BRAIN/PRIVATE/
+_private/
+ethics/
+supervision/
+participant_data/
+consent/
+
+# Data that is not explicitly cleared for publication
+data/raw/
+data/private/
+data/restricted/
+
+# Working and submission files are private by default
+drafts/
+reports/drafts/
+reports/submission/
+scratch/
+tmp/
+
+# Generated local outputs
+*.log
+*.bak
