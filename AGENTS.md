@@ -12,5 +12,7 @@ Before changing the project:
 6. Do not collect data or begin artefact development before the required proposal and ethics approval have been granted.
 7. Run `python3 scripts/public_preflight.py` before every public commit.
 8. Never publish lesson files, assessment documents, private notes, tutor communications, ARMS records, personal data, credentials, restricted data, or unapproved drafts.
+9. Never publish private working conversations, prompts, transcripts, tool-assisted brainstorming, or tool-by-tool collaboration histories. Public material may describe the final verified method and results without exposing the private working process.
+10. If the current academic-integrity policy requires an AI-use declaration, record the full factual usage privately and disclose only the required, accurate declaration after student review.
 
 The repository is public. If publication status is uncertain, keep the material local and record it in the private publication review queue.
