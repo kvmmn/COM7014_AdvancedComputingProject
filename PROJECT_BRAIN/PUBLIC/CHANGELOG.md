@@ -1,5 +1,11 @@
 # Public Changelog
 
+## 2026-09-28
+
+- Selected the working topic: a per-series reliability framework for routing between time-series foundation models and classical forecasters.
+- Added `TOPIC.md` as the public specification.
+- Recorded that proposal, ethics, data collection, and artefact development have not started.
+
 ## 2026-07-21
 
 - Established this folder as the single COM7014 workspace.

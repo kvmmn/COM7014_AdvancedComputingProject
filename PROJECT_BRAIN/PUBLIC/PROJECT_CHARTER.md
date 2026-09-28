@@ -6,7 +6,9 @@ Develop a substantial Master's-level computing project that addresses a defensib
 
 ## Current scope
 
-The current phase covers project governance and topic selection only. The topic, working title, aim, objectives, research design, dataset, development methodology, technical stack, and artefact remain undecided.
+The working topic is selected. See [`TOPIC.md`](../../TOPIC.md).
+
+The project will design and evaluate a per-series reliability router that chooses between a time-series foundation model and a classical forecaster, and that attaches a calibrated confidence to the choice. Dataset choice, the exact model pool, supervisor approval, and the formal proposal remain open. Data collection and artefact development have not started.
 
 ## Quality principles
 

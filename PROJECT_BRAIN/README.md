@@ -35,4 +35,4 @@ Every material change must leave evidence in the correct layer:
 
 ## Current gate
 
-Infrastructure setup is complete. Topic selection may begin next, but assessed drafting and data collection remain blocked until the missing authoritative documents are supplied and the student confirms the project contract.
+The working topic is selected and recorded in [`TOPIC.md`](../TOPIC.md). Assessed drafting, data collection, and artefact development remain blocked until the missing brief, rubric, and required proposal and ethics approvals are in place.
