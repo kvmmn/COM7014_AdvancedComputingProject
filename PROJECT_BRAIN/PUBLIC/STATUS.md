@@ -4,11 +4,11 @@ Last updated: 2026-09-28
 
 ## Phase
 
-Working topic selected. Proposal, ethics approval, data collection, and artefact development have not started.
+Working topic selected. A supervisor has been allocated. Proposal approval, ethics approval, data collection, and artefact development have not started.
 
 ## Topic
 
-**When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between TSFMs and Classical Forecasters**
+**When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models**
 
 The specification is in [`TOPIC.md`](../../TOPIC.md).
 
@@ -28,9 +28,10 @@ The specification is in [`TOPIC.md`](../../TOPIC.md).
 - Proposal template and submission instructions
 - Current AI-use policy or declaration requirement
 - Confirmed deadline, word-count rule, and submission format
-- Supervisor allocation and topic confirmation through the required portal
+- Supervisor allocation through ARMS on 2026-09-28. The name and correspondence stay in the local record.
+- Topic confirmation with the supervisor
 - Required proposal and ethics approval
 
 ## Next phase
 
-Confirm the remaining scope choices inside the selected topic, then prepare the proposal only after the authoritative documents are available. No data collection or artefact development will begin before the required ethics approval.
+Confirm the checkpoint list and intermittent collections with the supervisor. No data collection or artefact development will begin before the required ethics approval.

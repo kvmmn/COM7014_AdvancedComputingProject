@@ -2,7 +2,7 @@
 
 This is the working repository for the COM7014 Master's project at Arden University.
 
-The selected topic is a per-series reliability framework that decides when a time-series foundation model should be trusted and when a classical forecaster is the safer choice. The working title, research questions, method, and evaluation protocol are in [`TOPIC.md`](TOPIC.md).
+The selected topic is a per-series reliability framework that decides when a time-series foundation model should be trusted and when a classical forecaster is the safer choice, including on intermittent demand. The working title, research questions, method, and evaluation protocol are in [`TOPIC.md`](TOPIC.md).
 
 The topic was selected on 2026-09-28. The proposal, ethics approval, dataset work, and artefact have not started.
 

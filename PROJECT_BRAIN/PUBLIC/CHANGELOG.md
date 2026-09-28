@@ -4,7 +4,10 @@
 
 - Selected the working topic: a per-series reliability framework for routing between time-series foundation models and classical forecasters.
 - Added `TOPIC.md` as the public specification.
-- Recorded that proposal, ethics, data collection, and artefact development have not started.
+- Adopted the initial proposal as the current working path, including intermittent demand and a fourth research question.
+- Recorded that supervisor approval of the proposal, ethics approval, data collection, and artefact development have not started.
+- Recorded that a supervisor was allocated on 2026-09-28. The name and email stay local.
+- Aligned the public working title with the title stored on ARMS. Intermittent demand remains in the method, not in the title.
 
 ## 2026-07-21
 
