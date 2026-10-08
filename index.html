@@ -3,23 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COM7014 Supervision & Research Briefing | Kaveh Momeni</title>
+  <title>COM7014 Supervision & Research Methodology Briefing | Kaveh Momeni</title>
   
-  <!-- Mermaid.js for Interactive Diagrams -->
+  <!-- Mermaid.js with High-Contrast Custom Configuration -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>
     mermaid.initialize({
       startOnLoad: true,
-      theme: 'neutral',
+      theme: 'base',
       fontFamily: 'Aptos, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       themeVariables: {
         fontSize: '14px',
-        primaryColor: '#f1f5f9',
+        primaryColor: '#ffffff',
         primaryTextColor: '#0f172a',
-        primaryBorderColor: '#cbd5e1',
-        lineColor: '#64748b',
+        primaryBorderColor: '#64748b',
+        lineColor: '#334155',
         secondaryColor: '#f8fafc',
-        tertiaryColor: '#ffffff'
+        tertiaryColor: '#f1f5f9',
+        edgeLabelBackground: '#ffffff',
+        nodeBorder: '#334155',
+        clusterBkg: '#f8fafc',
+        clusterBorder: '#cbd5e1'
+      },
+      flowchart: {
+        curve: 'basis',
+        nodeSpacing: 45,
+        rankSpacing: 45,
+        padding: 15
       }
     });
   </script>
@@ -43,7 +53,7 @@
       --color-border-subtle: #f1f5f9;
       
       --color-text-primary: #0f172a;
-      --color-text-secondary: #475569;
+      --color-text-secondary: #334155;
       --color-text-muted: #64748b;
       
       --color-accent: #1e3a8a;
@@ -56,6 +66,10 @@
       --color-tag-green-text: #166534;
       --color-tag-amber: #fef3c7;
       --color-tag-amber-text: #92400e;
+      --color-tag-red: #fee2e2;
+      --color-tag-red-text: #991b1b;
+      --color-tag-purple: #f3e8ff;
+      --color-tag-purple-text: #6b21a8;
     }
 
     * {
@@ -75,13 +89,13 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 12px;
-      padding: 48px 56px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 52px 60px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     }
 
     @media (max-width: 768px) {
@@ -111,7 +125,7 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 27px;
       font-weight: 700;
       letter-spacing: -0.02em;
       line-height: 1.25;
@@ -121,7 +135,7 @@
 
     .meta-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px 24px;
       font-size: 13.5px;
       background: var(--color-bg);
@@ -155,20 +169,20 @@
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--color-text-primary);
-      margin-top: 40px;
+      margin-top: 44px;
       margin-bottom: 16px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--color-border-subtle);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     h3 {
       font-size: 16px;
       font-weight: 600;
       color: var(--color-text-primary);
-      margin-top: 24px;
+      margin-top: 28px;
       margin-bottom: 12px;
     }
 
@@ -197,10 +211,10 @@
     /* Callout & Cards */
     .callout {
       background: var(--color-accent-subtle);
-      border-left: 3px solid var(--color-accent);
+      border-left: 3.5px solid var(--color-accent);
       border-radius: 0 8px 8px 0;
-      padding: 16px 20px;
-      margin: 20px 0;
+      padding: 18px 22px;
+      margin: 22px 0;
       font-size: 14.5px;
     }
 
@@ -243,24 +257,28 @@
     /* Badges & Tags */
     .badge {
       display: inline-block;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 4px;
       letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
     .badge-blue { background: var(--color-tag-blue); color: var(--color-tag-blue-text); }
     .badge-green { background: var(--color-tag-green); color: var(--color-tag-green-text); }
     .badge-amber { background: var(--color-tag-amber); color: var(--color-tag-amber-text); }
+    .badge-red { background: var(--color-tag-red); color: var(--color-tag-red-text); }
+    .badge-purple { background: var(--color-tag-purple); color: var(--color-tag-purple-text); }
 
     /* Tables */
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
-      margin: 20px 0 24px 0;
+      margin: 18px 0 24px 0;
       border: 1px solid var(--color-border);
       border-radius: 8px;
+      background: #ffffff;
     }
 
     table {
@@ -274,16 +292,19 @@
       background: var(--color-bg);
       color: var(--color-text-primary);
       font-weight: 600;
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-bottom: 1px solid var(--color-border);
       white-space: nowrap;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
     }
 
     td {
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-bottom: 1px solid var(--color-border-subtle);
       color: var(--color-text-secondary);
       vertical-align: top;
+      line-height: 1.45;
     }
 
     tr:last-child td {
@@ -299,11 +320,99 @@
       background: #ffffff;
       border: 1px solid var(--color-border);
       border-radius: 8px;
-      padding: 20px;
+      padding: 24px 16px;
       margin: 24px 0;
       display: flex;
       justify-content: center;
       overflow-x: auto;
+    }
+
+    .diagram-box .mermaid {
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Custom CSS Visual: Syntetos-Boylan Quadrant */
+    .quadrant-container {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 24px;
+      margin: 24px 0;
+    }
+
+    .quadrant-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .quad-cell {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--color-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .quad-cell.highlight-classical {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .quad-cell.highlight-fm {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .quad-cell.highlight-hard {
+      background: #fefce8;
+      border-color: #fde047;
+    }
+
+    .quad-cell.highlight-erratic {
+      background: #faf5ff;
+      border-color: #d8b4fe;
+    }
+
+    .quad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quad-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    .quad-cond {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    .quad-text {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .quad-winner {
+      font-size: 12px;
+      font-weight: 600;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     /* Title Options Styling */
@@ -345,22 +454,41 @@
     footer {
       margin-top: 48px;
       padding-top: 24px;
+      border-bottom: none;
       border-top: 1px solid var(--color-border);
       font-size: 12.5px;
       color: var(--color-text-muted);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: gap;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     code {
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 12px;
       background: #f1f5f9;
       padding: 2px 5px;
       border-radius: 4px;
       color: #0f172a;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .tag {
+      font-size: 11.5px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #334155;
+      font-family: var(--font-mono);
     }
   </style>
 </head>
@@ -370,7 +498,7 @@
     
     <header>
       <div class="super-title">Arden University · COM7014 Advanced Computing Project</div>
-      <h1>Project Exploration & Supervision Briefing</h1>
+      <h1>Research Methodology, Dataset Exploration &amp; Model Architecture</h1>
       
       <div class="meta-grid">
         <div class="meta-item">
@@ -383,321 +511,475 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Current Phase</span>
-          <span class="meta-value">M1: Topic, Datasets & Proposal</span>
+          <span class="meta-value">Phase M1 (Problem, Datasets &amp; Proposal)</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Status</span>
-          <span class="meta-value">Active Review (October 2026)</span>
+          <span class="meta-value">Supervisory Briefing (October 2026)</span>
         </div>
       </div>
     </header>
 
     <!-- Section 1 -->
     <section>
-      <h2>1. Context & Supervisor Direction</h2>
+      <h2>1. Context &amp; Core Supervisory Direction</h2>
       <p>
-        Following our initial supervisory consultation on 2026-10-05, this document records the Phase M1 findings and outlines the core decisions for the project proposal. 
+        Following our supervisory meeting on Monday 2026-10-05, this document records the comprehensive research process, search methodology, dataset structural findings, and model selection rationale undertaken for Phase M1.
       </p>
       <div class="callout">
-        <strong>Core Principle Adopted:</strong> The proposal must be built directly around the <em>research problem and the concrete datasets in hand</em>, rather than chasing models or tools in isolation.
+        <strong>The Central Directive:</strong> The proposal must be built directly around the <em>research problem and the concrete datasets in hand</em>, rather than chasing a model or tool in isolation. The dataset selection must be scientific, transparent, and multi-domain.
       </div>
       <p>
-        Accordingly, three sequential investigations were carried out before drafting the assessed proposal:
+        Guided by this instruction, our investigation focused on four concrete objectives:
       </p>
       <ul>
-        <li><strong>Cross-field dataset exploration:</strong> Executing a structured 6-route search across academic repositories to ensure multi-domain coverage.</li>
-        <li><strong>Data structure & contamination audit:</strong> Analysing sampling rates, sparsity, and pretraining data leakage in modern Foundation Models.</li>
-        <li><strong>Proposal title formulation:</strong> Developing five distinct title directions reflecting different project emphases for supervisory feedback.</li>
+        <li><strong>Conduct a multi-route scientific search:</strong> Survey repositories and literature across eight diverse industries using structured query families.</li>
+        <li><strong>Perform structural data analysis:</strong> Extract series length, sampling frequencies, intermittency rates, and schemas across candidate datasets.</li>
+        <li><strong>Audit pretraining data leakage:</strong> Investigate foundation model training logs to distinguish contaminated models from genuinely zero-shot checkpoints.</li>
+        <li><strong>Evaluate model classes and architectural baselines:</strong> Compare zero-shot Foundation Models against classical statistical baselines, local neural networks (LSTM / CNN-LSTM), and hybrid approaches.</li>
       </ul>
-
-      <div class="diagram-box">
-        <pre class="mermaid">
-flowchart LR
-    A["Supervisor Guidance<br/>(Problem & Data First)"] --> B["Systematic Search<br/>(8 Domains, 29 Runs)"]
-    B --> C["Data Structure &<br/>Leakage Audit"]
-    C --> D["3-Tier Corpus Selection<br/>& Model Landscape"]
-    D --> E["Proposal Grounding<br/>& Title Options"]
-        </pre>
-      </div>
     </section>
 
     <!-- Section 2 -->
     <section>
-      <h2>2. Terminology & Conceptual Foundation</h2>
+      <h2>2. Research Methodology: Systematic Multi-Route Search</h2>
       <p>
-        To ensure precision and transparency across all documentation, the central technical terms are defined below:
+        Rather than selecting convenient datasets ad hoc, we established a 6-route search protocol with explicit stopping criteria, query strings, and audit ledgers.
       </p>
 
+      <h3>2.1 Sources &amp; Search Platforms Consulted</h3>
+      <ul>
+        <li><strong>Academic Citation Engines:</strong> OpenAlex API, Google Scholar, Scopus bibliographic exports, and arXiv repository index.</li>
+        <li><strong>Benchmark Registries &amp; Model Repositories:</strong> HuggingFace Datasets and Spaces APIs, GitHub repository API, Zenodo REST API.</li>
+        <li><strong>Forecasting Domain Archives:</strong> Monash Time Series Forecasting Repository (<code>forecastingdata.org</code>), UCI Machine Learning Repository, Kaggle Competitions archive.</li>
+      </ul>
+
+      <h3>2.2 Query Families &amp; Keyword Taxonomy</h3>
+      <p>
+        Queries were formulated by combining task terms, data terms, domain keywords, and routing concepts:
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Task &amp; Model Terms</div>
+          <div class="card-body">
+            <code>"time series foundation model"</code>, <code>"zero-shot time series"</code>, <code>"forecasting benchmark"</code>, <code>"GIFT-Eval"</code>, <code>"TSFM"</code>, <code>"pretrained transformer forecasting"</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Data &amp; Sparsity Terms</div>
+          <div class="card-body">
+            <code>"intermittent demand forecasting"</code>, <code>"spare parts demand"</code>, <code>"retail sales forecasting"</code>, <code>"zero-inflated time series"</code>, <code>"electricity load dataset"</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Routing &amp; Decision Terms</div>
+          <div class="card-body">
+            <code>"time-series model selection"</code>, <code>"algorithm selection"</code>, <code>"calibrated routing"</code>, <code>"meta-learning forecasting"</code>, <code>"FFORMS"</code>, <code>"TimeRouter"</code>
+          </div>
+        </div>
+      </div>
+
+      <h3>2.3 Execution Summary Across the 6 Routes (29 Runs Logged)</h3>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>Term</th>
-              <th>Working Definition</th>
-              <th>Role in This Research</th>
+              <th>Route ID</th>
+              <th>Methodology &amp; Objective</th>
+              <th>Platform / Endpoints</th>
+              <th>Key Search Strings &amp; Targets</th>
+              <th>Runs</th>
+              <th>Core Outcome &amp; Discovery</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Time-Series Foundation Model (TSFM)</strong></td>
-              <td>A large pre-trained neural network (predominantly Transformer architectures) trained on massive multi-domain time-series corpora, designed to produce zero-shot forecasts without local retraining.</td>
-              <td>The advanced deep learning challenger under evaluation (e.g. Chronos-2, TimesFM-2.5, MOIRAI).</td>
+              <td><strong>R1</strong></td>
+              <td>Confirm primary benchmark leads</td>
+              <td>HuggingFace API, GitHub API, Zenodo REST, Monash portal</td>
+              <td><code>search=gift-eval</code>, <code>search=chronos</code>, <code>search=monash</code>, <code>records/4656193</code></td>
+              <td>DS-001 to DS-010</td>
+              <td>Identified GIFT-Eval (23 datasets, 144k series) &amp; Monash (30 datasets). Car Parts identified as key intermittent anchor.</td>
             </tr>
             <tr>
-              <td><strong>GIFT-Eval</strong></td>
-              <td><em>General Time Series Foundation Model Evaluation</em>. A standardized benchmark released by Salesforce AI Research (Aksu et al., 2024) comprising 23 datasets, 144k series, and 177M observations across 7 domains.</td>
-              <td>Serves as our primary benchmark layer, offering established baselines and documented data leakage tracking.</td>
+              <td><strong>R2</strong></td>
+              <td>Model pretraining sets &amp; leakage audit</td>
+              <td>HuggingFace tree, GitHub API, GIFT-Eval config files</td>
+              <td><code>autogluon/chronos_datasets</code>, <code>google-research/timesfm</code>, <code>uni2ts</code>, <code>granite-tsfm</code></td>
+              <td>DS-011 to DS-016</td>
+              <td><strong>Major finding:</strong> Chronos-T5 saw 32 Monash datasets in pretraining. Confirmed clean models: Chronos-2, TimesFM-2.5, MOIRAI.</td>
             </tr>
             <tr>
-              <td><strong>Zero-Shot Evaluation</strong></td>
-              <td>Testing a model on time-series distributions completely unseen during pretraining, without updating network weights.</td>
-              <td>The empirical evaluation setting used to test true cross-domain generalisation.</td>
+              <td><strong>R3</strong></td>
+              <td>Benchmark registries &amp; repos</td>
+              <td>HuggingFace Dataset API, OpenML API, UCI API</td>
+              <td><code>search=demand+forecasting</code>, <code>autogluon/fev_datasets</code>, <code>tag/timeseries</code></td>
+              <td>DS-017 to DS-021</td>
+              <td>Extracted <code>fev_datasets</code> containing independent retail collections (Walmart, Rossmann, Favorita) separate from Chronos pretraining.</td>
             </tr>
             <tr>
-              <td><strong>Test-Data Leakage</strong></td>
-              <td>When an evaluation dataset was inadvertently present in a model's pretraining corpus, producing artificially inflated zero-shot scores.</td>
-              <td>Audited explicitly; dictates which foundation model checkpoints are methodologically valid for this study.</td>
+              <td><strong>R4</strong></td>
+              <td>Field-by-field cross-domain search</td>
+              <td>OpenAlex API, arXiv</td>
+              <td><code>"intermittent demand forecasting"</code>, <code>"retail demand forecasting benchmark"</code>, <code>"electricity load"</code></td>
+              <td>DS-022 to DS-025</td>
+              <td><strong>Literature grounding:</strong> Discovered Rubczynski (2026) retail meta-analysis (543 comparisons) proving foundation models fail on intermittent demand.</td>
             </tr>
             <tr>
-              <td><strong>Intermittent Demand</strong></td>
-              <td>Series characterised by frequent zero observations punctuated by irregular non-zero values (e.g. spare parts, retail inventory, medical emergencies).</td>
-              <td>A documented weakness of neural foundation models where classical statistical estimators frequently prevail.</td>
+              <td><strong>R5</strong></td>
+              <td>Citation snowballing &amp; graph analysis</td>
+              <td>OpenAlex citation API, arXiv</td>
+              <td><code>filter=cites:W4403570643</code> (GIFT-Eval citations), <code>arXiv:2609.28506</code></td>
+              <td>DS-027 to DS-029</td>
+              <td>Discovered TW3Cast (arXiv 2609.28506). Confirmed TW3Cast selects at configuration level (not per-series) and lacks calibrated confidence routing.</td>
             </tr>
             <tr>
-              <td><strong>Croston / SBA / TSB</strong></td>
-              <td>Classical parametric methods designed specifically for intermittent series. Croston separates interval from magnitude; SBA corrects positive bias; TSB updates demand probabilities continuously.</td>
-              <td>Specialised lightweight CPU baselines for sparse data subsets.</td>
-            </tr>
-            <tr>
-              <td><strong>Catch22 Features</strong></td>
-              <td><em>Canonical Time-Series Characteristics</em>. A scientifically curated set of 22 computationally efficient summary statistics capturing autocorrelation, distribution shape, outliers, and entropy in &lt;5ms.</td>
-              <td>The lightweight input features examined by the routing classifier.</td>
-            </tr>
-            <tr>
-              <td><strong>Calibration &amp; ECE</strong></td>
-              <td><em>Expected Calibration Error</em>. The statistical alignment between a model's predicted confidence score and its actual empirical accuracy.</td>
-              <td>The primary metric ensuring the router outputs trustworthy probabilities rather than uncalibrated decisions.</td>
+              <td><strong>R6</strong></td>
+              <td>Open competition datasets</td>
+              <td>Kaggle Dataset API</td>
+              <td><code>intermittent demand</code>, <code>spare parts demand</code>, <code>M5 forecasting accuracy</code></td>
+              <td>DS-026</td>
+              <td>Audited M5 retail data terms; confirmed high zero rate (~70%) but flagged Kaggle competition licensing requirements.</td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="callout">
+        <strong>Stopping Condition Verified:</strong> Search ceased after Run DS-029 because three consecutive routes added no new strong candidates, cross-domain representation spanned eight distinct fields, and intermittency anchors were mathematically confirmed.
       </div>
     </section>
 
     <!-- Section 3 -->
     <section>
-      <h2>3. The Core Research Problem</h2>
+      <h2>3. Dataset Structural Taxonomy &amp; Mathematical Characterization</h2>
       <p>
-        Recent industry practice often defaults to deploying large Time-Series Foundation Models indiscriminately. However, empirical literature highlights two critical operational realities:
-      </p>
-      
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-title">1. Computational Expense &amp; Latency</div>
-          <div class="card-body">
-            Foundation models require dedicated GPU hardware and incur significant inference latency. Running zero-shot transformers across millions of enterprise series generates high recurring infrastructure costs.
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">2. Degradation on Sparse Series</div>
-          <div class="card-body">
-            Cross-benchmark meta-analyses (e.g. Rubczynski, 2026 across 543 comparisons) demonstrate that foundation models regularly underperform classical statistical methods (Croston, SBA) and GBDTs on intermittent data.
-          </div>
-        </div>
-      </div>
-
-      <div class="callout">
-        <strong>The Central Objective:</strong> Rather than viewing foundation models as a universal replacement, this research builds a <em>fast, calibrated per-series router</em> that evaluates individual time-series properties and determines whether to dispatch to a foundation model or fall back to an efficient classical baseline.
-      </div>
-
-      <div class="diagram-box">
-        <pre class="mermaid">
-flowchart TD
-    TS["Individual Time Series Y[t]"] --> R{"Calibrated Router"}
-    R -->|"Dense, Complex, High Confidence"| FM["Foundation Model<br/>(Chronos-2 / TimesFM-2.5 / MOIRAI)"]
-    R -->|"Sparse, Intermittent Demand"| CL["Intermittent Specialist<br/>(Croston / SBA / TSB)"]
-    R -->|"Linear, Stable Seasonality"| ST["Classical Statistical<br/>(AutoARIMA / ETS)"]
-        </pre>
-      </div>
-    </section>
-
-    <!-- Section 4 -->
-    <section>
-      <h2>4. Dataset Discovery &amp; Structural Taxonomy</h2>
-      <p>
-        Following supervisory advice, a 6-route discovery protocol was executed across multiple academic repositories, logging 29 runs and achieving multi-domain representation across 8 industries.
+        As advised by Dr. Pattanaik, we examined the physical schemas, sampling rates, and statistical characteristics of candidate data to ensure the router has meaningful patterns to learn from and evaluate.
       </p>
 
-      <h3>Structural Anatomy of Time-Series Data</h3>
+      <h3>3.1 Schema Taxonomy Across Time-Series Data</h3>
       <p>
-        To ensure the router can generalise, candidate datasets were analysed across their structural and temporal properties:
+        In modern enterprise environments, time-series data present four structural dimensions:
       </p>
       <ul>
-        <li><strong>Dimensionality:</strong> Univariate single-target series ($y_t$) versus multivariate coupled channels.</li>
-        <li><strong>Sampling Frequency:</strong> Ranging from high-frequency (15-minute grid telemetry) to daily (retail) and monthly (industrial parts).</li>
-        <li><strong>Exogenous Variables:</strong> Dynamic covariates (temperatures, promotions, calendar events) and static category tags.</li>
+        <li><strong>Time Resolution:</strong> Uniform fixed intervals (10-second web telemetry, 15-minute grid load, daily sales, monthly inventory).</li>
+        <li><strong>Channel Dimensionality:</strong> Univariate series ($y_t \in \mathbb{R}$) versus multivariate coupled vectors ($\mathbf{y}_t \in \mathbb{R}^D$) with cross-channel correlation.</li>
+        <li><strong>Dynamic Covariates ($X_t$):</strong> Time-varying external signals such as ambient temperature (energy), promotional discounts (retail), or holiday calendars.</li>
+        <li><strong>Static Metadata ($Z$):</strong> Fixed contextual attributes such as store identifier, geographic region, or asset class.</li>
       </ul>
 
-      <h3>Intermittency Classification: The Syntetos-Boylan Quadrant</h3>
+      <h3>3.2 Intermittency Classification: The Syntetos-Boylan Matrix</h3>
       <p>
-        To objectively identify where classical models should supersede foundation models, candidate series are categorized using two mathematical dimensions: average inter-demand interval ($p$) and squared coefficient of variation ($CV^2$):
+        To determine objectively which model family is mathematically suited for each series, we apply the Syntetos-Boylan classification using average inter-demand interval ($p$) and squared coefficient of variation ($CV^2$):
       </p>
 
-      <div class="diagram-box">
-        <pre class="mermaid">
-quadrantChart
-    title Syntetos-Boylan Demand Quadrant
-    x-axis "Low Intermittency (p <= 1.32)" --> "High Intermittency (p > 1.32)"
-    y-axis "Stable Quantity (CV² <= 0.49)" --> "Volatile Quantity (CV² > 0.49)"
-    quadrant-1 "LUMPY: Sparse & Volatile (TSB / Croston)"
-    quadrant-2 "ERRATIC: High Variance Dense (LightGBM)"
-    quadrant-3 "SMOOTH: Continuous (Foundation Model Advantage)"
-    quadrant-4 "INTERMITTENT: Sparse Regular (Croston / SBA Win)"
-        </pre>
+      <div class="quadrant-container">
+        <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">Syntetos-Boylan Empirical Demand Quadrant</div>
+        <div style="font-size: 13px; color: var(--color-text-muted);">Cutoff thresholds: Inter-demand interval $p = 1.32$ periods · Squared coefficient of variation $CV^2 = 0.49$</div>
+
+        <div class="quadrant-grid">
+          <div class="quad-cell highlight-erratic">
+            <div class="quad-header">
+              <span class="quad-title">ERRATIC DEMAND</span>
+              <span class="badge badge-purple">High Variance Dense</span>
+            </div>
+            <div class="quad-cond">p &le; 1.32 &nbsp;|&nbsp; CV² &gt; 0.49</div>
+            <div class="quad-text">Frequent demand but highly fluctuating transaction magnitudes. Non-zero values vary widely.</div>
+            <div class="quad-winner">
+              <span>Optimal Model Family:</span>
+              <strong>GBDT (LightGBM) / Hybrid ARIMA</strong>
+            </div>
+          </div>
+
+          <div class="quad-cell highlight-hard">
+            <div class="quad-header">
+              <span class="quad-title">LUMPY DEMAND</span>
+              <span class="badge badge-amber">Sparse &amp; Volatile</span>
+            </div>
+            <div class="quad-cond">p &gt; 1.32 &nbsp;|&nbsp; CV² &gt; 0.49</div>
+            <div class="quad-text">Long runs of zero demand combined with large, volatile bursts. Highest forecasting difficulty.</div>
+            <div class="quad-winner">
+              <span>Optimal Model Family:</span>
+              <strong>TSB / Croston Variant</strong>
+            </div>
+          </div>
+
+          <div class="quad-cell highlight-fm">
+            <div class="quad-header">
+              <span class="quad-title">SMOOTH DEMAND</span>
+              <span class="badge badge-blue">Continuous &amp; Regular</span>
+            </div>
+            <div class="quad-cond">p &le; 1.32 &nbsp;|&nbsp; CV² &le; 0.49</div>
+            <div class="quad-text">Regular occurrences, stable non-zero volumes. Consistent trend and seasonal patterns.</div>
+            <div class="quad-winner">
+              <span>Optimal Model Family:</span>
+              <strong>Foundation Models (TSFM)</strong>
+            </div>
+          </div>
+
+          <div class="quad-cell highlight-classical">
+            <div class="quad-header">
+              <span class="quad-title">INTERMITTENT DEMAND</span>
+              <span class="badge badge-green">Classic Sparse</span>
+            </div>
+            <div class="quad-cond">p &gt; 1.32 &nbsp;|&nbsp; CV² &le; 0.49</div>
+            <div class="quad-text">Infrequent occurrences (many zeros) but relatively stable order sizes when non-zero.</div>
+            <div class="quad-winner">
+              <span>Optimal Model Family:</span>
+              <strong>Croston / SBA (Classical)</strong>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h3>Candidate Dataset Inventory</h3>
+      <h3>3.3 Candidate Corpus Profile Across Domains</h3>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
               <th>ID</th>
-              <th>Dataset</th>
+              <th>Collection Name</th>
               <th>Domain</th>
-              <th>Sampling</th>
-              <th>Series</th>
-              <th>Length</th>
+              <th>Sampling Frequency</th>
+              <th>Series Count</th>
               <th>Zero Rate</th>
-              <th>Format &amp; Licence</th>
+              <th>Exogenous Inputs</th>
+              <th>Role in Proposed Router Evaluation</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>DS-001</strong></td>
-              <td>GIFT-Eval</td>
-              <td>7 Domains</td>
-              <td>10 freqs (10s–1Y)</td>
+              <td><strong>GIFT-Eval Benchmark</strong></td>
+              <td>Multi (7 domains)</td>
+              <td>10 freqs (10s to 1Y)</td>
               <td>144,000</td>
-              <td>100–10k+</td>
-              <td>Variable</td>
-              <td>Arrow / Apache-2.0</td>
+              <td>Variable (0–80%)</td>
+              <td>Calendar / Fourier</td>
+              <td><span class="badge badge-blue">Primary Benchmark</span> Central testing arena with documented leakage tracking.</td>
             </tr>
             <tr>
               <td><strong>DS-005</strong></td>
-              <td>M5 Competition</td>
-              <td>Retail</td>
+              <td><strong>M5 Retail Data</strong></td>
+              <td>Retail / Supermarket</td>
               <td>Daily</td>
               <td>30,490</td>
-              <td>1,941</td>
               <td>High (~70%)</td>
-              <td>CSV / Kaggle Terms</td>
+              <td>Prices, Promotions, SNAP</td>
+              <td><span class="badge badge-green">Intermittency Anchor</span> Validates router routing on zero-inflated retail items.</td>
             </tr>
             <tr>
               <td><strong>DS-006</strong></td>
-              <td>Car Parts</td>
-              <td>Industrial</td>
+              <td><strong>Car Parts (Monash)</strong></td>
+              <td>Industrial Spares</td>
               <td>Monthly</td>
               <td>2,674</td>
-              <td>51</td>
               <td>High (~65%)</td>
-              <td>.tsf / Research Use</td>
+              <td>None (Univariate)</td>
+              <td><span class="badge badge-green">Canonical Sparse</span> Standard benchmark for Croston / SBA comparisons.</td>
             </tr>
             <tr>
               <td><strong>DS-007</strong></td>
-              <td>NN5 Cash</td>
-              <td>Banking</td>
+              <td><strong>NN5 Cash Demand</strong></td>
+              <td>Banking / ATMs</td>
               <td>Daily</td>
               <td>111</td>
-              <td>791</td>
               <td>Moderate (~20%)</td>
-              <td>.tsf / Research Use</td>
-            </tr>
-            <tr>
-              <td><strong>DS-015</strong></td>
-              <td>Rossmann</td>
-              <td>Retail</td>
-              <td>Daily</td>
-              <td>1,115</td>
-              <td>942</td>
-              <td>Moderate</td>
-              <td>CSV / Open Access</td>
+              <td>Day of week</td>
+              <td><span class="badge badge-green">Bursty Demand</span> Tests routing on irregular banking withdrawal spikes.</td>
             </tr>
             <tr>
               <td><strong>DS-022</strong></td>
-              <td>ENTSO-E</td>
-              <td>Energy</td>
+              <td><strong>ENTSO-E Grid Load</strong></td>
+              <td>Energy &amp; Utilities</td>
               <td>Hourly</td>
               <td>35 zones</td>
-              <td>8,760+</td>
               <td>0% (Dense)</td>
-              <td>Parquet / Open Data</td>
+              <td>Temperature, Day types</td>
+              <td><span class="badge badge-blue">Dense Domain</span> Verifies foundation model strength on multi-frequency cycles.</td>
             </tr>
             <tr>
               <td><strong>DS-025</strong></td>
-              <td>ECDC ILI</td>
+              <td><strong>ECDC Influenza (ILI)</strong></td>
               <td>Healthcare</td>
               <td>Weekly</td>
               <td>28 countries</td>
-              <td>520</td>
               <td>Low (~5%)</td>
-              <td>Public Domain</td>
+              <td>Epidemic flags</td>
+              <td><span class="badge badge-purple">Epidemiological</span> Tests Poisson-style non-linear growth patterns.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section>
+      <h2>4. Model Architecture &amp; Selection Analysis</h2>
+      <p>
+        A core research contribution is establishing a principled basis for model inclusion. We specifically addressed why certain models are selected while dozens of other published architectures were deliberately excluded.
+      </p>
+
+      <h3>4.1 The Pretraining Data Contamination Audit</h3>
+      <p>
+        In foundational machine learning, evaluating a model on series present in its pretraining corpus invalidates zero-shot claims. Our inspection of model documentation revealed extensive training contamination:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Model Candidate</th>
+              <th>Developer</th>
+              <th>Pretraining Corpus Overlap Identified</th>
+              <th>Zero-Shot Validity</th>
+              <th>Project Decision &amp; Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Chronos-T5 (Original)</strong></td>
+              <td>Amazon Science</td>
+              <td>Ingested 32 Monash datasets, M4, M5, Hospital, Car Parts</td>
+              <td><span class="badge badge-red">Contaminated</span></td>
+              <td><strong>Excluded from Zero-Shot:</strong> Testing on Monash would report memorisation rather than generalisation.</td>
+            </tr>
+            <tr>
+              <td><strong>TimesFM 1.0 &amp; 2.0</strong></td>
+              <td>Google Research</td>
+              <td>Pretraining included significant Monash / M4 data splits</td>
+              <td><span class="badge badge-red">Contaminated</span></td>
+              <td><strong>Excluded:</strong> Replaced by cleaner, refreshed 2.5 architecture.</td>
+            </tr>
+            <tr>
+              <td><strong>TinyTimeMixer (TTM)</strong></td>
+              <td>IBM Granite</td>
+              <td>Explicit test-set leakage logged on GIFT-Eval leaderboard</td>
+              <td><span class="badge badge-red">Contaminated</span></td>
+              <td><strong>Excluded:</strong> Eliminates false empirical advantages on benchmark test splits.</td>
+            </tr>
+            <tr>
+              <td><strong>TimesFM 3.0</strong></td>
+              <td>Google Research</td>
+              <td>Proprietary non-commercial terms, unverified pretraining mix</td>
+              <td><span class="badge badge-amber">Restricted</span></td>
+              <td><strong>Excluded:</strong> Non-transparent pretraining boundary.</td>
+            </tr>
+            <tr>
+              <td><strong>Time-LLM / LLM4TS</strong></td>
+              <td>Academic (7B LLMs)</td>
+              <td>Wraps frozen 7B parameter LLMs (LLaMA/GPT-2) for time-series</td>
+              <td><span class="badge badge-amber">Impractical</span></td>
+              <td><strong>Excluded:</strong> Inference latency is &gt;100x slower. Running a 7B LLM for per-series routing destroys computational efficiency.</td>
+            </tr>
+            <tr>
+              <td><strong>Lag-Llama</strong></td>
+              <td>Morgan Stanley / Mila</td>
+              <td>Univariate probabilistic baseline; small context window</td>
+              <td><span class="badge badge-amber">Superseded</span></td>
+              <td><strong>Excluded:</strong> Superseded on GIFT-Eval leaderboard by modern architectures.</td>
+            </tr>
+            <tr>
+              <td><strong>Chronos-2</strong></td>
+              <td>Amazon Science</td>
+              <td>Segregated clean evaluation splits; no Monash overlap</td>
+              <td><span class="badge badge-green">Clean Zero-Shot</span></td>
+              <td><strong>SELECTED:</strong> Primary high-performing Transformer architecture (Apache-2.0).</td>
+            </tr>
+            <tr>
+              <td><strong>TimesFM-2.5</strong></td>
+              <td>Google Research</td>
+              <td>Refreshed pretraining split with verified boundary</td>
+              <td><span class="badge badge-green">Clean Zero-Shot</span></td>
+              <td><strong>SELECTED:</strong> High-speed zero-shot patch-based forecaster (Apache-2.0).</td>
+            </tr>
+            <tr>
+              <td><strong>MOIRAI 1.1</strong></td>
+              <td>Salesforce Research</td>
+              <td>Trained on LOTSA with explicit masking of target benchmarks</td>
+              <td><span class="badge badge-green">Clean Zero-Shot</span></td>
+              <td><strong>SELECTED:</strong> Multi-frequency, cross-channel Transformer (CC-BY-NC-4.0).</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h3>Data Contamination Audit &amp; Clean Model Triad</h3>
+      <div class="callout">
+        <strong>The Selected Leakage-Clean Triad:</strong> Our foundation model pool is strictly defined as <code>Chronos-2</code>, <code>TimesFM-2.5</code>, and <code>MOIRAI</code>. This guarantees defensible, leakage-free zero-shot evaluation.
+      </div>
+
+      <!-- Subsection on Neural Networks & Hybrids -->
+      <h3>4.2 Methodological Guidance: Where Do LSTMs, CNN-LSTMs, and Hybrids Fit?</h3>
       <p>
-        An inspection of pretraining logs revealed that older models (Chronos-T5, TimesFM 1.0, TinyTimeMixer) ingested Monash and M-competition datasets during pretraining. Evaluating these models on those benchmarks would violate zero-shot evaluation standards.
+        An important question arises regarding locally trained neural networks (e.g. LSTMs, CNN-LSTM hybrids, or the <strong>Hybrid ARIMA-LSTM</strong> models used in prior industrial experience at Snappstore): <em>Should they be considered classical, and should they be included in the routing pool?</em>
       </p>
-      <p>
-        To preserve scientific validity, this study isolates the <strong>leakage-clean triad</strong>:
-      </p>
-      <ul>
-        <li><code>Chronos-2</code>: Employs strict, verified partition boundaries.</li>
-        <li><code>TimesFM-2.5</code>: Cleaned, segregated evaluation splits.</li>
-        <li><code>MOIRAI</code>: Pretrained on LOTSA with documented masking of benchmark targets.</li>
-      </ul>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Paradigm 1: Classical Statistical</div>
+          <div class="card-body">
+            <strong>AutoARIMA, ETS, Croston, SBA:</strong> Fitted per series in milliseconds on CPU. Zero training pipelines. Highly interpretable, low memory footprint.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Paradigm 2: Local Deep Learning</div>
+          <div class="card-body">
+            <strong>LSTM, CNN-LSTM, Hybrid ARIMA-LSTM:</strong> Requires local backpropagation training per series or per dataset. Captures non-linear residuals well, but requires extensive training pipelines.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Paradigm 3: Zero-Shot Foundation</div>
+          <div class="card-body">
+            <strong>Chronos-2, TimesFM-2.5:</strong> Pre-trained on millions of series. Zero training at test time. Immediate inference, but GPU-demanding.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Methodological Recommendation for This Project:</strong>
+        <br><br>
+        1. <strong>The Primary Routing Boundary Remains Cross-Family:</strong> The router’s core operational value is deciding between <em>Zero-Shot Foundation Models</em> (heavy GPU inference, zero local training) and <em>Lightweight Classical Baselines</em> (instant CPU inference, Croston/AutoARIMA).
+        <br><br>
+        2. <strong>In Corporate Deployments (e.g. Snappstore):</strong> A Hybrid ARIMA-LSTM is highly effective when forecasting a small number of high-value aggregated series where offline retraining pipelines are manageable. However, across a catalogue of 100,000 retail SKUs, training 100,000 individual LSTMs is computationally prohibitive — which is precisely why companies explore zero-shot foundation models.
+        <br><br>
+        3. <strong>Incorporating Hybrid ARIMA-LSTM as a Benchmark Comparator:</strong> We propose including <code>Hybrid ARIMA-LSTM</code> and a standard <code>LSTM / DeepAR</code> as a representative <em>locally trained deep learning baseline</em> in our empirical evaluation table in Phase M2. This connects real-world industrial practice directly to academic evaluation without complicating the lightweight per-series router.
+      </div>
     </section>
 
     <!-- Section 5 -->
     <section>
-      <h2>5. Model Landscape &amp; Proposed Routing Pipeline</h2>
+      <h2>5. The Two-Stage Calibrated Router Pipeline</h2>
       <p>
-        The router evaluates candidate time series using 22 computationally fast statistical features (<code>Catch22</code>) computed in under 5 ms, predicting model suitability and calibration scores before executing a forecast:
+        To preserve computational efficiency, the router must not rely on heavy language model agents or expensive embeddings. Instead, it extracts 22 canonical summary statistics (<code>Catch22</code>) in under 5 ms and uses a calibrated classifier to dispatch forecasts:
       </p>
 
       <div class="diagram-box">
         <pre class="mermaid">
-sequenceDiagram
-    autonumber
-    actor System as Ingestion Pipeline
-    participant Extractor as Feature Extractor (Catch22)
-    participant Router as Calibrated Router (LightGBM)
-    participant Gate as Decision Gate
-    participant Forecaster as Model Execution
-
-    System->>Extractor: Pass Series Y[t]
-    Extractor->>Extractor: Compute 22 summary features in <5ms<br/>(Autocorrelation, Sparsity, Variance, Entropy)
-    Extractor->>Router: Feature Vector x
-    Router->>Router: Predict probability P(FM wins | x)
-    Router->>Gate: Calibrated Confidence P + Estimated Cost
-    alt High Confidence & Budget Available
-        Gate->>Forecaster: Execute Foundation Model (Chronos-2 / TimesFM-2.5)
-    else High Sparsity Detected
-        Gate->>Forecaster: Execute Intermittent Specialist (Croston / SBA)
-    else Low Confidence or Standard Seasonality
-        Gate->>Forecaster: Execute Classical Baseline (AutoARIMA / ETS)
-    end
-    Forecaster-->>System: Return Final Forecast
+flowchart TD
+    TS["Input Time Series Y[t]"] --> CATCH["Catch22 Feature Extractor<br/>(&lt;5ms CPU: Autocorrelation, Entropy, Sparsity, Variance)"]
+    CATCH --> VEC["Feature Vector x &isin; &reals;&sup2;&sup6;"]
+    VEC --> ROUTER["Calibrated Routing Classifier<br/>(LightGBM + Platt Scaling)"]
+    ROUTER --> PROB["Estimated Probability P(FM wins | x)<br/>+ Calibrated Confidence Score"]
+    
+    PROB --> GATE{"Decision &amp; Cost Gate"}
+    
+    GATE -->|"P &ge; &tau; &amp; Budget High"| FM["Foundation Model<br/>(Chronos-2 / TimesFM-2.5)"]
+    GATE -->|"Sparsity &gt; 60% (Intermittent)"| CROST["Intermittent Specialist<br/>(Croston / SBA)"]
+    GATE -->|"P &lt; &tau; or Linear Trend"| ARIMA["Classical Baseline<br/>(AutoARIMA / ETS)"]
+    
+    FM --> OUT["Final Forecast Output"]
+    CROST --> OUT
+    ARIMA --> OUT
         </pre>
       </div>
     </section>
 
     <!-- Section 6 -->
     <section>
-      <h2>6. Candidate Proposal Titles for Review</h2>
+      <h2>6. Candidate Proposal Titles for Supervisory Review</h2>
       <p>
-        In accordance with supervisory guidance to review the title following Phase M1 findings, five options are presented below for consideration:
+        In accordance with the M1 project plan to review the title with Dr. Pattanaik, five distinct options are presented below for consideration:
       </p>
 
       <div class="title-option recommended">
@@ -708,19 +990,19 @@ sequenceDiagram
           "When to Trust a Time-Series Foundation Model: A Calibrated Reliability Framework for Cross-Family Forecasting Routing"
         </div>
         <div class="title-desc">
-          <strong>Rationale:</strong> Directly addresses the "when to trust" problem while highlighting the primary technical novelty: outputting calibrated confidence scores on model trustworthiness across diverse model families.
+          <strong>Rationale:</strong> Directly addresses the "when to trust" problem while highlighting our primary technical contribution: *calibrated reliability* (outputting verified confidence scores rather than a black-box decision).
         </div>
       </div>
 
       <div class="title-option">
         <div class="title-header">
-          <span class="title-name">Option 2: The Practical Computational Cost &amp; Efficiency Focus</span>
+          <span class="title-name">Option 2: The Computational Cost &amp; Operational Efficiency Focus</span>
         </div>
         <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0;">
           "Cost-Calibrated Per-Series Routing: Balancing Foundation Models and Classical Baselines in Operational Time-Series Forecasting"
         </div>
         <div class="title-desc">
-          <strong>Rationale:</strong> Focuses on the industrial trade-off: eliminating unnecessary GPU overhead when lightweight statistical models deliver equivalent or superior accuracy.
+          <strong>Rationale:</strong> Emphasizes the industrial trade-off: eliminating unnecessary GPU overhead when lightweight statistical models provide equal or better accuracy.
         </div>
       </div>
 
@@ -732,7 +1014,7 @@ sequenceDiagram
           "Selective Trust in Time-Series Forecasting: Routing Edge Cases and Intermittent Series Between Foundation Models and Classical Specialists"
         </div>
         <div class="title-desc">
-          <strong>Rationale:</strong> Emphasizes the empirical finding that foundation models falter on sparse data, framing the router as an intelligent edge-case detector.
+          <strong>Rationale:</strong> Grounded in empirical findings that foundation models degrade on sparse data, framing the router as a safety mechanism for edge cases.
         </div>
       </div>
 
@@ -744,7 +1026,7 @@ sequenceDiagram
           "A Risk-Aware Per-Series Dispatcher: Calibrated Routing Across Classical and Pretrained Time-Series Foundation Models"
         </div>
         <div class="title-desc">
-          <strong>Rationale:</strong> Uses systems engineering terminology ("dispatcher"), presenting the artefact as a modular computing component.
+          <strong>Rationale:</strong> Frames the research as a computer science systems deliverable (a *dispatcher*), emphasizing architectural and software engineering criteria.
         </div>
       </div>
 
@@ -756,7 +1038,7 @@ sequenceDiagram
           "When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models"
         </div>
         <div class="title-desc">
-          <strong>Rationale:</strong> The existing title currently registered in initial administrative drafts.
+          <strong>Rationale:</strong> The safe, established title currently registered in initial administrative drafts.
         </div>
       </div>
     </section>
@@ -765,19 +1047,19 @@ sequenceDiagram
     <section>
       <h2>7. Agenda for Next Supervisory Contact</h2>
       <p>
-        The following four items are prepared for discussion and confirmation to close Phase M1:
+        The following four items are scheduled for discussion to conclude Phase M1:
       </p>
       <ol>
         <li><strong>Title Endorsement:</strong> Confirmation of the preferred title direction (with Option 1 recommended).</li>
-        <li><strong>Evaluation Corpus Composition:</strong> Approval of using GIFT-Eval as the central multi-domain benchmark alongside M5, Car Parts, and NN5 for intermittent stress-testing.</li>
-        <li><strong>Licensing Confirmation:</strong> Verification that MOIRAI's <code>CC-BY-NC-4.0</code> non-commercial academic licence meets module regulations for dissertation artefacts.</li>
-        <li><strong>Proposal Drafting:</strong> Transitioning these findings directly into the official university proposal template.</li>
+        <li><strong>Evaluation Corpus Composition:</strong> Approval of the three-tier corpus: GIFT-Eval (standard primary benchmark) alongside M5, Car Parts, and NN5 (intermittent anchors).</li>
+        <li><strong>Model Baseline Inclusion:</strong> Agreement on evaluating the leakage-clean triad (<code>Chronos-2</code>, <code>TimesFM-2.5</code>, <code>MOIRAI</code>) against classical baselines, with a local <code>Hybrid ARIMA-LSTM</code> included as an offline deep comparator.</li>
+        <li><strong>Proposal Drafting:</strong> Transitioning this structured evidence base directly into the official university proposal template.</li>
       </ol>
     </section>
 
     <footer>
       <span>Arden University · School of Computing · COM7014</span>
-      <span>Documented: October 2026 · Built with Aptos Typography</span>
+      <span>Updated: October 2026 · Rendered in Official Aptos Typography</span>
     </footer>
 
   </div>
