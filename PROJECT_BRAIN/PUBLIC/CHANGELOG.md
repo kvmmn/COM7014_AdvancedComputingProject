@@ -8,6 +8,7 @@
 - Redesigned the briefing for mobile reading: single column, near-monochrome light palette with one accent, and diagrams for the trust threshold, the state of the literature, dataset roles and sizes, the validation folds, intermittency classes and search coverage.
 - Refocused the briefing narrative on the dataset search and the title: summary of corpus and title, search protocol and routes, what the papers changed, options considered with reasons, the recommended corpus, and title options assessed against the findings.
 - Trimmed the search sources and limits in the briefing and the technical report to the sources that produced results.
+- Added a phase strip to the briefing header showing M1 (topic, data and proposal) in progress, with its steps, followed by M2 (models and evaluation) and M3 (thesis).
 - Added Dataset Discovery V2 with 42 logged searches across seven discovery routes.
 - Added a publication-safe technical report containing 15 article-to-dataset extractions, numerical descriptors, experimental roles, source links, limitations, and decision gates.
 - Revised the novelty statement after identifying Zhang et al., CARFS and FAME as direct cross-family routing precedents.
