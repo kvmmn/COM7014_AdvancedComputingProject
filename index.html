@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COM7014 Supervision & Research Briefing | Kaveh Momeni</title>
+  
+  <!-- Mermaid.js for Interactive Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      fontFamily: 'Aptos, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      themeVariables: {
+        fontSize: '14px',
+        primaryColor: '#f1f5f9',
+        primaryTextColor: '#0f172a',
+        primaryBorderColor: '#cbd5e1',
+        lineColor: '#64748b',
+        secondaryColor: '#f8fafc',
+        tertiaryColor: '#ffffff'
+      }
+    });
+  </script>
+
+  <style>
+    /* Official Typography: Aptos */
+    @font-face {
+      font-family: 'Aptos';
+      src: local('Aptos'), local('Aptos Display');
+      font-weight: 100 900;
+      font-style: normal;
+    }
+
+    :root {
+      --font-main: 'Aptos', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --color-bg: #f8fafc;
+      --color-surface: #ffffff;
+      --color-border: #e2e8f0;
+      --color-border-subtle: #f1f5f9;
+      
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-muted: #64748b;
+      
+      --color-accent: #1e3a8a;
+      --color-accent-subtle: #eff6ff;
+      --color-accent-border: #bfdbfe;
+      
+      --color-tag-blue: #dbeafe;
+      --color-tag-blue-text: #1e40af;
+      --color-tag-green: #dcfce7;
+      --color-tag-green-text: #166534;
+      --color-tag-amber: #fef3c7;
+      --color-tag-amber-text: #92400e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 48px 16px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 48px 56px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 8px;
+      }
+      .container {
+        padding: 28px 20px;
+        border-radius: 8px;
+      }
+    }
+
+    /* Header & Meta */
+    header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+
+    .super-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: var(--color-text-primary);
+      margin-bottom: 18px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px 24px;
+      font-size: 13.5px;
+      background: var(--color-bg);
+      padding: 16px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .meta-value {
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* Section Typography */
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--color-text-primary);
+      margin-top: 40px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--color-text-secondary);
+      font-size: 15px;
+    }
+
+    ul, ol {
+      margin-bottom: 18px;
+      padding-left: 24px;
+      color: var(--color-text-secondary);
+      font-size: 15px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    /* Callout & Cards */
+    .callout {
+      background: var(--color-accent-subtle);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 14.5px;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+      transition: border-color 0.15s ease;
+    }
+
+    .card:hover {
+      border-color: var(--color-text-muted);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-text-primary);
+    }
+
+    .card-body {
+      font-size: 13.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Badges & Tags */
+    .badge {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-blue { background: var(--color-tag-blue); color: var(--color-tag-blue-text); }
+    .badge-green { background: var(--color-tag-green); color: var(--color-tag-green-text); }
+    .badge-amber { background: var(--color-tag-amber); color: var(--color-tag-amber-text); }
+
+    /* Tables */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 20px 0 24px 0;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    th {
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      color: var(--color-text-secondary);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #fafbfc;
+    }
+
+    /* Diagram containers */
+    .diagram-box {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    /* Title Options Styling */
+    .title-option {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .title-option.recommended {
+      border-color: var(--color-accent-border);
+      background: #fbfdff;
+    }
+
+    .title-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .title-name {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
+
+    .title-desc {
+      font-size: 13.5px;
+      color: var(--color-text-secondary);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      background: #f1f5f9;
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <header>
+      <div class="super-title">Arden University · COM7014 Advanced Computing Project</div>
+      <h1>Project Exploration & Supervision Briefing</h1>
+      
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Student</span>
+          <span class="meta-value">Kaveh Momeni (25199053)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Supervisor</span>
+          <span class="meta-value">Dr. Priyadarshini Pattanaik</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Current Phase</span>
+          <span class="meta-value">M1: Topic, Datasets & Proposal</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="meta-value">Active Review (October 2026)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Section 1 -->
+    <section>
+      <h2>1. Context & Supervisor Direction</h2>
+      <p>
+        Following our initial supervisory consultation on 2026-10-05, this document records the Phase M1 findings and outlines the core decisions for the project proposal. 
+      </p>
+      <div class="callout">
+        <strong>Core Principle Adopted:</strong> The proposal must be built directly around the <em>research problem and the concrete datasets in hand</em>, rather than chasing models or tools in isolation.
+      </div>
+      <p>
+        Accordingly, three sequential investigations were carried out before drafting the assessed proposal:
+      </p>
+      <ul>
+        <li><strong>Cross-field dataset exploration:</strong> Executing a structured 6-route search across academic repositories to ensure multi-domain coverage.</li>
+        <li><strong>Data structure & contamination audit:</strong> Analysing sampling rates, sparsity, and pretraining data leakage in modern Foundation Models.</li>
+        <li><strong>Proposal title formulation:</strong> Developing five distinct title directions reflecting different project emphases for supervisory feedback.</li>
+      </ul>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+flowchart LR
+    A["Supervisor Guidance<br/>(Problem & Data First)"] --> B["Systematic Search<br/>(8 Domains, 29 Runs)"]
+    B --> C["Data Structure &<br/>Leakage Audit"]
+    C --> D["3-Tier Corpus Selection<br/>& Model Landscape"]
+    D --> E["Proposal Grounding<br/>& Title Options"]
+        </pre>
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section>
+      <h2>2. Terminology & Conceptual Foundation</h2>
+      <p>
+        To ensure precision and transparency across all documentation, the central technical terms are defined below:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Working Definition</th>
+              <th>Role in This Research</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Time-Series Foundation Model (TSFM)</strong></td>
+              <td>A large pre-trained neural network (predominantly Transformer architectures) trained on massive multi-domain time-series corpora, designed to produce zero-shot forecasts without local retraining.</td>
+              <td>The advanced deep learning challenger under evaluation (e.g. Chronos-2, TimesFM-2.5, MOIRAI).</td>
+            </tr>
+            <tr>
+              <td><strong>GIFT-Eval</strong></td>
+              <td><em>General Time Series Foundation Model Evaluation</em>. A standardized benchmark released by Salesforce AI Research (Aksu et al., 2024) comprising 23 datasets, 144k series, and 177M observations across 7 domains.</td>
+              <td>Serves as our primary benchmark layer, offering established baselines and documented data leakage tracking.</td>
+            </tr>
+            <tr>
+              <td><strong>Zero-Shot Evaluation</strong></td>
+              <td>Testing a model on time-series distributions completely unseen during pretraining, without updating network weights.</td>
+              <td>The empirical evaluation setting used to test true cross-domain generalisation.</td>
+            </tr>
+            <tr>
+              <td><strong>Test-Data Leakage</strong></td>
+              <td>When an evaluation dataset was inadvertently present in a model's pretraining corpus, producing artificially inflated zero-shot scores.</td>
+              <td>Audited explicitly; dictates which foundation model checkpoints are methodologically valid for this study.</td>
+            </tr>
+            <tr>
+              <td><strong>Intermittent Demand</strong></td>
+              <td>Series characterised by frequent zero observations punctuated by irregular non-zero values (e.g. spare parts, retail inventory, medical emergencies).</td>
+              <td>A documented weakness of neural foundation models where classical statistical estimators frequently prevail.</td>
+            </tr>
+            <tr>
+              <td><strong>Croston / SBA / TSB</strong></td>
+              <td>Classical parametric methods designed specifically for intermittent series. Croston separates interval from magnitude; SBA corrects positive bias; TSB updates demand probabilities continuously.</td>
+              <td>Specialised lightweight CPU baselines for sparse data subsets.</td>
+            </tr>
+            <tr>
+              <td><strong>Catch22 Features</strong></td>
+              <td><em>Canonical Time-Series Characteristics</em>. A scientifically curated set of 22 computationally efficient summary statistics capturing autocorrelation, distribution shape, outliers, and entropy in &lt;5ms.</td>
+              <td>The lightweight input features examined by the routing classifier.</td>
+            </tr>
+            <tr>
+              <td><strong>Calibration &amp; ECE</strong></td>
+              <td><em>Expected Calibration Error</em>. The statistical alignment between a model's predicted confidence score and its actual empirical accuracy.</td>
+              <td>The primary metric ensuring the router outputs trustworthy probabilities rather than uncalibrated decisions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section>
+      <h2>3. The Core Research Problem</h2>
+      <p>
+        Recent industry practice often defaults to deploying large Time-Series Foundation Models indiscriminately. However, empirical literature highlights two critical operational realities:
+      </p>
+      
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">1. Computational Expense &amp; Latency</div>
+          <div class="card-body">
+            Foundation models require dedicated GPU hardware and incur significant inference latency. Running zero-shot transformers across millions of enterprise series generates high recurring infrastructure costs.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Degradation on Sparse Series</div>
+          <div class="card-body">
+            Cross-benchmark meta-analyses (e.g. Rubczynski, 2026 across 543 comparisons) demonstrate that foundation models regularly underperform classical statistical methods (Croston, SBA) and GBDTs on intermittent data.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>The Central Objective:</strong> Rather than viewing foundation models as a universal replacement, this research builds a <em>fast, calibrated per-series router</em> that evaluates individual time-series properties and determines whether to dispatch to a foundation model or fall back to an efficient classical baseline.
+      </div>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+flowchart TD
+    TS["Individual Time Series Y[t]"] --> R{"Calibrated Router"}
+    R -->|"Dense, Complex, High Confidence"| FM["Foundation Model<br/>(Chronos-2 / TimesFM-2.5 / MOIRAI)"]
+    R -->|"Sparse, Intermittent Demand"| CL["Intermittent Specialist<br/>(Croston / SBA / TSB)"]
+    R -->|"Linear, Stable Seasonality"| ST["Classical Statistical<br/>(AutoARIMA / ETS)"]
+        </pre>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section>
+      <h2>4. Dataset Discovery &amp; Structural Taxonomy</h2>
+      <p>
+        Following supervisory advice, a 6-route discovery protocol was executed across multiple academic repositories, logging 29 runs and achieving multi-domain representation across 8 industries.
+      </p>
+
+      <h3>Structural Anatomy of Time-Series Data</h3>
+      <p>
+        To ensure the router can generalise, candidate datasets were analysed across their structural and temporal properties:
+      </p>
+      <ul>
+        <li><strong>Dimensionality:</strong> Univariate single-target series ($y_t$) versus multivariate coupled channels.</li>
+        <li><strong>Sampling Frequency:</strong> Ranging from high-frequency (15-minute grid telemetry) to daily (retail) and monthly (industrial parts).</li>
+        <li><strong>Exogenous Variables:</strong> Dynamic covariates (temperatures, promotions, calendar events) and static category tags.</li>
+      </ul>
+
+      <h3>Intermittency Classification: The Syntetos-Boylan Quadrant</h3>
+      <p>
+        To objectively identify where classical models should supersede foundation models, candidate series are categorized using two mathematical dimensions: average inter-demand interval ($p$) and squared coefficient of variation ($CV^2$):
+      </p>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+quadrantChart
+    title Syntetos-Boylan Demand Quadrant
+    x-axis "Low Intermittency (p <= 1.32)" --> "High Intermittency (p > 1.32)"
+    y-axis "Stable Quantity (CV² <= 0.49)" --> "Volatile Quantity (CV² > 0.49)"
+    quadrant-1 "LUMPY: Sparse & Volatile (TSB / Croston)"
+    quadrant-2 "ERRATIC: High Variance Dense (LightGBM)"
+    quadrant-3 "SMOOTH: Continuous (Foundation Model Advantage)"
+    quadrant-4 "INTERMITTENT: Sparse Regular (Croston / SBA Win)"
+        </pre>
+      </div>
+
+      <h3>Candidate Dataset Inventory</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Dataset</th>
+              <th>Domain</th>
+              <th>Sampling</th>
+              <th>Series</th>
+              <th>Length</th>
+              <th>Zero Rate</th>
+              <th>Format &amp; Licence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>DS-001</strong></td>
+              <td>GIFT-Eval</td>
+              <td>7 Domains</td>
+              <td>10 freqs (10s–1Y)</td>
+              <td>144,000</td>
+              <td>100–10k+</td>
+              <td>Variable</td>
+              <td>Arrow / Apache-2.0</td>
+            </tr>
+            <tr>
+              <td><strong>DS-005</strong></td>
+              <td>M5 Competition</td>
+              <td>Retail</td>
+              <td>Daily</td>
+              <td>30,490</td>
+              <td>1,941</td>
+              <td>High (~70%)</td>
+              <td>CSV / Kaggle Terms</td>
+            </tr>
+            <tr>
+              <td><strong>DS-006</strong></td>
+              <td>Car Parts</td>
+              <td>Industrial</td>
+              <td>Monthly</td>
+              <td>2,674</td>
+              <td>51</td>
+              <td>High (~65%)</td>
+              <td>.tsf / Research Use</td>
+            </tr>
+            <tr>
+              <td><strong>DS-007</strong></td>
+              <td>NN5 Cash</td>
+              <td>Banking</td>
+              <td>Daily</td>
+              <td>111</td>
+              <td>791</td>
+              <td>Moderate (~20%)</td>
+              <td>.tsf / Research Use</td>
+            </tr>
+            <tr>
+              <td><strong>DS-015</strong></td>
+              <td>Rossmann</td>
+              <td>Retail</td>
+              <td>Daily</td>
+              <td>1,115</td>
+              <td>942</td>
+              <td>Moderate</td>
+              <td>CSV / Open Access</td>
+            </tr>
+            <tr>
+              <td><strong>DS-022</strong></td>
+              <td>ENTSO-E</td>
+              <td>Energy</td>
+              <td>Hourly</td>
+              <td>35 zones</td>
+              <td>8,760+</td>
+              <td>0% (Dense)</td>
+              <td>Parquet / Open Data</td>
+            </tr>
+            <tr>
+              <td><strong>DS-025</strong></td>
+              <td>ECDC ILI</td>
+              <td>Healthcare</td>
+              <td>Weekly</td>
+              <td>28 countries</td>
+              <td>520</td>
+              <td>Low (~5%)</td>
+              <td>Public Domain</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Data Contamination Audit &amp; Clean Model Triad</h3>
+      <p>
+        An inspection of pretraining logs revealed that older models (Chronos-T5, TimesFM 1.0, TinyTimeMixer) ingested Monash and M-competition datasets during pretraining. Evaluating these models on those benchmarks would violate zero-shot evaluation standards.
+      </p>
+      <p>
+        To preserve scientific validity, this study isolates the <strong>leakage-clean triad</strong>:
+      </p>
+      <ul>
+        <li><code>Chronos-2</code>: Employs strict, verified partition boundaries.</li>
+        <li><code>TimesFM-2.5</code>: Cleaned, segregated evaluation splits.</li>
+        <li><code>MOIRAI</code>: Pretrained on LOTSA with documented masking of benchmark targets.</li>
+      </ul>
+    </section>
+
+    <!-- Section 5 -->
+    <section>
+      <h2>5. Model Landscape &amp; Proposed Routing Pipeline</h2>
+      <p>
+        The router evaluates candidate time series using 22 computationally fast statistical features (<code>Catch22</code>) computed in under 5 ms, predicting model suitability and calibration scores before executing a forecast:
+      </p>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor System as Ingestion Pipeline
+    participant Extractor as Feature Extractor (Catch22)
+    participant Router as Calibrated Router (LightGBM)
+    participant Gate as Decision Gate
+    participant Forecaster as Model Execution
+
+    System->>Extractor: Pass Series Y[t]
+    Extractor->>Extractor: Compute 22 summary features in <5ms<br/>(Autocorrelation, Sparsity, Variance, Entropy)
+    Extractor->>Router: Feature Vector x
+    Router->>Router: Predict probability P(FM wins | x)
+    Router->>Gate: Calibrated Confidence P + Estimated Cost
+    alt High Confidence & Budget Available
+        Gate->>Forecaster: Execute Foundation Model (Chronos-2 / TimesFM-2.5)
+    else High Sparsity Detected
+        Gate->>Forecaster: Execute Intermittent Specialist (Croston / SBA)
+    else Low Confidence or Standard Seasonality
+        Gate->>Forecaster: Execute Classical Baseline (AutoARIMA / ETS)
+    end
+    Forecaster-->>System: Return Final Forecast
+        </pre>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section>
+      <h2>6. Candidate Proposal Titles for Review</h2>
+      <p>
+        In accordance with supervisory guidance to review the title following Phase M1 findings, five options are presented below for consideration:
+      </p>
+
+      <div class="title-option recommended">
+        <div class="title-header">
+          <span class="title-name">Option 1: The Reliability &amp; Calibration Focus <span class="badge badge-blue">Student Preference</span></span>
+        </div>
+        <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0; color: var(--color-accent);">
+          "When to Trust a Time-Series Foundation Model: A Calibrated Reliability Framework for Cross-Family Forecasting Routing"
+        </div>
+        <div class="title-desc">
+          <strong>Rationale:</strong> Directly addresses the "when to trust" problem while highlighting the primary technical novelty: outputting calibrated confidence scores on model trustworthiness across diverse model families.
+        </div>
+      </div>
+
+      <div class="title-option">
+        <div class="title-header">
+          <span class="title-name">Option 2: The Practical Computational Cost &amp; Efficiency Focus</span>
+        </div>
+        <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0;">
+          "Cost-Calibrated Per-Series Routing: Balancing Foundation Models and Classical Baselines in Operational Time-Series Forecasting"
+        </div>
+        <div class="title-desc">
+          <strong>Rationale:</strong> Focuses on the industrial trade-off: eliminating unnecessary GPU overhead when lightweight statistical models deliver equivalent or superior accuracy.
+        </div>
+      </div>
+
+      <div class="title-option">
+        <div class="title-header">
+          <span class="title-name">Option 3: The Intermittent Demand &amp; Edge-Case Focus</span>
+        </div>
+        <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0;">
+          "Selective Trust in Time-Series Forecasting: Routing Edge Cases and Intermittent Series Between Foundation Models and Classical Specialists"
+        </div>
+        <div class="title-desc">
+          <strong>Rationale:</strong> Emphasizes the empirical finding that foundation models falter on sparse data, framing the router as an intelligent edge-case detector.
+        </div>
+      </div>
+
+      <div class="title-option">
+        <div class="title-header">
+          <span class="title-name">Option 4: The Systems &amp; Dispatcher Architecture Focus</span>
+        </div>
+        <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0;">
+          "A Risk-Aware Per-Series Dispatcher: Calibrated Routing Across Classical and Pretrained Time-Series Foundation Models"
+        </div>
+        <div class="title-desc">
+          <strong>Rationale:</strong> Uses systems engineering terminology ("dispatcher"), presenting the artefact as a modular computing component.
+        </div>
+      </div>
+
+      <div class="title-option">
+        <div class="title-header">
+          <span class="title-name">Option 5: Current Working Baseline</span>
+        </div>
+        <div class="title-name" style="font-size: 16px; margin: 4px 0 8px 0;">
+          "When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models"
+        </div>
+        <div class="title-desc">
+          <strong>Rationale:</strong> The existing title currently registered in initial administrative drafts.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7 -->
+    <section>
+      <h2>7. Agenda for Next Supervisory Contact</h2>
+      <p>
+        The following four items are prepared for discussion and confirmation to close Phase M1:
+      </p>
+      <ol>
+        <li><strong>Title Endorsement:</strong> Confirmation of the preferred title direction (with Option 1 recommended).</li>
+        <li><strong>Evaluation Corpus Composition:</strong> Approval of using GIFT-Eval as the central multi-domain benchmark alongside M5, Car Parts, and NN5 for intermittent stress-testing.</li>
+        <li><strong>Licensing Confirmation:</strong> Verification that MOIRAI's <code>CC-BY-NC-4.0</code> non-commercial academic licence meets module regulations for dissertation artefacts.</li>
+        <li><strong>Proposal Drafting:</strong> Transitioning these findings directly into the official university proposal template.</li>
+      </ol>
+    </section>
+
+    <footer>
+      <span>Arden University · School of Computing · COM7014</span>
+      <span>Documented: October 2026 · Built with Aptos Typography</span>
+    </footer>
+
+  </div>
+
+</body>
+</html>
