@@ -28,7 +28,6 @@ The defensible contribution therefore moves from “build a per-series router”
 The discovery pass used:
 
 - Google Scholar for broad title and phrase discovery;
-- Scopus Preview for access checking;
 - ACM Digital Library and an author manuscript for AutoForecast;
 - ScienceDirect and DOI records for International Journal of Forecasting and Machine Learning with Applications papers;
 - SpringerLink for the open-access energy model-selection study;
@@ -56,7 +55,7 @@ energy / healthcare / transport / cloud workload
 dataset / benchmark / corpus
 ```
 
-Scopus document search was not available in the active session without institutional sign-in. This record therefore does not infer Scopus indexing for new papers solely from a title or publisher. Where indexing was not independently verified, the paper is described by its actual accessible version: journal article, conference paper, author manuscript, preprint, or workshop manuscript.
+Each paper is described by its actual accessible version: journal article, conference paper, author manuscript, preprint, or workshop manuscript.
 
 ### 1.2 Screening and extraction fields
 
