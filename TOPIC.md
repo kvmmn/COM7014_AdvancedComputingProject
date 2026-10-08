@@ -129,8 +129,8 @@ Stratify the results by intermittency class. Test whether the router detects int
 
 These stay open for the supervisor. They do not reopen the choice of topic.
 
-- The exact checkpoint list, frozen only after a smoke test on the available machine. The clean set is Chronos-2, TimesFM-2.5, and MOIRAI.
-- Which public intermittent collections join the main benchmark. Dataset selection follows the scientific protocol in `PROJECT_BRAIN/PRIVATE/DATASET_DISCOVERY_PROTOCOL.md` (D-017).
+- The exact checkpoint list, frozen only after a smoke test on the available machine. Chronos-2, TimesFM-2.5, and MOIRAI have no leakage flag on GIFT-Eval, but every added dataset still needs a checkpoint-specific overlap check.
+- Which public intermittent collections join the main benchmark. The current evidence and candidate roles are documented in [`research/dataset-discovery-v2-scholar-article-extraction.md`](research/dataset-discovery-v2-scholar-article-extraction.md).
 - The module brief, the marking rubric, the word budget, and the deadline. The supervisor required the student to check the deadline and official constraints and report back (S-002).
 
 ## Project staging

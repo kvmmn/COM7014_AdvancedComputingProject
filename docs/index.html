@@ -111,7 +111,7 @@
   <h1>When to Trust a Time-Series Foundation Model</h1>
   <div class="subtitle">Problem, evidence, datasets, models and method — working briefing for the proposal</div>
   <div class="meta">
-    <div><span class="k">Student</span><span>Kaveh Momeni (25199053)</span></div>
+    <div><span class="k">Researcher</span><span>Kaveh Momeni</span></div>
     <div><span class="k">Phase</span><span>M1 · problem, data and proposal</span></div>
     <div><span class="k">Status</span><span>Working document · not assessed</span></div>
     <div><span class="k">Experiments</span><span>None run · gated on proposal and ethics approval</span></div>
@@ -159,25 +159,26 @@
 <tbody>
 <tr><td><strong>Rubczynski (2026)</strong>, systematic review and meta-analysis, 543 paired comparisons, retail</td><td>A robust benchmark-level FM advantage, strongest on distributional metrics (scaled quantile loss Δ −0.318) and smaller on point metrics (WAPE Δ −0.116). Model size is not a significant moderator. On intermittent M5, an FM scores 0.97 WRMSSE against 0.52 for competition-grade LightGBM.</td><td>No per-series routing. No calibration test (stated explicitly by the author). The M5 loss is against LightGBM, not against Croston-type methods.</td></tr>
 <tr><td><strong>GIFT-Eval leaderboard</strong> (Aksu et al., 2024)</td><td>Zero-shot FMs are among the strongest entries across 7 domains and 10 frequencies; test-data leakage is flagged per model.</td><td>Which individual series an FM gets wrong.</td></tr>
-<tr><td><strong>Routing systems</strong> (TimeRouter, TW3Cast, others — §3)</td><td>Selecting among FMs improves aggregate accuracy.</td><td>Whether a classical fallback should be in the pool; whether the routing confidence is calibrated.</td></tr>
+<tr><td><strong>Foundation-only routing</strong> (TimeRouter, TW3Cast — §3)</td><td>Selecting among foundation models can improve aggregate accuracy.</td><td>Whether a classical fallback should be available; whether the routing confidence is calibrated.</td></tr>
+<tr><td><strong>Cross-family routing</strong> (Zhang et al., CARFS, FAME — §3)</td><td>Recent retail studies already select among statistical, machine-learning and deep models; FAME can also choose Chronos selectively.</td><td>Reliability diagrams, expected calibration error, risk–coverage behaviour, and generalisation beyond predominantly retail datasets.</td></tr>
 </tbody></table></div>
 <p><strong>The cost motive, stated carefully.</strong> An FM forward pass is far more expensive than fitting ETS or Croston, but the review reports that consumer-hardware FM inference remains viable up to roughly 30K series with daily re-forecasting. Cost is therefore treated as a <em>measured</em> quantity in this project, not as an assumption.</p>
 
 <!-- 3 -->
 <h2 id="s3"><span class="n">3</span>What already exists, and the gap</h2>
-<p>Choosing a forecasting model from series features is an established line of work. FFORMS (Talagala et al.) and FFORMA (Montero-Manso et al., 2020) selected or weighted <em>classical</em> models from time-series features. Recent systems do the same <em>among foundation models</em>. This project sits between the two lines.</p>
+<p>Choosing a forecasting model from series features is an established line of work. FFORMS (Talagala et al.) and FFORMA (Montero-Manso et al., 2020) selected or weighted <em>classical</em> models from time-series features. TimeRouter and TW3Cast route among foundation models. More recent retail studies — Zhang et al., CARFS and especially FAME — already cross model-family boundaries. The defensible gap is therefore not “foundation versus classical routing” by itself; it is whether that decision can be made with a probability that is calibrated, auditable and useful for deferral.</p>
 <div class="tw"><table>
-<thead><tr><th>Capability</th><th>FFORMS / FFORMA</th><th>TimeRouter</th><th>TW3Cast</th><th>LLM agents¹</th><th>This project</th></tr></thead>
+<thead><tr><th>Capability</th><th>FFORMS / FFORMA</th><th>TimeRouter / TW3Cast</th><th>Zhang / CARFS / FAME</th><th>LLM agents¹</th><th>This project</th></tr></thead>
 <tbody>
-<tr><td>Feature-based per-series selection</td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b warn">Per configuration</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Foundation models in the pool</td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Classical fallback in the pool</td><td><span class="b ok">Yes</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Intermittent-demand methods</td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Calibrated probability that the choice is right</td><td><span class="b bad">No</span></td><td><span class="b bad">No²</span></td><td><span class="b bad">No³</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Per-series regret and cost</td><td><span class="b bad">No</span></td><td><span class="b warn">Partial</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Feature-based per-series selection</td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Foundation models in the pool</td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td><td><span class="b warn">FAME: optional</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Classical fallback in the pool</td><td><span class="b ok">Yes</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Intermittency features or methods</td><td><span class="b warn">Limited</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Calibrated probability that the choice is right</td><td><span class="b bad">No</span></td><td><span class="b bad">No²</span></td><td><span class="b bad">Not reported</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
+<tr><td>Per-series regret and cost</td><td><span class="b bad">No</span></td><td><span class="b warn">Partial</span></td><td><span class="b warn">FAME: cost-aware</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
 </tbody></table></div>
-<p style="font-size:13px;color:var(--muted)">¹ TSOrchestra, MoiraiAgent, TimeCopilot. ² Uses the one-vs-all structure of Verma &amp; Nalisnick (2022) but only as a threshold gate; no reliability diagrams or ECE reported. ³ Uses MASE and CRPS jointly as a filter and states that calibration-first selection “is not evaluated here” (arXiv 2609.28506).</p>
-<div class="note"><p><strong>Honest positioning.</strong> The routing idea is not new and the project will not claim to beat TimeRouter on aggregate MASE. The contribution is narrower: a <em>cross-family</em> pool (foundation + classical + intermittent methods) and a routing confidence that is <em>calibrated and checked</em>.</p></div>
+<p style="font-size:13px;color:var(--muted)">¹ TSOrchestra, MoiraiAgent, TimeCopilot. ² TimeRouter uses a one-vs-all threshold gate but does not report reliability diagrams or expected calibration error; TW3Cast states that calibration-first selection is not evaluated.</p>
+<div class="note"><p><strong>Honest positioning.</strong> Routing and cross-family model choice are not new. The narrower contribution is a calibrated estimate of whether the selected model is likely to be correct, an explicit defer policy when confidence is inadequate, and leakage-aware validation on datasets and fields not used to train the router.</p></div>
 
 <!-- 4 -->
 <h2 id="s4"><span class="n">4</span>Research questions and hypotheses</h2>
@@ -194,7 +195,7 @@
 <!-- 5 -->
 <h2 id="s5"><span class="n">5</span>How the datasets were found</h2>
 <h3>5.1 Protocol</h3>
-<p>The search followed a written protocol before execution: six routes with a time budget, twelve selection criteria (two hard gates: licence and feasible size), and a stopping rule. Every query was logged with platform, exact string, date and result count (29 runs, DS-001 to DS-029).</p>
+<p>The search followed a written protocol before execution: seven routes, twelve selection criteria (including the hard gates of usable access terms and feasible size), and a stopping rule. Every query was logged with platform, exact string, date and result count. The completed record now contains 42 searches (DS-001 to DS-042), including a dedicated article-to-dataset extraction pass.</p>
 <div class="tw"><table>
 <thead><tr><th>Route</th><th>Purpose</th><th>Platforms actually used</th><th>Example queries / endpoints</th><th>Main outcome</th></tr></thead>
 <tbody>
@@ -204,16 +205,33 @@
 <tr><td><strong>R4</strong> · 4 runs</td><td>Field-by-field literature search</td><td>OpenAlex API</td><td><code>"intermittent demand forecasting"</code>, <code>"spare parts demand forecasting"</code>, <code>"electricity load forecasting dataset"</code></td><td>Found the Rubczynski (2026) review.</td></tr>
 <tr><td><strong>R5</strong> · 3 runs</td><td>Citation snowballing</td><td>OpenAlex citations, arXiv</td><td><code>filter=cites:W4403570643</code> (papers citing GIFT-Eval)</td><td>Found TW3Cast; read in full.</td></tr>
 <tr><td><strong>R6</strong> · 1 run</td><td>Competition repositories</td><td>Kaggle API</td><td><code>intermittent demand</code>, <code>retail sales forecasting</code></td><td>Mostly weak; M5 licence needs care.</td></tr>
+<tr><td><strong>R7</strong> · 13 runs</td><td>Extract datasets from papers, not only registries</td><td>Google Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview</td><td><code>"forecast model selection" time series dataset</code> and citation-led variants</td><td>15 article-to-dataset records; three direct cross-family routing precedents; stronger candidates for comparability and held-out-field validation.</td></tr>
 </tbody></table></div>
-<p><strong>Query families.</strong> Each query combined a task term (<code>forecasting</code>, <code>demand forecasting</code>, <code>load forecasting</code>), a data term (<code>benchmark</code>, <code>dataset</code>, <code>corpus</code>) and a field term (retail, energy, transport, finance, weather, healthcare, industrial, cloud telemetry). Routing literature was searched with <code>model selection</code>, <code>algorithm selection</code>, <code>meta-learning forecasting</code>, <code>FFORMS</code>.</p>
-<p><strong>Stopping rule.</strong> Stop when three consecutive searches add no strong candidate, at least three fields are covered, and at least one intermittency-heavy collection is confirmed. Result: eight fields covered; intermittent collections confirmed; R4–R6 added no new strong dataset.</p>
+<p><strong>Query families.</strong> Each query combined a task term (<code>forecasting</code>, <code>demand forecasting</code>, <code>load forecasting</code>), a data term (<code>benchmark</code>, <code>dataset</code>, <code>corpus</code>) and a field term (retail, energy, transport, finance, weather, healthcare, industrial, cloud telemetry). Routing literature was searched through Google Scholar and publisher indexes with <code>model selection</code>, <code>algorithm selection</code>, <code>meta-learning forecasting</code>, <code>FFORMS</code> and the exact phrase <code>"forecast model selection" time series dataset</code>.</p>
+<p><strong>Stopping rule.</strong> The initial rule — three consecutive searches without a strong new candidate, at least three fields covered, and one confirmed intermittency-heavy collection — was met. R7 deliberately reopened the search because registry evidence alone was too shallow. It closed after the core routing line had been traced to concrete evaluation datasets and the additional searches produced repetition rather than a new high-priority corpus.</p>
 
-<h3>5.2 Limitations of the search so far, and the next step</h3>
+<h3>5.2 What the article extraction changed</h3>
+<p>The paper-level pass changed both the novelty claim and the corpus design. Cross-family routing is already demonstrated on retail data, so the project must earn its contribution through calibrated confidence, deferral and stronger out-of-dataset validation. It also revealed which datasets have a clear experimental role rather than merely being available.</p>
+<div class="tw"><table>
+<thead><tr><th>Study</th><th>Datasets extracted from the evaluation</th><th>Why it matters here</th></tr></thead>
+<tbody>
+<tr><td><strong>Zhang et al.</strong></td><td>Favorita: 24,646 product–store series; mean zero-sales share 57.2%; 34 features; 14- and 30-day horizons.</td><td>Direct evidence that feature-based cross-family selection already works on intermittent retail data; a novelty constraint and a replication comparator.</td></tr>
+<tr><td><strong>FAME</strong></td><td>SNBC, M5 and Favorita; Chronos selected for only 8.6% and 10.9% of M5 and Favorita cases.</td><td>The closest methodological precedent. It makes selective FM use empirically plausible and shifts the open question to whether the selection confidence is trustworthy.</td></tr>
+<tr><td><strong>CARFS</strong></td><td>Meta-learning on M5, evaluated on 1,000 Favorita series.</td><td>A useful cross-dataset retail transfer design; supports leave-one-dataset-out rather than random series splitting.</td></tr>
+<tr><td><strong>FFORMPP</strong></td><td>M1 and M3 plus 10,000 GRATIS series per frequency; tested on M4.</td><td>A clean precedent for separating router construction from evaluation and for using synthetic series only as training support.</td></tr>
+<tr><td><strong>AutoForecast</strong></td><td>348 datasets, 625 time series and 322 model configurations.</td><td>Shows the breadth possible in algorithm selection, but also why a Master's project needs a smaller, role-defined corpus.</td></tr>
+<tr><td><strong>Werling et al.</strong></td><td>Ausgrid: 300 buildings over three years at 30-minute resolution; 200 buildings for development, 100 held out for evaluation.</td><td>A strong held-out-field candidate with an explicit entity-level split, outside the retail concentration of the routing literature.</td></tr>
+<tr><td><strong>Barak et al.</strong></td><td>NN5: 111 daily ATM-withdrawal series, 791 observations each, 56-day horizon.</td><td>A compact demand dataset with a direct model-selection precedent; missing values must be distinguished from genuine zero demand.</td></tr>
+</tbody></table></div>
+<div class="note"><p><strong>Detailed evidence layer.</strong> The full extraction records all 15 papers/datasets, numerical descriptors, access notes, methodological implications and source links in the <a href="https://github.com/kvmmn/kvmmn-COM7014_AdvancedComputingProject/blob/main/research/dataset-discovery-v2-scholar-article-extraction.md">Dataset Discovery V2 technical report</a>.</p></div>
+
+<h3>5.3 Remaining limitations</h3>
 <ul>
-  <li>The literature routes were shallow: OpenAlex queries returned only a handful of records each, and Google Scholar was not used for dataset discovery.</li>
-  <li>Selection leaned on registries rather than on <em>how often datasets are actually used in the literature</em>.</li>
+  <li>Scopus Preview exposed bibliographic records but full institutional Scopus search was not available in this pass.</li>
+  <li>The 15 records are a purposive extraction around routing and dataset choice, not a claim of an exhaustive systematic review.</li>
+  <li>Dataset licences, stable download routes and foundation-model training overlap remain hard gates before any download.</li>
+  <li>No dataset has been downloaded and no model has been run; every proposed size, zero rate and split is still source-reported.</li>
 </ul>
-<div class="note"><p><strong>Planned R7 — dataset-usage extraction.</strong> Read the evaluation sections of ~25 core papers (FM papers, GIFT-Eval, fev-bench, routing systems, FFORMS/FFORMA, intermittent-demand reviews) and build a matrix: dataset × paper × metric × horizon. Usage frequency, plus a numeric score against the twelve criteria, gives a transparent and reproducible justification for each dataset kept or dropped.</p></div>
 
 <!-- 6 -->
 <h2 id="s6"><span class="n">6</span>Dataset analysis</h2>
@@ -248,27 +266,28 @@
 <div class="tw"><table>
 <thead><tr><th>Layer</th><th>Dataset</th><th>Field</th><th>Freq.</th><th>Series × length</th><th>Zeros</th><th>Covariates</th><th>Licence</th><th>Why it is here</th></tr></thead>
 <tbody>
-<tr><td><span class="b info">Primary</span></td><td><strong>GIFT-Eval</strong></td><td>7 domains</td><td>10 freqs</td><td>144K series, 177M points</td><td><span class="b tbc">TBC</span></td><td>Some</td><td>Apache-2.0</td><td>Standard zero-shot benchmark with per-model leakage flags; comparable with routing work.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td><strong>Car Parts</strong></td><td>Spare parts</td><td>Monthly</td><td>2,674 × 51</td><td><span class="b tbc">TBC</span></td><td>None</td><td>Research use</td><td>Canonical intermittent set; already inside GIFT-Eval.</td></tr>
+<tr><td><span class="b info">Primary</span></td><td><strong>GIFT-Eval</strong></td><td>7 domains</td><td>10 freqs</td><td>144K series, 177M points</td><td><span class="b tbc">TBC</span></td><td>Some</td><td><span class="b warn">Per source</span></td><td>Standard zero-shot benchmark with per-model leakage flags; the benchmark code is open, but reuse terms must be checked for each constituent dataset.</td></tr>
+<tr><td><span class="b ok">Intermittent</span></td><td><strong>Car Parts</strong></td><td>Spare parts</td><td>Monthly</td><td>2,674 × 51</td><td><span class="b tbc">TBC</span></td><td>None</td><td><span class="b warn">Verify upstream</span></td><td>Canonical sparse-demand set and already represented inside GIFT-Eval.</td></tr>
 <tr><td><span class="b ok">Intermittent</span></td><td><strong>M5</strong></td><td>Retail</td><td>Daily</td><td>30,490 × ~1,941</td><td>~70% (reported)</td><td>Prices, events</td><td><span class="b warn">Kaggle rules</span></td><td>Large, hierarchical, covariate-rich; the review's key intermittent result.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td><strong>fev retail sets</strong> (Rossmann, Walmart, Favorita, Rohlik)</td><td>Retail</td><td>Daily / weekly</td><td>Rossmann 1,115 stores; Walmart 3,331</td><td><span class="b tbc">TBC</span></td><td>Promotions, holidays</td><td>Research use</td><td>Retail data outside the original Chronos training corpus — lower leakage risk.</td></tr>
-<tr><td><span class="b warn">Verify</span></td><td><strong>NN5</strong></td><td>ATM cash</td><td>Daily</td><td>111 × 791</td><td><span class="b tbc">TBC</span></td><td>Calendar</td><td>Research use</td><td>Listed as intermittent; its gaps may be missing values rather than zero demand. Keep only if verified.</td></tr>
-<tr><td><span class="b info">Domain</span></td><td><strong>ENTSO-E, EPF</strong></td><td>Energy</td><td>Hourly</td><td><span class="b tbc">TBC</span></td><td>≈0</td><td>Load, calendar</td><td>Research use</td><td>Dense, strongly seasonal: where FMs should win.</td></tr>
-<tr><td><span class="b info">Domain</span></td><td><strong>ECDC ILI, Hospital</strong></td><td>Healthcare</td><td>Weekly / monthly</td><td><span class="b tbc">TBC</span></td><td><span class="b tbc">TBC</span></td><td>—</td><td>Research use</td><td>Low counts and epidemic shifts.</td></tr>
+<tr><td><span class="b ok">Comparator</span></td><td><strong>Favorita</strong> (via fev or verified upstream route)</td><td>Retail</td><td>Daily</td><td>24,646 product–store series in Zhang et al.</td><td>57.2% mean zero-sales share</td><td>Promotions, holidays, metadata</td><td><span class="b warn">Verify upstream</span></td><td>Used directly by Zhang, CARFS and FAME; essential for comparison, not evidence of novelty.</td></tr>
+<tr><td><span class="b warn">Verify</span></td><td><strong>NN5</strong></td><td>ATM cash</td><td>Daily</td><td>111 × 791</td><td><span class="b tbc">TBC</span></td><td>Calendar</td><td><span class="b warn">Verify upstream</span></td><td>Direct model-selection precedent and a 56-day horizon. Retain only after distinguishing missing observations from genuine zero demand.</td></tr>
+<tr><td><span class="b info">Held-out field</span></td><td><strong>Ausgrid rooftop-solar</strong></td><td>Energy</td><td>30-minute</td><td>300 buildings × 3 years</td><td>≈0 load; solar may be zero</td><td>Load, PV, calendar</td><td><span class="b warn">Verify upstream</span></td><td>Published 200-building development / 100-building hold-out design; tests transfer beyond retail without mixing entities.</td></tr>
+<tr><td><span class="b tbc">Reserve</span></td><td><strong>Alibaba / vmCloud traces</strong></td><td>Cloud telemetry</td><td>Fine-grained</td><td>&gt;4,000 machines over 8 days in the cited extraction</td><td><span class="b tbc">TBC</span></td><td>Resource metrics</td><td><span class="b warn">Verify upstream</span></td><td>Non-retail stress test if duration and reuse terms pass the gates.</td></tr>
+<tr><td><span class="b tbc">Reserve</span></td><td><strong>FluSight / COVID forecasting records</strong></td><td>Healthcare</td><td>Weekly</td><td>86 models across 110 forecast dates in the cited study</td><td>Not the main issue</td><td>Epidemiological context</td><td><span class="b warn">Verify upstream</span></td><td>Useful for model-selection research, but the unit is forecast submissions rather than a straightforward target-series corpus.</td></tr>
 </tbody></table></div>
-<p><strong>Common ground.</strong> GIFT-Eval and fev both ship in a GluonTS/Arrow-style long format (series id, timestamp, target, optional covariates), so all layers can be loaded through one interface and evaluated with one protocol.</p>
+<p><strong>Common ground.</strong> GIFT-Eval and fev provide compatible GluonTS/Arrow-style structures (series id, timestamp, target and optional covariates), so one adapter can cover much of the corpus. A common schema simplifies evaluation; it does <em>not</em> make the underlying licences, provenance or model-training overlap identical.</p>
 
 <h3>6.5 Training-data leakage, per model and dataset</h3>
 <p>A zero-shot claim is only valid if the model did not see the test data during pre-training. The GIFT-Eval leakage flag covers GIFT-Eval test windows only; datasets added from outside GIFT-Eval need their own check.</p>
 <div class="tw"><table>
-<thead><tr><th>Model</th><th>GIFT-Eval (incl. Car Parts)</th><th>M5</th><th>NN5</th><th>fev retail</th></tr></thead>
+<thead><tr><th>Model</th><th>GIFT-Eval (incl. Car Parts)</th><th>M5</th><th>NN5</th><th>Favorita</th><th>Ausgrid</th></tr></thead>
 <tbody>
-<tr><td>Chronos (original T5)</td><td><span class="b bad">Leak flagged</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td>TimesFM 1.0 / 2.0</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td>TinyTimeMixer R1 / R2</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>Chronos-2</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>TimesFM-2.5</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>MOIRAI</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify (LOTSA draws on Monash data)</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td>Chronos (original T5)</td><td><span class="b bad">Leak flagged</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td>TimesFM 1.0 / 2.0</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td>TinyTimeMixer R1 / R2</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td><strong>Chronos-2</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td><strong>TimesFM-2.5</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
+<tr><td><strong>MOIRAI</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify (LOTSA draws on Monash data)</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
 </tbody></table></div>
 <div class="note"><p><strong>Mitigations if a check fails:</strong> (1) evaluate only on windows dated after the model's release; (2) prefer datasets published after the model's training cut-off; (3) report results with and without the uncertain datasets, so no headline result depends on a possibly contaminated cell.</p></div>
 
@@ -410,17 +429,18 @@
 <!-- 13 -->
 <h2 id="s13"><span class="n">13</span>Questions for discussion</h2>
 <ol>
-  <li>Is the cross-family framing with calibrated confidence a sufficiently distinct contribution given TimeRouter and TW3Cast?</li>
-  <li>Corpus: GIFT-Eval as primary plus Car Parts, fev retail and (if verified) M5 — is this enough breadth, or should the R7 literature extraction be completed before the proposal?</li>
+  <li>Given TimeRouter, TW3Cast, Zhang et al., CARFS and FAME, is <strong>calibrated reliability plus an explicit defer policy</strong> a sufficiently distinct and appropriately scoped contribution?</li>
+  <li>Corpus: approve a three-role design — GIFT-Eval for broad comparability; M5, Favorita, Car Parts and possibly NN5 for sparse-demand comparison; Ausgrid as a held-out energy field?</li>
   <li>Pool: is adding global LightGBM as a required baseline, with deep trained models only as optional comparators, the right scope?</li>
-  <li>Leakage: is a temporal hold-out an acceptable mitigation where pre-training overlap cannot be ruled out?</li>
-  <li>Licences: are non-commercial weights (MOIRAI) and Kaggle-rule data (M5) acceptable for the artefact?</li>
+  <li>Validation: should the main generalisation claim require leave-one-dataset-out testing plus the held-out Ausgrid field, rather than a random split across series?</li>
+  <li>Leakage: is a temporal hold-out acceptable where pre-training overlap cannot be ruled out, or should every uncertain model–dataset pair be excluded from headline results?</li>
+  <li>Licences: are non-commercial weights (MOIRAI), Kaggle-rule data (M5), and the verified upstream terms for Favorita, NN5, Ausgrid and Alibaba acceptable for the artefact?</li>
   <li>Title: is a change preferred now, or after M1, given the ethics record?</li>
 </ol>
 
 <footer>
   <span>Arden University · School of Computing · COM7014 Advanced Computing Project</span>
-  <span>Supervisor: Dr Priyadarshini Pattanaik · Updated 8 October 2026</span>
+  <span>Research update · Updated 8 October 2026</span>
 </footer>
 </div>
 </body>

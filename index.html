@@ -3,424 +3,408 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COM7014 · When to Trust a Time-Series Foundation Model · M1 Briefing</title>
+<title>When to Trust a Time-Series Foundation Model · COM7014 M1 Briefing</title>
 <style>
   @font-face { font-family: 'Aptos'; src: local('Aptos'), local('Aptos Display'); font-weight: 100 900; }
   :root {
     --font: 'Aptos', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    --bg: #f7f8fa; --surface: #fff; --border: #e3e6eb; --soft: #f1f3f6;
-    --ink: #111827; --ink2: #374151; --muted: #6b7280;
-    --accent: #1e3a8a; --accent-bg: #eef3fc;
-    --ok: #166534; --ok-bg: #e8f6ed; --warn: #92400e; --warn-bg: #fdf3e1;
-    --bad: #991b1b; --bad-bg: #fbeaea; --info: #1e40af; --info-bg: #e7efff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ink: #111827; --ink2: #4b5563; --muted: #9ca3af;
+    --line: #e5e7eb; --soft: #f6f7f9; --accent: #1e3a8a;
+    --green: #15803d; --amber: #b45309; --red: #b91c1c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--bg); color: var(--ink); line-height: 1.6; padding: 40px 16px; -webkit-font-smoothing: antialiased; }
-  .page { max-width: 980px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 52px 60px; }
-  @media (max-width: 760px) { body { padding: 12px 6px; } .page { padding: 26px 18px; } }
+  body { font-family: var(--font); color: var(--ink); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 760px; margin: 0 auto; padding: 64px 24px 48px; }
 
-  header { border-bottom: 1px solid var(--border); padding-bottom: 26px; margin-bottom: 28px; }
-  .eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: 27px; line-height: 1.25; letter-spacing: -.02em; margin: 8px 0 6px; }
-  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 18px; }
-  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 22px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; font-size: 13.5px; }
-  .meta span { display: block; }
-  .meta .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+  /* Header */
+  .eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 34px; line-height: 1.15; letter-spacing: -.025em; margin: 10px 0 12px; }
+  .lead { font-size: 18px; color: var(--ink2); }
+  .meta { margin-top: 18px; font-size: 13px; color: var(--muted); }
 
-  nav.toc { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 8px; font-size: 13.5px; columns: 2; column-gap: 28px; }
-  nav.toc a { color: var(--ink2); text-decoration: none; display: block; padding: 2px 0; }
-  nav.toc a:hover { color: var(--accent); }
-  @media (max-width: 760px) { nav.toc { columns: 1; } }
-
-  h2 { font-size: 20px; letter-spacing: -.01em; margin: 46px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--soft); }
-  h2 .n { color: var(--accent); margin-right: 8px; }
-  h3 { font-size: 15.5px; margin: 26px 0 10px; }
-  p, li { font-size: 15px; color: var(--ink2); }
-  p { margin-bottom: 14px; }
-  ul, ol { padding-left: 22px; margin-bottom: 16px; }
-  li { margin-bottom: 5px; }
+  /* Sections */
+  section { margin-top: 64px; }
+  .num { font-size: 12px; font-weight: 600; letter-spacing: .1em; color: var(--accent); text-transform: uppercase; }
+  h2 { font-size: 24px; letter-spacing: -.015em; margin: 4px 0 14px; }
+  p { color: var(--ink2); font-size: 16px; margin-bottom: 12px; }
   strong { color: var(--ink); font-weight: 600; }
-  code { font-family: var(--mono); font-size: 12px; background: var(--soft); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { color: var(--ink2); font-size: 16px; margin-bottom: 6px; }
+  code { font-family: var(--mono); font-size: 13px; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
 
-  .note { border-left: 3px solid var(--accent); background: var(--accent-bg); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 18px 0; font-size: 14.5px; color: var(--ink2); }
-  .note.warn { border-color: #d97706; background: var(--warn-bg); }
-  .note p:last-child { margin: 0; }
+  /* TL;DR */
+  .tldr { margin-top: 36px; border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; }
+  .tldr h3 { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .tldr li { margin-bottom: 8px; }
 
-  .tw { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin: 16px 0 22px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13.3px; }
-  th { background: var(--bg); text-align: left; font-weight: 600; font-size: 12.3px; letter-spacing: .02em; padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; color: var(--ink); }
-  td { padding: 10px 12px; border-bottom: 1px solid var(--soft); vertical-align: top; color: var(--ink2); line-height: 1.45; }
-  tr:last-child td { border-bottom: none; }
-
-  .b { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 4px; white-space: nowrap; }
-  .ok { background: var(--ok-bg); color: var(--ok); } .warn { background: var(--warn-bg); color: var(--warn); }
-  .bad { background: var(--bad-bg); color: var(--bad); } .info { background: var(--info-bg); color: var(--info); }
-  .tbc { background: var(--soft); color: var(--muted); }
-
-  /* Logic chain */
-  .chain { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 18px 0 22px; }
-  .chain div { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 8px; font-size: 12.3px; text-align: center; color: var(--ink2); position: relative; }
-  .chain div b { display: block; font-size: 12.8px; color: var(--accent); margin-bottom: 3px; }
-  @media (max-width: 860px) { .chain { grid-template-columns: 1fr 1fr; } }
+  /* Flow */
+  .flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+  .flow .box { flex: 1; min-width: 130px; border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-size: 14px; color: var(--ink2); }
+  .flow .box b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 2px; }
+  .flow .arrow { align-self: center; color: var(--muted); font-size: 18px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .split .box { border-radius: 10px; padding: 14px; font-size: 14px; }
+  .yes { background: #f0f6ff; border: 1px solid #cfe0fb; }
+  .no { background: #f2f8f4; border: 1px solid #cfe8d7; }
 
   /* Cards */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 16px 0 20px; }
-  .card { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
-  .card h4 { font-size: 14.5px; margin-bottom: 6px; }
-  .card p, .card li { font-size: 13.5px; margin-bottom: 6px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .card .k { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .card p { font-size: 15px; margin: 0; }
+  .card .t { font-size: 15.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.35; }
+  .card .s { font-size: 13.5px; color: var(--ink2); }
 
-  /* Hierarchy */
-  .hier { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 12px 0 18px; font-size: 13px; }
-  .hier span { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
-  .hier i { color: var(--muted); font-style: normal; }
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0; }
+  .stat { background: var(--soft); border-radius: 10px; padding: 14px; text-align: center; }
+  .stat b { display: block; font-size: 26px; letter-spacing: -.02em; color: var(--ink); }
+  .stat span { font-size: 12.5px; color: var(--ink2); }
+  @media (max-width: 600px) { .stats { grid-template-columns: 1fr 1fr; } .split { grid-template-columns: 1fr; } h1 { font-size: 28px; } }
+
+  /* Checklist table */
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 14px 0; }
+  th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  td { padding: 10px; border-bottom: 1px solid var(--line); color: var(--ink2); vertical-align: top; }
+  td.c { text-align: center; white-space: nowrap; }
+  .y { color: var(--green); font-weight: 700; } .n { color: var(--red); font-weight: 700; } .p { color: var(--amber); font-weight: 700; }
+
+  /* Callout */
+  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin: 18px 0; }
+  .callout p { margin: 0; color: var(--ink); }
+  .callout.warn { border-color: var(--amber); }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; margin: 0 4px 6px 0; color: var(--ink2); }
+  .tag.g { border-color: #bfe3cb; color: var(--green); } .tag.a { border-color: #f1d4a8; color: var(--amber); } .tag.r { border-color: #f3c4c4; color: var(--red); }
 
   /* Quadrant */
-  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 6px; }
-  .q { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; background: var(--bg); }
-  .q h4 { font-size: 14px; margin-bottom: 2px; }
-  .q .c { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
-  .q p { font-size: 13px; margin-bottom: 4px; }
-  .axis { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 18px; }
+  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 6px; }
+  .quad div { background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: var(--ink2); }
+  .quad b { display: block; color: var(--ink); }
+  .cap { font-size: 13px; color: var(--muted); }
 
-  /* Pipeline */
-  .pipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 18px 0 10px; }
-  .pipe .s { border: 1px solid var(--border); background: var(--bg); padding: 12px 10px; font-size: 12.5px; color: var(--ink2); }
-  .pipe .s:first-child { border-radius: 8px 0 0 8px; } .pipe .s:last-child { border-radius: 0 8px 8px 0; }
-  .pipe .s + .s { border-left: none; }
-  .pipe .s b { display: block; color: var(--accent); font-size: 12.5px; margin-bottom: 4px; }
-  @media (max-width: 860px) { .pipe { grid-template-columns: 1fr; } .pipe .s, .pipe .s:first-child, .pipe .s:last-child { border-radius: 0; border-left: 1px solid var(--border); } .pipe .s + .s { border-top: none; } }
-  .outcomes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
-  .outcomes div { border: 1px dashed #c7cdd6; border-radius: 8px; padding: 10px 12px; font-size: 12.8px; color: var(--ink2); }
-  @media (max-width: 760px) { .outcomes { grid-template-columns: 1fr; } }
+  /* Steps */
+  .steps { counter-reset: s; margin: 14px 0; }
+  .steps div { counter-increment: s; position: relative; padding: 0 0 16px 40px; color: var(--ink2); font-size: 15.5px; }
+  .steps div::before { content: counter(s); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); text-align: center; line-height: 25px; font-size: 13px; color: var(--accent); font-weight: 600; }
+  .steps b { color: var(--ink); }
+
+  /* Details */
+  details { border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+  summary { cursor: pointer; padding: 12px 16px; font-size: 14.5px; font-weight: 600; color: var(--ink); list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; float: right; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  details .inner { padding: 0 16px 14px; overflow-x: auto; }
+  details table { font-size: 13.5px; }
 
   /* Titles */
-  .title { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; margin-bottom: 12px; }
-  .title.rec { border-color: #b9cdf3; background: #fafcff; }
-  .title .t { font-size: 15.5px; font-weight: 700; color: var(--ink); margin: 4px 0 6px; line-height: 1.4; }
-  .title p { font-size: 13.5px; margin-bottom: 4px; }
+  .title { border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+  .title.best { border-color: #cfe0fb; background: #f8fbff; }
+  .title .t { font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--ink); margin: 4px 0; }
+  .title .s { font-size: 14px; color: var(--ink2); }
 
-  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  footer { margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 </style>
 </head>
 <body>
 <div class="page">
 
 <header>
-  <div class="eyebrow">Arden University · COM7014 Advanced Computing Project · Phase M1</div>
+  <div class="eyebrow">COM7014 · Advanced Computing Project · Phase M1</div>
   <h1>When to Trust a Time-Series Foundation Model</h1>
-  <div class="subtitle">Problem, evidence, datasets, models and method — working briefing for the proposal</div>
-  <div class="meta">
-    <div><span class="k">Student</span><span>Kaveh Momeni (25199053)</span></div>
-    <div><span class="k">Phase</span><span>M1 · problem, data and proposal</span></div>
-    <div><span class="k">Status</span><span>Working document · not assessed</span></div>
-    <div><span class="k">Experiments</span><span>None run · gated on proposal and ethics approval</span></div>
-  </div>
+  <p class="lead">For any single time series: should we use a big pre-trained model, or a simple classical one? And how sure can we be?</p>
+  <div class="meta">Kaveh Momeni · Working briefing · Updated 8 October 2026 · No data downloaded or models run</div>
 </header>
 
-<div class="note warn"><p><strong>Reading this page.</strong> Nothing has been downloaded or run yet. Every number is either taken from a cited source or marked <span class="b tbc">TBC</span> (to be computed once data access is approved). Hypotheses are labelled as hypotheses.</p></div>
-
-<nav class="toc">
-  <a href="#s1">1. At a glance</a>
-  <a href="#s2">2. Problem and evidence</a>
-  <a href="#s3">3. What already exists, and the gap</a>
-  <a href="#s4">4. Research questions and hypotheses</a>
-  <a href="#s5">5. How the datasets were found</a>
-  <a href="#s6">6. Dataset analysis</a>
-  <a href="#s7">7. Model pool and selection logic</a>
-  <a href="#s8">8. Router design</a>
-  <a href="#s9">9. Evaluation protocol</a>
-  <a href="#s10">10. Threats to validity</a>
-  <a href="#s11">11. Feasibility and scope</a>
-  <a href="#s12">12. Title options</a>
-  <a href="#s13">13. Questions for discussion</a>
-</nav>
-
-<!-- 1 -->
-<h2 id="s1"><span class="n">1</span>At a glance</h2>
-<p>Forecasting benchmarks report how good a foundation model is <em>on average over a dataset</em>. A practitioner needs something else: for <em>this</em> series, should I use the foundation model or a cheaper classical method, and how sure can I be? This project builds and evaluates a small per-series router that answers that question and attaches a confidence score that can be checked.</p>
-<p>The working principle is problem-first and data-first: the corpus and the model pool are chosen because they let the research questions be answered, not the other way round.</p>
-
-<div class="chain">
-  <div><b>Problem</b>Average scores hide per-series failure</div>
-  <div><b>Evidence</b>FMs strong overall, weak on sparse retail</div>
-  <div><b>Gap</b>No calibrated FM-vs-classical router</div>
-  <div><b>Questions</b>RQ1–RQ4</div>
-  <div><b>Design</b>Corpus, pool, router</div>
-  <div><b>Evaluation</b>Accuracy, calibration, regret, cost</div>
-  <div><b>Risks</b>Leakage, labels, compute</div>
+<div class="tldr">
+  <h3>In 30 seconds</h3>
+  <ul>
+    <li><strong>Problem:</strong> benchmarks report averages, but in practice you pick a model for each series separately.</li>
+    <li><strong>What changed:</strong> the new article search found that per-series routing across classical, ML and deep models already exists on M5 and Favorita.</li>
+    <li><strong>Gap:</strong> the defensible contribution is now narrower: a calibrated probability that trusting a foundation model is the right decision, with an explicit classical fallback and held-out-field testing.</li>
+    <li><strong>So far:</strong> 42 logged searches, 15 article-to-dataset extractions, 8 fields covered, and a model–dataset leakage problem identified.</li>
+  </ul>
 </div>
 
-<!-- 2 -->
-<h2 id="s2"><span class="n">2</span>Problem and evidence</h2>
-<p>The evidence is mixed rather than one-sided, and that is precisely why a per-series decision is worth studying. The table separates what each source shows from what it does <em>not</em> show.</p>
-<div class="tw"><table>
-<thead><tr><th>Source</th><th>What it shows</th><th>What it does not show</th></tr></thead>
-<tbody>
-<tr><td><strong>Rubczynski (2026)</strong>, systematic review and meta-analysis, 543 paired comparisons, retail</td><td>A robust benchmark-level FM advantage, strongest on distributional metrics (scaled quantile loss Δ −0.318) and smaller on point metrics (WAPE Δ −0.116). Model size is not a significant moderator. On intermittent M5, an FM scores 0.97 WRMSSE against 0.52 for competition-grade LightGBM.</td><td>No per-series routing. No calibration test (stated explicitly by the author). The M5 loss is against LightGBM, not against Croston-type methods.</td></tr>
-<tr><td><strong>GIFT-Eval leaderboard</strong> (Aksu et al., 2024)</td><td>Zero-shot FMs are among the strongest entries across 7 domains and 10 frequencies; test-data leakage is flagged per model.</td><td>Which individual series an FM gets wrong.</td></tr>
-<tr><td><strong>Routing systems</strong> (TimeRouter, TW3Cast, others — §3)</td><td>Selecting among FMs improves aggregate accuracy.</td><td>Whether a classical fallback should be in the pool; whether the routing confidence is calibrated.</td></tr>
-</tbody></table></div>
-<p><strong>The cost motive, stated carefully.</strong> An FM forward pass is far more expensive than fitting ETS or Croston, but the review reports that consumer-hardware FM inference remains viable up to roughly 30K series with daily re-forecasting. Cost is therefore treated as a <em>measured</em> quantity in this project, not as an assumption.</p>
+<!-- The idea -->
+<section>
+  <div class="num">The idea</div>
+  <h2>One decision, per series</h2>
+  <div class="flow">
+    <div class="box"><b>A time series</b>e.g. daily sales of one product</div>
+    <div class="arrow">→</div>
+    <div class="box"><b>Quick profile</b>about 30 simple statistics</div>
+    <div class="arrow">→</div>
+    <div class="box"><b>Confidence score</b>“how likely is the big model to win here?”</div>
+  </div>
+  <div class="split">
+    <div class="box yes"><b>High score → trust it</b><br>Use the foundation model.</div>
+    <div class="box no"><b>Low score → fall back</b><br>Use a cheap classical or sparse-demand method.</div>
+  </div>
+  <p style="margin-top:14px" class="cap">Glossary: <strong>foundation model (FM)</strong> = large model pre-trained on millions of series, used without retraining. <strong>Classical</strong> = simple statistical methods such as ETS, ARIMA, Croston.</p>
+</section>
 
-<!-- 3 -->
-<h2 id="s3"><span class="n">3</span>What already exists, and the gap</h2>
-<p>Choosing a forecasting model from series features is an established line of work. FFORMS (Talagala et al.) and FFORMA (Montero-Manso et al., 2020) selected or weighted <em>classical</em> models from time-series features. Recent systems do the same <em>among foundation models</em>. This project sits between the two lines.</p>
-<div class="tw"><table>
-<thead><tr><th>Capability</th><th>FFORMS / FFORMA</th><th>TimeRouter</th><th>TW3Cast</th><th>LLM agents¹</th><th>This project</th></tr></thead>
-<tbody>
-<tr><td>Feature-based per-series selection</td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b warn">Per configuration</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Foundation models in the pool</td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Classical fallback in the pool</td><td><span class="b ok">Yes</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Intermittent-demand methods</td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Calibrated probability that the choice is right</td><td><span class="b bad">No</span></td><td><span class="b bad">No²</span></td><td><span class="b bad">No³</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-<tr><td>Per-series regret and cost</td><td><span class="b bad">No</span></td><td><span class="b warn">Partial</span></td><td><span class="b bad">No</span></td><td><span class="b bad">No</span></td><td><span class="b ok">Yes</span></td></tr>
-</tbody></table></div>
-<p style="font-size:13px;color:var(--muted)">¹ TSOrchestra, MoiraiAgent, TimeCopilot. ² Uses the one-vs-all structure of Verma &amp; Nalisnick (2022) but only as a threshold gate; no reliability diagrams or ECE reported. ³ Uses MASE and CRPS jointly as a filter and states that calibration-first selection “is not evaluated here” (arXiv 2609.28506).</p>
-<div class="note"><p><strong>Honest positioning.</strong> The routing idea is not new and the project will not claim to beat TimeRouter on aggregate MASE. The contribution is narrower: a <em>cross-family</em> pool (foundation + classical + intermittent methods) and a routing confidence that is <em>calibrated and checked</em>.</p></div>
+<!-- Why -->
+<section>
+  <div class="num">01 · Why</div>
+  <h2>Averages hide failures</h2>
+  <div class="cards">
+    <div class="card"><div class="k">Good news</div><p>FMs are among the strongest forecasters on the main benchmark, GIFT-Eval.</p></div>
+    <div class="card"><div class="k">Bad news</div><p>On sparse retail demand (M5) an FM scored 0.97 vs 0.52 for a tuned LightGBM (error, lower is better).</p></div>
+    <div class="card"><div class="k">Missing</div><p>No one tells you <em>which</em> series will fail, or how far to trust a model's choice.</p></div>
+  </div>
+  <p class="cap">Source for the first two: Rubczynski (2026), a review of 543 model comparisons in retail. It finds a real overall FM advantage, so the picture is mixed, not one-sided.</p>
+</section>
 
-<!-- 4 -->
-<h2 id="s4"><span class="n">4</span>Research questions and hypotheses</h2>
-<div class="tw"><table>
-<thead><tr><th>RQ</th><th>Question</th><th>Working hypothesis</th><th>Would be refuted if…</th><th>Evidence used</th></tr></thead>
-<tbody>
-<tr><td><strong>RQ1</strong></td><td>Which measurable series characteristics predict whether an FM beats a classical baseline on that series?</td><td>Intermittency, length and seasonal strength carry most of the signal.</td><td>A feature-based classifier is no better than the majority class under leave-one-dataset-out.</td><td>Per-series feature table; feature-group ablation; SHAP or permutation importance.</td></tr>
-<tr><td><strong>RQ2</strong></td><td>Can a lightweight meta-learner route so that accuracy matches or beats the best single model at lower cost?</td><td>Routed accuracy ≥ best single model, with measurably lower total compute.</td><td>Always-FM dominates the router on both accuracy and cost.</td><td>Routed vs single-model error; wall-clock cost; regret against an oracle.</td></tr>
-<tr><td><strong>RQ3</strong></td><td>Can the router emit a calibrated reliability score?</td><td>One-vs-all scores give lower ECE than an uncalibrated multiclass router.</td><td>ECE and reliability diagrams show systematic over- or under-confidence that recalibration cannot fix.</td><td>Reliability diagrams, ECE, Brier score, risk–coverage curves.</td></tr>
-<tr><td><strong>RQ4</strong></td><td>Can the router identify the intermittent subset in advance and recover the accuracy a single FM loses there?</td><td>The learned router matches or beats the hand-written Syntetos–Boylan rule on demand series.</td><td>The fixed SBC rule routes intermittent series as well as the learned router (then the learned router adds nothing on that subset — itself a useful result).</td><td>Results stratified by SBC class on count/demand series only.</td></tr>
-</tbody></table></div>
-<p>Each stage is designed so that a negative result is still reportable: if FMs win almost everywhere, detecting the minority where they fail is the result.</p>
+<!-- Gap -->
+<section>
+  <div class="num">02 · What exists</div>
+  <h2>Routing is established. Reliable trust decisions are not.</h2>
+  <table>
+    <thead><tr><th></th><th class="c">Closest prior work*</th><th class="c">Proposed focus</th></tr></thead>
+    <tbody>
+      <tr><td>Picks a model per series</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Routes across classical, ML and deep experts</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Includes intermittent-demand features or methods</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Can invoke a foundation model selectively</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Calibrates probability that the routing decision is correct</td><td class="c n">not shown</td><td class="c y">core test</td></tr>
+      <tr><td>Tests transfer to a held-out field or dataset family</td><td class="c p">limited</td><td class="c y">required</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">* FAME, Zhang's sparse-demand router, CARFS, AutoForecast, FFORMPP, TimeRouter and TW3Cast. Their selection units, expert pools and evaluation targets differ.</p>
+  <div class="callout"><p>The project will <strong>not</strong> claim that per-series routing is new. The contribution under investigation is a verified trust/defer probability, cross-family fallback, and generalisation beyond the retail datasets used by the closest studies.</p></div>
+</section>
 
-<!-- 5 -->
-<h2 id="s5"><span class="n">5</span>How the datasets were found</h2>
-<h3>5.1 Protocol</h3>
-<p>The search followed a written protocol before execution: six routes with a time budget, twelve selection criteria (two hard gates: licence and feasible size), and a stopping rule. Every query was logged with platform, exact string, date and result count (29 runs, DS-001 to DS-029).</p>
-<div class="tw"><table>
-<thead><tr><th>Route</th><th>Purpose</th><th>Platforms actually used</th><th>Example queries / endpoints</th><th>Main outcome</th></tr></thead>
-<tbody>
-<tr><td><strong>R1</strong> · 10 runs</td><td>Confirm known benchmark leads</td><td>HuggingFace API, GitHub API, Zenodo API, Monash repository</td><td><code>search=gift-eval</code>, <code>search=chronos</code>, <code>forecastingdata.org</code>, <code>records/4656193</code></td><td>GIFT-Eval and Monash confirmed; Car Parts found inside GIFT-Eval.</td></tr>
-<tr><td><strong>R2</strong> · 6 runs</td><td>Model training corpora, licences, leakage</td><td>GitHub, HuggingFace dataset tree, GIFT-Eval leaderboard configs</td><td><code>autogluon/chronos_datasets</code>, <code>google-research/timesfm</code>, <code>SalesforceAIResearch/uni2ts</code></td><td>Original Chronos trained on almost every Monash and M4/M5 set; leakage flags per model.</td></tr>
-<tr><td><strong>R3</strong> · 5 runs</td><td>Benchmark registries</td><td>HuggingFace, UCI, OpenML</td><td><code>search=demand+forecasting</code>, <code>autogluon/fev_datasets</code></td><td>fev datasets: retail sets (Rossmann, Walmart, Favorita, Rohlik) outside GIFT-Eval. UCI/OpenML: nothing usable.</td></tr>
-<tr><td><strong>R4</strong> · 4 runs</td><td>Field-by-field literature search</td><td>OpenAlex API</td><td><code>"intermittent demand forecasting"</code>, <code>"spare parts demand forecasting"</code>, <code>"electricity load forecasting dataset"</code></td><td>Found the Rubczynski (2026) review.</td></tr>
-<tr><td><strong>R5</strong> · 3 runs</td><td>Citation snowballing</td><td>OpenAlex citations, arXiv</td><td><code>filter=cites:W4403570643</code> (papers citing GIFT-Eval)</td><td>Found TW3Cast; read in full.</td></tr>
-<tr><td><strong>R6</strong> · 1 run</td><td>Competition repositories</td><td>Kaggle API</td><td><code>intermittent demand</code>, <code>retail sales forecasting</code></td><td>Mostly weak; M5 licence needs care.</td></tr>
-</tbody></table></div>
-<p><strong>Query families.</strong> Each query combined a task term (<code>forecasting</code>, <code>demand forecasting</code>, <code>load forecasting</code>), a data term (<code>benchmark</code>, <code>dataset</code>, <code>corpus</code>) and a field term (retail, energy, transport, finance, weather, healthcare, industrial, cloud telemetry). Routing literature was searched with <code>model selection</code>, <code>algorithm selection</code>, <code>meta-learning forecasting</code>, <code>FFORMS</code>.</p>
-<p><strong>Stopping rule.</strong> Stop when three consecutive searches add no strong candidate, at least three fields are covered, and at least one intermittency-heavy collection is confirmed. Result: eight fields covered; intermittent collections confirmed; R4–R6 added no new strong dataset.</p>
+<!-- RQs -->
+<section>
+  <div class="num">03 · Questions</div>
+  <h2>Four questions</h2>
+  <div class="cards">
+    <div class="card"><div class="k">RQ1 · Signals</div><div class="t">Which series properties predict that an FM will win?</div><div class="s">Fails if the properties predict no better than guessing.</div></div>
+    <div class="card"><div class="k">RQ2 · Value</div><div class="t">Does routing match the best single model at lower cost?</div><div class="s">Fails if “always use the FM” wins on accuracy and cost.</div></div>
+    <div class="card"><div class="k">RQ3 · Trust</div><div class="t">When the router says 80% sure, is it right about 80% of the time?</div><div class="s">Measured with reliability diagrams and calibration error.</div></div>
+    <div class="card"><div class="k">RQ4 · Sparse demand</div><div class="t">Can it spot sparse series by itself and route them well?</div><div class="s">Must beat a simple hand-written rule to count.</div></div>
+  </div>
+  <p class="cap">A negative answer is still a result: finding the minority of series where FMs fail is useful on its own.</p>
+</section>
 
-<h3>5.2 Limitations of the search so far, and the next step</h3>
-<ul>
-  <li>The literature routes were shallow: OpenAlex queries returned only a handful of records each, and Google Scholar was not used for dataset discovery.</li>
-  <li>Selection leaned on registries rather than on <em>how often datasets are actually used in the literature</em>.</li>
-</ul>
-<div class="note"><p><strong>Planned R7 — dataset-usage extraction.</strong> Read the evaluation sections of ~25 core papers (FM papers, GIFT-Eval, fev-bench, routing systems, FFORMS/FFORMA, intermittent-demand reviews) and build a matrix: dataset × paper × metric × horizon. Usage frequency, plus a numeric score against the twelve criteria, gives a transparent and reproducible justification for each dataset kept or dropped.</p></div>
+<!-- Search -->
+<section>
+  <div class="num">04 · How the data was found</div>
+  <h2>A logged, repeatable search</h2>
+  <div class="stats">
+    <div class="stat"><b>7</b><span>search routes</span></div>
+    <div class="stat"><b>42</b><span>logged searches</span></div>
+    <div class="stat"><b>8</b><span>fields covered</span></div>
+    <div class="stat"><b>12</b><span>selection criteria</span></div>
+  </div>
+  <div class="steps">
+    <div><b>Discover</b> through Google Scholar, Scopus access checks, publishers, citation indexes, benchmark registries and official repositories.</div>
+    <div><b>Read</b> the evaluation and data sections, then extract the unit, scale, frequency, horizon, sparsity, covariates, access and experimental role.</div>
+    <div><b>Decide</b> only after separating comparability value from novelty value and applying licence, leakage and compute gates.</div>
+  </div>
+  <details>
+    <summary>The seven routes in detail</summary>
+    <div class="inner"><table>
+      <thead><tr><th>Route</th><th>Where</th><th>Main result</th></tr></thead>
+      <tbody>
+        <tr><td>R1 · known leads</td><td>HuggingFace, GitHub, Zenodo, Monash repository</td><td>GIFT-Eval and Monash confirmed</td></tr>
+        <tr><td>R2 · model training data</td><td>Model repositories, GIFT-Eval leaderboard</td><td>Found which models already saw the test data</td></tr>
+        <tr><td>R3 · registries</td><td>HuggingFace, UCI, OpenML</td><td>Extra retail sets (fev); UCI/OpenML empty</td></tr>
+        <tr><td>R4 · by field</td><td>OpenAlex</td><td>Found the 2026 retail review</td></tr>
+        <tr><td>R5 · citations</td><td>OpenAlex, arXiv</td><td>Found TW3Cast</td></tr>
+        <tr><td>R6 · competitions</td><td>Kaggle</td><td>Mostly weak; M5 licence needs care</td></tr>
+        <tr><td>R7 · article extraction</td><td>Google Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview</td><td>15 datasets/studies extracted; direct routing precedents and held-out-field candidates identified</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+  <div class="callout"><p><strong>Completed in this pass:</strong> article-to-dataset extraction is now explicit. The next gate is not another broad search; it is authoritative licence, provenance, checkpoint-overlap and local-feasibility verification for the shortlist.</p></div>
+</section>
 
-<!-- 6 -->
-<h2 id="s6"><span class="n">6</span>Dataset analysis</h2>
-<h3>6.1 Units of analysis</h3>
-<p>Benchmarks are nested. Counting at the wrong level is a common source of confusion (GIFT-Eval is described as 23 datasets, its repository lists 28 dataset entries, and the leaderboard scores 97 configurations).</p>
-<div class="hier">
-  <span>Benchmark</span><i>→</i><span>Dataset</span><i>→</i><span>Frequency variant</span><i>→</i><span>Configuration (dataset × frequency × horizon)</span><i>→</i><span>Series</span><i>→</i><span>Forecast window</span>
-</div>
-<p>The router decides at the <strong>series</strong> level; accuracy is measured per <strong>window</strong>; generalisation is tested across <strong>datasets</strong>.</p>
+<!-- Article extraction -->
+<section>
+  <div class="num">05 · What the papers changed</div>
+  <h2>The datasets are evidence — and a warning</h2>
+  <p>The same retail datasets recur across the closest model-selection studies. That makes them excellent for comparison, but weak as evidence of originality.</p>
+  <div class="cards">
+    <div class="card"><div class="k">Favorita · Zhang 2025</div><div class="t">24,646 daily item–store series</div><div class="s">19,646 training and 5,000 disjoint holdout series; 57.2% mean zero-sales; seven experts and three routers.</div></div>
+    <div class="card"><div class="k">M5 + Favorita · FAME 2026</div><div class="t">Sparse, cost-aware expert routing</div><div class="s">Classical, ML and deep experts; optional Chronos used on 8.6% of M5 and 10.9% of Favorita series.</div></div>
+    <div class="card"><div class="k">M5 → Favorita · CARFS 2023</div><div class="t">Ranked model shortlisting already transfers</div><div class="s">M5 builds the benchmark knowledge base; a 1,000-series Favorita subset tests implementation.</div></div>
+    <div class="card"><div class="k">348 datasets · AutoForecast</div><div class="t">Cross-domain model-selection corpus</div><div class="s">625 series, 308 univariate and 40 multivariate datasets, with results from 322 model configurations.</div></div>
+  </div>
+  <div class="callout warn"><p><strong>Novelty boundary:</strong> “route each series to a model” is already done. The proposed work must show calibrated trust, a clear defer/fallback policy, and generalisation to a dataset family or field not used to train the router.</p></div>
 
-<h3>6.2 Structural attributes recorded for every dataset</h3>
-<div class="cards">
-  <div class="card"><h4>Shape</h4><p>Number of series, length distribution, frequency, forecast horizon, missing-value pattern.</p></div>
-  <div class="card"><h4>Signal</h4><p>Seasonal strength, trend, non-stationarity, spectral entropy, share of zeros, inter-demand interval <em>p</em>, CV² of non-zero values.</p></div>
-  <div class="card"><h4>Context</h4><p>Univariate or multivariate; dynamic covariates (prices, promotions, weather); static metadata (store, category); hierarchy.</p></div>
-  <div class="card"><h4>Governance</h4><p>Licence, provenance and version, file format, and whether each candidate model saw it during pre-training.</p></div>
-</div>
-<p>The covariate attribute matters because model families differ in what they can use: univariate FMs ignore promotions and prices, while covariate-aware models (LightGBM, and Chronos-2 by design) can use them.</p>
+  <h2 style="margin-top:28px">Best article-derived candidates</h2>
+  <table>
+    <thead><tr><th>Candidate</th><th>What the article provides</th><th>Current role</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ausgrid</strong></td><td>300 buildings, three years, 30-minute load and PV; selector trained on 200 buildings and tested on 100</td><td>Leading held-out energy candidate</td></tr>
+      <tr><td><strong>NN5</strong></td><td>111 daily ATM-demand series, 791 observations, 56-day horizon; direct meta-learning selection precedent</td><td>Compact non-retail demand candidate</td></tr>
+      <tr><td><strong>Alibaba 2018</strong></td><td>More than 4,000 cloud machines over eight days with resource telemetry</td><td>Reserve cloud-domain candidate</td></tr>
+      <tr><td><strong>FluSight / COVID hubs</strong></td><td>Weekly hospitalisation forecasts across US locations and horizons</td><td>Calibration-method reserve</td></tr>
+      <tr><td><strong>SNBC, LA traffic, cardiac CBC</strong></td><td>Strong real-world evidence but confidential or without a public release route</td><td>Problem evidence only; not experimental data</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">Full extraction, source links, access decisions and the consolidated matrix: <a href="research/dataset-discovery-v2-scholar-article-extraction.md">Dataset Discovery V2 technical record</a>.</p>
+</section>
 
-<h3>6.3 Intermittency classification (Syntetos–Boylan)</h3>
-<p>For <strong>non-negative demand series only</strong>, each series is placed by its average inter-demand interval <em>p</em> and the squared coefficient of variation of non-zero demand CV². The classification does not apply to energy load, temperature or prices.</p>
-<div class="quad">
-  <div class="q"><h4>Erratic</h4><div class="c">p ≤ 1.32 · CV² &gt; 0.49</div><p>Regular occurrence, highly variable size.</p></div>
-  <div class="q"><h4>Lumpy</h4><div class="c">p &gt; 1.32 · CV² &gt; 0.49</div><p>Rare occurrence, highly variable size. Hardest class.</p></div>
-  <div class="q"><h4>Smooth</h4><div class="c">p ≤ 1.32 · CV² ≤ 0.49</div><p>Regular occurrence, stable size.</p></div>
-  <div class="q"><h4>Intermittent</h4><div class="c">p &gt; 1.32 · CV² ≤ 0.49</div><p>Rare occurrence, stable size. Croston-type territory.</p></div>
-</div>
-<div class="axis">horizontal: occurrence becomes rarer → · vertical: size becomes more variable ↑</div>
-<p><strong>Hypothesis, not finding:</strong> FMs are expected to do best on smooth series and worst on intermittent and lumpy ones. This mapping is what RQ4 tests; the SBC rule itself is used as a baseline router.</p>
+<!-- Data -->
+<section>
+  <div class="num">06 · The data</div>
+  <h2>Three layers</h2>
+  <div class="cards">
+    <div class="card"><div class="k">Main benchmark</div><div class="t">GIFT-Eval</div><div class="s">144K series · 7 fields · 10 time scales · upstream terms checked per dataset</div></div>
+    <div class="card"><div class="k">Comparability</div><div class="t">M5 and Favorita</div><div class="s">Used because direct routing baselines exist — not because the datasets are novel</div></div>
+    <div class="card"><div class="k">Held-out field</div><div class="t">Ausgrid first; cloud/health reserves</div><div class="s">Tests whether trust decisions transfer beyond retail</div></div>
+  </div>
 
-<h3>6.4 Candidate corpus</h3>
-<div class="tw"><table>
-<thead><tr><th>Layer</th><th>Dataset</th><th>Field</th><th>Freq.</th><th>Series × length</th><th>Zeros</th><th>Covariates</th><th>Licence</th><th>Why it is here</th></tr></thead>
-<tbody>
-<tr><td><span class="b info">Primary</span></td><td><strong>GIFT-Eval</strong></td><td>7 domains</td><td>10 freqs</td><td>144K series, 177M points</td><td><span class="b tbc">TBC</span></td><td>Some</td><td>Apache-2.0</td><td>Standard zero-shot benchmark with per-model leakage flags; comparable with routing work.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td><strong>Car Parts</strong></td><td>Spare parts</td><td>Monthly</td><td>2,674 × 51</td><td><span class="b tbc">TBC</span></td><td>None</td><td>Research use</td><td>Canonical intermittent set; already inside GIFT-Eval.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td><strong>M5</strong></td><td>Retail</td><td>Daily</td><td>30,490 × ~1,941</td><td>~70% (reported)</td><td>Prices, events</td><td><span class="b warn">Kaggle rules</span></td><td>Large, hierarchical, covariate-rich; the review's key intermittent result.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td><strong>fev retail sets</strong> (Rossmann, Walmart, Favorita, Rohlik)</td><td>Retail</td><td>Daily / weekly</td><td>Rossmann 1,115 stores; Walmart 3,331</td><td><span class="b tbc">TBC</span></td><td>Promotions, holidays</td><td>Research use</td><td>Retail data outside the original Chronos training corpus — lower leakage risk.</td></tr>
-<tr><td><span class="b warn">Verify</span></td><td><strong>NN5</strong></td><td>ATM cash</td><td>Daily</td><td>111 × 791</td><td><span class="b tbc">TBC</span></td><td>Calendar</td><td>Research use</td><td>Listed as intermittent; its gaps may be missing values rather than zero demand. Keep only if verified.</td></tr>
-<tr><td><span class="b info">Domain</span></td><td><strong>ENTSO-E, EPF</strong></td><td>Energy</td><td>Hourly</td><td><span class="b tbc">TBC</span></td><td>≈0</td><td>Load, calendar</td><td>Research use</td><td>Dense, strongly seasonal: where FMs should win.</td></tr>
-<tr><td><span class="b info">Domain</span></td><td><strong>ECDC ILI, Hospital</strong></td><td>Healthcare</td><td>Weekly / monthly</td><td><span class="b tbc">TBC</span></td><td><span class="b tbc">TBC</span></td><td>—</td><td>Research use</td><td>Low counts and epidemic shifts.</td></tr>
-</tbody></table></div>
-<p><strong>Common ground.</strong> GIFT-Eval and fev both ship in a GluonTS/Arrow-style long format (series id, timestamp, target, optional covariates), so all layers can be loaded through one interface and evaluated with one protocol.</p>
+  <p><strong>Sorting sparse demand.</strong> Each demand series lands in one of four boxes, based on how often sales happen and how much their size varies:</p>
+  <div class="quad">
+    <div><b>Erratic</b>frequent · size jumps</div>
+    <div><b>Lumpy</b>rare · size jumps</div>
+    <div><b>Smooth</b>frequent · steady size</div>
+    <div><b>Intermittent</b>rare · steady size</div>
+  </div>
+  <p class="cap">Syntetos–Boylan classification. Only for demand data, not for energy or temperature. Expectation to test: FMs do best on “smooth”, worst on “intermittent” and “lumpy”.</p>
 
-<h3>6.5 Training-data leakage, per model and dataset</h3>
-<p>A zero-shot claim is only valid if the model did not see the test data during pre-training. The GIFT-Eval leakage flag covers GIFT-Eval test windows only; datasets added from outside GIFT-Eval need their own check.</p>
-<div class="tw"><table>
-<thead><tr><th>Model</th><th>GIFT-Eval (incl. Car Parts)</th><th>M5</th><th>NN5</th><th>fev retail</th></tr></thead>
-<tbody>
-<tr><td>Chronos (original T5)</td><td><span class="b bad">Leak flagged</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b bad">In training corpus</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td>TimesFM 1.0 / 2.0</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td>TinyTimeMixer R1 / R2</td><td><span class="b bad">Leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>Chronos-2</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>TimesFM-2.5</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify</span></td></tr>
-<tr><td><strong>MOIRAI</strong></td><td><span class="b ok">No leak flagged</span></td><td><span class="b warn">Verify</span></td><td><span class="b warn">Verify (LOTSA draws on Monash data)</span></td><td><span class="b warn">Verify</span></td></tr>
-</tbody></table></div>
-<div class="note"><p><strong>Mitigations if a check fails:</strong> (1) evaluate only on windows dated after the model's release; (2) prefer datasets published after the model's training cut-off; (3) report results with and without the uncertain datasets, so no headline result depends on a possibly contaminated cell.</p></div>
+  <details>
+    <summary>Dataset details</summary>
+    <div class="inner"><table>
+      <thead><tr><th>Dataset</th><th>Field</th><th>Size</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>GIFT-Eval</td><td>7 fields</td><td>144K series</td><td>Standard benchmark; flags models that saw the test data</td></tr>
+        <tr><td>Car Parts</td><td>Spare parts</td><td>2,674 × 51 months</td><td>Classic sparse set; inside GIFT-Eval</td></tr>
+        <tr><td>M5</td><td>Retail</td><td>30,490 × ~1,941 days</td><td>~70% zero days (reported); Kaggle licence</td></tr>
+        <tr><td>Favorita</td><td>Grocery retail</td><td>24,646-series protocol in Zhang (2025)</td><td>Direct routing benchmark; 57.2% mean zero-sales in that sample</td></tr>
+        <tr><td>NN5</td><td>ATM cash</td><td>111 × 791 days</td><td>56-day horizon; distinguish missing values from real zero demand</td></tr>
+        <tr><td>Ausgrid</td><td>Energy</td><td>300 buildings × 3 years</td><td>30-minute load and PV; strongest held-out-field candidate</td></tr>
+        <tr><td>Alibaba 2018</td><td>Cloud operations</td><td>4,000+ machines × 8 days</td><td>Reserve candidate; requires a bounded, reproducible subset</td></tr>
+      </tbody>
+    </table><p class="cap">Zero shares and sizes not listed are computed once data access is approved.</p></div>
+  </details>
 
-<!-- 7 -->
-<h2 id="s7"><span class="n">7</span>Model pool and selection logic</h2>
-<h3>7.1 Criteria for a foundation model to enter the pool</h3>
-<ol>
-  <li><strong>No leakage flag</strong> on GIFT-Eval, and a per-dataset check for the added sets.</li>
-  <li><strong>Open weights</strong> with a licence that permits academic use.</li>
-  <li><strong>Runs on the project machine</strong> (16 GB Apple M3) within the time budget — confirmed by a smoke test.</li>
-  <li><strong>Architectural diversity</strong>, so pool-size ablations mean something.</li>
-  <li><strong>Maintained code</strong> and a documented inference interface.</li>
-</ol>
+  <div class="callout warn"><p><strong>The big pitfall: test data the model has already seen.</strong> Some models were trained on the very datasets used to test them, so their scores look better than they are. Older Chronos, TimesFM 1–2 and TinyTimeMixer are flagged. Chronos-2, TimesFM-2.5 and MOIRAI are clean <em>on GIFT-Eval</em>. For datasets outside GIFT-Eval this still has to be checked.</p></div>
+  <details>
+    <summary>If a check fails</summary>
+    <div class="inner"><ul>
+      <li>Test only on time periods after the model's release.</li>
+      <li>Prefer datasets published after the model was trained.</li>
+      <li>Report results with and without the doubtful datasets.</li>
+    </ul></div>
+  </details>
+</section>
 
-<h3>7.2 Proposed pool</h3>
-<div class="tw"><table>
-<thead><tr><th>Family</th><th>Models</th><th>Role</th></tr></thead>
-<tbody>
-<tr><td><span class="b info">Foundation</span></td><td>Chronos-2, TimesFM-2.5, MOIRAI (version frozen after smoke test)</td><td>Zero-shot candidates. Three different design families: Chronos-2 is covariate-aware; TimesFM is a decoder-only patch model; MOIRAI is a masked encoder for any number of variates.</td></tr>
-<tr><td><span class="b ok">Classical</span></td><td>Seasonal Naive, ETS, ARIMA, Theta</td><td>Cheap general fallback.</td></tr>
-<tr><td><span class="b ok">Intermittent</span></td><td>Croston, SBA, TSB</td><td>Fallback for sparse demand.</td></tr>
-<tr><td><span class="b warn">Global tree</span></td><td>LightGBM (one model across series, with covariates)</td><td>The strongest reported baseline on M5. Leaving it out would be the first examiner question.</td></tr>
-<tr><td><span class="b tbc">Sanity</span></td><td>Context-parroting baseline</td><td>Ensures an FM is not credited for a pattern a trivial rule already captures.</td></tr>
-</tbody></table></div>
+<!-- Models -->
+<section>
+  <div class="num">07 · The models</div>
+  <h2>Who is in the pool</h2>
+  <p><span class="tag">Foundation</span> Chronos-2 · TimesFM-2.5 · MOIRAI</p>
+  <p><span class="tag g">Classical</span> Seasonal Naive · ETS · ARIMA · Theta</p>
+  <p><span class="tag g">Sparse demand</span> Croston · SBA · TSB</p>
+  <p><span class="tag a">Strong baseline</span> LightGBM (best known result on M5)</p>
 
-<h3>7.3 Models considered and not selected</h3>
-<div class="tw"><table>
-<thead><tr><th>Model</th><th>Reason (criterion)</th></tr></thead>
-<tbody>
-<tr><td>Chronos (original T5), Chronos-Bolt</td><td>Criterion 1: GIFT-Eval leak flag for Chronos; Bolt shares its training corpus (to verify).</td></tr>
-<tr><td>TimesFM 1.0 / 2.0</td><td>Criterion 1: GIFT-Eval leak flag. TimesFM-2.5 kept instead.</td></tr>
-<tr><td>TinyTimeMixer R1 / R2</td><td>Criterion 1: GIFT-Eval leak flag.</td></tr>
-<tr><td>TimesFM 3.0</td><td>Criterion 2: weights under a non-commercial licence; no advantage over 2.5 for this question established yet.</td></tr>
-<tr><td>LLM-based forecasters (Time-LLM and similar)</td><td>Criterion 3: multi-billion-parameter backbones conflict with a cheap per-series decision on a 16 GB machine.</td></tr>
-<tr><td>TiRex, Toto, Sundial, FlowState, Moirai-2</td><td>Not yet audited against criteria 1–3. Strong GIFT-Eval entries; candidates for the pool-size ablation if the smoke test allows.</td></tr>
-</tbody></table></div>
+  <p style="margin-top:16px"><strong>A foundation model gets in only if it is:</strong></p>
+  <ul>
+    <li>clean (has not seen the test data)</li>
+    <li>openly licensed for academic use</li>
+    <li>able to run on a 16 GB laptop</li>
+    <li>different in design from the others</li>
+  </ul>
 
-<h3>7.4 Where do LSTM, CNN-LSTM and hybrid ARIMA–LSTM fit?</h3>
-<p>They are not "classical" in the statistical sense. It helps to separate three paradigms by <em>how a model is trained</em>, not by architecture:</p>
-<div class="cards">
-  <div class="card"><h4>Local statistical</h4><p>ETS, ARIMA, Croston: a few parameters fitted per series in milliseconds. Transparent, no training pipeline.</p></div>
-  <div class="card"><h4>Trained on the target data</h4><p><em>Local</em> (one network per series, e.g. hybrid ARIMA–LSTM as in Zhang, 2003) or <em>global</em> (one network across all series: DeepAR, N-HiTS, global LightGBM). Needs a training pipeline and hyper-parameter tuning.</p></div>
-  <div class="card"><h4>Zero-shot foundation</h4><p>Chronos-2, TimesFM, MOIRAI: pre-trained elsewhere; no training on the target data; one forward pass per forecast.</p></div>
-</div>
-<div class="note"><p><strong>Decision rule: a model enters only if it helps answer an RQ.</strong> The router's question is “trust the zero-shot FM, or fall back to something cheap?”. A trained deep model is neither, and adding it to the routing pool increases label noise and compute without serving RQ1–RQ4. Proposal: (1) global LightGBM as the required trained baseline; (2) one global neural model (N-HiTS or DeepAR) as an optional comparator; (3) hybrid ARIMA–LSTM as an optional practitioner baseline on a stratified subset — reported alongside the router, not inside it. CNN-LSTM adds little beyond these and is left out.</p></div>
+  <details>
+    <summary>Left out, and why</summary>
+    <div class="inner"><table>
+      <tbody>
+        <tr><td>Chronos (original), TimesFM 1–2, TinyTimeMixer</td><td><span class="tag r">saw test data</span></td></tr>
+        <tr><td>TimesFM 3.0</td><td><span class="tag a">non-commercial licence</span></td></tr>
+        <tr><td>LLM-based forecasters</td><td><span class="tag a">too heavy for a laptop</span></td></tr>
+        <tr><td>TiRex, Toto, Sundial, Moirai-2</td><td><span class="tag">not yet checked; possible later</span></td></tr>
+      </tbody>
+    </table></div>
+  </details>
 
-<!-- 8 -->
-<h2 id="s8"><span class="n">8</span>Router design</h2>
-<div class="pipe">
-  <div class="s"><b>1 · Series</b>History up to the forecast origin only.</div>
-  <div class="s"><b>2 · Features</b>catch22 + share of zeros, <em>p</em>, CV², length, frequency, covariate flag.</div>
-  <div class="s"><b>3 · One-vs-all scorer</b>One classifier per candidate: “will this model be within the margin of the best?”</div>
-  <div class="s"><b>4 · Calibrated score</b>Probability that trusting the FM is the right choice.</div>
-  <div class="s"><b>5 · Decision</b>Trust the FM if score ≥ τ; otherwise fall back.</div>
-</div>
-<div class="outcomes">
-  <div><strong>Trust FM</strong> — the best-scoring foundation model forecasts.</div>
-  <div><strong>Fall back</strong> — the best-scoring classical, intermittent or tree model forecasts.</div>
-  <div><strong>τ is a dial</strong> — sweeping it traces the risk–coverage curve (§9).</div>
-</div>
+  <div class="callout"><p><strong>What about LSTM, CNN-LSTM or hybrid ARIMA-LSTM?</strong> They are neither zero-shot nor cheap, so they don't fit the router's choice between “big pre-trained” and “simple fallback”. They can still be <em>reported alongside</em> it: one trained neural model (e.g. N-HiTS) and a hybrid ARIMA-LSTM on a subset. CNN-LSTM is left out.</p></div>
+</section>
 
-<h3>8.1 Design decisions that determine the results</h3>
-<div class="tw"><table>
-<thead><tr><th>Decision</th><th>Choice</th><th>Why</th></tr></thead>
-<tbody>
-<tr><td>Routing label</td><td>A model “wins” a series if its error is within a pre-registered margin (e.g. 2–5%) of the best; ties go to the cheaper model.</td><td>Without a margin, tiny noisy differences become labels, and cost is ignored.</td></tr>
-<tr><td>Error metric behind the label</td><td>Fixed in advance: MASE for point forecasts, weighted quantile loss for probabilistic forecasts; label sensitivity reported for both.</td><td>The metric decides the winner. On intermittent data an absolute-error metric rewards forecasting zero (the median); a squared-error metric rewards the mean, which Croston targets.</td></tr>
-<tr><td>Intermittency handling</td><td>SBC statistics are router <em>inputs</em>; no hard-coded sparsity gate.</td><td>A fixed gate would make RQ4 untestable. The SBC rule is instead a baseline the router must beat.</td></tr>
-<tr><td>Calibration</td><td>One-vs-all structure (Verma &amp; Nalisnick, 2022); post-hoc recalibration (Platt / isotonic) as an ablation.</td><td>The one-vs-all structure is designed to yield calibrated probabilities of expert correctness.</td></tr>
-<tr><td>Meta-learner</td><td>Gradient-boosted trees or logistic regression on the feature table.</td><td>Fast, small data needs, inspectable.</td></tr>
-</tbody></table></div>
+<!-- Router -->
+<section>
+  <div class="num">08 · The router</div>
+  <h2>Three rules that keep it honest</h2>
+  <div class="steps">
+    <div><b>Define “win” in advance.</b> One error measure, fixed before running. Near-ties go to the cheaper model.</div>
+    <div><b>No hand-written shortcuts.</b> Sparsity is an <em>input</em>, not a hard rule. The hand-written rule becomes a baseline it must beat.</div>
+    <div><b>Test on unseen datasets.</b> Train on some datasets, test on others, so it can't memorise.</div>
+  </div>
+  <p class="cap">Why rule 1 matters: on sparse data, some error measures reward predicting zero, others reward predicting the average. The choice can flip the winner.</p>
+</section>
 
-<h3>8.2 Baselines the router must beat</h3>
-<ul>
-  <li>Always use the best single FM · always use the best classical model.</li>
-  <li>Syntetos–Boylan rule (intermittent/lumpy → Croston/SBA/TSB, otherwise FM).</li>
-  <li>Naive rule by series length · FFORMS-style feature selector without FMs.</li>
-  <li>Oracle selector (upper bound, used to compute regret).</li>
-</ul>
+<!-- Evaluation -->
+<section>
+  <div class="num">09 · How we judge it</div>
+  <h2>Four scorecards</h2>
+  <div class="cards">
+    <div class="card"><div class="k">Accuracy</div><p>Forecast error per series (MASE, quantile loss).</p></div>
+    <div class="card"><div class="k">Regret</div><p>How much worse than a perfect chooser?</p></div>
+    <div class="card"><div class="k">Trust</div><p>Does 80% confidence mean right 80% of the time?</p></div>
+    <div class="card"><div class="k">Cost</div><p>Seconds per forecast on the project laptop.</p></div>
+  </div>
+  <p class="cap">Plus one curve: error vs share of series sent to the FM, as the confidence threshold moves. That curve is the answer to “when to trust”.</p>
+</section>
 
-<!-- 9 -->
-<h2 id="s9"><span class="n">9</span>Evaluation protocol</h2>
-<div class="tw"><table>
-<thead><tr><th>Aspect</th><th>Measure</th><th>Note</th></tr></thead>
-<tbody>
-<tr><td>Forecast accuracy</td><td>MASE; RMSSE on demand series; weighted quantile loss / CRPS for probabilistic forecasts</td><td>sMAPE only on strictly positive series: it is undefined or unstable with zeros.</td></tr>
-<tr><td>Routing quality</td><td>Routing accuracy; per-series regret against the oracle</td><td>Regret shows how much accuracy each wrong choice costs.</td></tr>
-<tr><td>Calibration</td><td>Reliability diagram, ECE, Brier score</td><td>Answers RQ3 directly.</td></tr>
-<tr><td>“When to trust”</td><td>Risk–coverage curve: error vs share of series sent to the FM as τ varies</td><td>Turns the title question into a measurable trade-off.</td></tr>
-<tr><td>Cost</td><td>Wall-clock time per forecast on the stated hardware, including FM forward passes and feature extraction</td><td>Ties every “use the FM only when…” claim to a measured cost.</td></tr>
-<tr><td>Validation design</td><td>Rolling-origin windows for forecasts; leave-one-dataset-out and leave-one-domain-out for the router</td><td>Series from one dataset are correlated; random series splits would overstate router accuracy.</td></tr>
-<tr><td>Ablations</td><td>Feature groups; FM pool size 1/2/3; results by domain and by SBC class</td><td>Shows where the router's value comes from.</td></tr>
-</tbody></table></div>
+<!-- Risks & plan -->
+<section>
+  <div class="num">10 · Risks and plan</div>
+  <h2>What could go wrong</h2>
+  <ul>
+    <li><strong>Leaked test data</strong> → per-dataset checks and later time periods.</li>
+    <li><strong>Noisy winners</strong> → tie margin; check stability across time windows.</li>
+    <li><strong>Laptop too slow</strong> → timing test first, then a balanced subsample.</li>
+  </ul>
+  <h2 style="margin-top:28px">Three stages, each useful alone</h2>
+  <div class="flow">
+    <div class="box"><b>1 · Compare</b>Every model on every series</div>
+    <div class="arrow">→</div>
+    <div class="box"><b>2 · Route</b>Train and test the router</div>
+    <div class="arrow">→</div>
+    <div class="box"><b>3 · Trust & cost</b>Check confidence and timing</div>
+  </div>
+</section>
 
-<!-- 10 -->
-<h2 id="s10"><span class="n">10</span>Threats to validity</h2>
-<div class="tw"><table>
-<thead><tr><th>Threat</th><th>Risk</th><th>Mitigation</th></tr></thead>
-<tbody>
-<tr><td>Pre-training leakage</td><td>Inflated FM scores → router learns to over-trust FMs.</td><td>Per-dataset leakage matrix (§6.5); temporal hold-out; with/without sensitivity.</td></tr>
-<tr><td>Label noise</td><td>Near-ties produce unstable labels.</td><td>Margin and cost-aware tie rule; report label stability across windows.</td></tr>
-<tr><td>Metric dependence</td><td>Winner changes with the metric.</td><td>Metric fixed in advance; sensitivity analysis.</td></tr>
-<tr><td>Dataset dominance</td><td>Large datasets dominate the router's training.</td><td>Per-dataset weighting; leave-one-dataset-out.</td></tr>
-<tr><td>Hardware-specific cost</td><td>Timings do not transfer to other machines.</td><td>Report hardware, batch size and settings; compare relative, not absolute, costs.</td></tr>
-<tr><td>Hyper-parameter asymmetry</td><td>Tuned baselines vs untuned FMs (or the reverse).</td><td>Default settings for all, documented; any tuning applied equally.</td></tr>
-</tbody></table></div>
+<!-- Titles -->
+<section>
+  <div class="num">11 · Title</div>
+  <h2>Options</h2>
+  <div class="title best"><span class="tag">Preferred</span>
+    <div class="t">When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</div>
+    <div class="s">Keeps the registered opening; names the two things others lack.</div></div>
+  <div class="title">
+    <div class="t">Trust or Fall Back? Calibrated Selective Forecasting with Time-Series Foundation Models and Classical Methods</div>
+    <div class="s">Shorter and catchier; less explicit about “per series”.</div></div>
+  <div class="title"><span class="tag">Current</span>
+    <div class="t">When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</div>
+    <div class="s">Accurate but long; no mention of calibration.</div></div>
+</section>
 
-<!-- 11 -->
-<h2 id="s11"><span class="n">11</span>Feasibility and scope</h2>
-<ul>
-  <li><strong>Smoke test first:</strong> time each FM per 1,000 series on the 16 GB M3 (CPU and Apple-GPU backends). The full checkpoint list is frozen only after this.</li>
-  <li><strong>Stratified subsample</strong> of GIFT-Eval configurations if the full 97 do not fit the budget, stratified by domain, frequency and SBC class.</li>
-  <li><strong>Staged results that stand alone:</strong> Stage 1 (per-series model comparison and feature table) is a result even if the router is weak; Stage 2 (router) is a result even if calibration is poor; Stage 3 (calibration and cost) completes the contribution.</li>
-  <li><strong>Ethics:</strong> public secondary data, no participants; still subject to the module's proposal and ethics approval before any download.</li>
-</ul>
-
-<!-- 12 -->
-<h2 id="s12"><span class="n">12</span>Title options</h2>
-<p>A good title should name the decision (trust or fall back), the unit (per series), the distinctive element (calibration) and the two families. Changing the title may require updating the ethics record, which is a point for discussion.</p>
-<div class="title rec">
-  <span class="b info">Preferred</span>
-  <div class="t">When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</div>
-  <p>Keeps the registered opening question; shorter than the current title; names calibration and the per-series unit, which are the two parts of the contribution others lack.</p>
-</div>
-<div class="title">
-  <div class="t">Trust or Fall Back? Calibrated Selective Forecasting with Time-Series Foundation Models and Classical Methods</div>
-  <p>Frames the work as selective prediction, matching the risk–coverage evaluation. Less explicit about the per-series unit.</p>
-</div>
-<div class="title">
-  <div class="t">Knowing When Not to Use a Foundation Model: Per-Series Reliability Estimation for Time-Series Forecasting, Including Intermittent Demand</div>
-  <p>Highlights the failure cases and RQ4. Risks reading as a narrower intermittent-demand study.</p>
-</div>
-<div class="title">
-  <span class="b tbc">Current (registered)</span>
-  <div class="t">When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</div>
-  <p>Accurate but long and repetitive; does not mention calibration.</p>
-</div>
-
-<!-- 13 -->
-<h2 id="s13"><span class="n">13</span>Questions for discussion</h2>
-<ol>
-  <li>Is the cross-family framing with calibrated confidence a sufficiently distinct contribution given TimeRouter and TW3Cast?</li>
-  <li>Corpus: GIFT-Eval as primary plus Car Parts, fev retail and (if verified) M5 — is this enough breadth, or should the R7 literature extraction be completed before the proposal?</li>
-  <li>Pool: is adding global LightGBM as a required baseline, with deep trained models only as optional comparators, the right scope?</li>
-  <li>Leakage: is a temporal hold-out an acceptable mitigation where pre-training overlap cannot be ruled out?</li>
-  <li>Licences: are non-commercial weights (MOIRAI) and Kaggle-rule data (M5) acceptable for the artefact?</li>
-  <li>Title: is a change preferred now, or after M1, given the ethics record?</li>
-</ol>
+<!-- Questions -->
+<section>
+  <div class="num">12 · For discussion</div>
+  <h2>Open questions</h2>
+  <ul>
+    <li>Given FAME, Zhang, CARFS, TimeRouter and TW3Cast, is calibrated confidence plus explicit deferral a distinct enough contribution?</li>
+    <li>Approve the three-role corpus: GIFT-Eval for breadth, M5/Favorita/Car Parts/NN5 for comparison, and Ausgrid as the held-out field?</li>
+    <li>Is LightGBM as the required baseline, with neural models optional, the right scope?</li>
+    <li>Should headline results exclude every model–dataset pair whose pre-training overlap remains uncertain?</li>
+    <li>Are MOIRAI's non-commercial weights, M5's Kaggle rules, and the verified upstream terms for the added datasets acceptable?</li>
+    <li>Change the title now, or after M1?</li>
+  </ul>
+</section>
 
 <footer>
-  <span>Arden University · School of Computing · COM7014 Advanced Computing Project</span>
-  <span>Supervisor: Dr Priyadarshini Pattanaik · Updated 8 October 2026</span>
+  <span>Arden University · COM7014 Advanced Computing Project</span>
+  <span>Research update · 8 October 2026</span>
 </footer>
 </div>
 </body>

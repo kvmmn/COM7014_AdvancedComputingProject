@@ -4,7 +4,12 @@ This is the working repository for the COM7014 Master's project at Arden Univers
 
 The selected topic is a per-series reliability framework that decides when a time-series foundation model should be trusted and when a classical forecaster is the safer choice, including on intermittent demand. The working title, research questions, method, and evaluation protocol are in [`TOPIC.md`](TOPIC.md).
 
-The topic was selected on 2026-09-28. The proposal, ethics approval, dataset work, and artefact have not started.
+The topic was selected on 2026-09-28. Dataset discovery and literature extraction are active, but no dataset has been downloaded and no model or experiment has been run. Proposal approval, ethics approval, data collection, and artefact development have not started.
+
+## Research archive
+
+- [`research/dataset-discovery-v2-scholar-article-extraction.md`](research/dataset-discovery-v2-scholar-article-extraction.md) — detailed article-to-dataset extraction from Google Scholar and publisher/index routes, including numerical descriptors, experimental roles, limitations, and decisions.
+- [`index.html`](index.html) — concise supervisor-facing briefing that explains what the evidence changes in the proposed project.
 
 ## Project control
 
