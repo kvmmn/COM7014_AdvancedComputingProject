@@ -14,7 +14,7 @@ Current time-series foundation model benchmarks report accuracy at dataset level
 
 The published evidence is mixed. Foundation models often fail to beat smaller specialised models or strong simple baselines. On some domains and with some checkpoints, zero-shot foundation models are among the strongest available forecasts. The open question is how to make that choice before committing to an expensive model, and how to attach a confidence score that matches how often the choice is actually right.
 
-Intermittent demand is part of that question. Sparse series are where classical methods such as Croston, SBA, and TSB are the usual fallback, and where a foundation model is most likely to be the wrong default.
+Intermittent demand is part of that question. Sparse series are where classical methods such as Croston, SBA, and TSB are the usual fallback, and where a foundation model is most likely to be the wrong default. A 2026 systematic review (Rubczynski 2026) already establishes that foundation models lose badly on intermittent retail demand: on the M5 competition data, a foundation model posts 0.97 wrmsse against a competition-grade LightGBM at 0.52. The project does not re-establish that finding. It asks whether a router can detect the intermittent subset in advance and route it to the classical fallback.
 
 ## What is already done in this space
 
@@ -48,7 +48,7 @@ The project does not claim to beat TimeRouter on aggregate MASE. The contributio
 1. Which measurable series characteristics predict whether a time-series foundation model outperforms a classical baseline on that series? The characteristics include seasonality strength, intermittency, length, non-stationarity, trend curvature, spectral entropy, and the presence of exogenous variables.
 2. Can a lightweight meta-learner, using those characteristics, route between a foundation model and a classical fallback so that routed accuracy matches or exceeds the best single model at a lower inference cost?
 3. Can the router emit a calibrated reliability score, so that when it says to trust the foundation model, the foundation model wins at the promised rate?
-4. On intermittent series, do Croston, SBA, and TSB remain the appropriate fallback when the pool also contains strong zero-shot foundation models, and can the router identify that subset in advance?
+4. Can a per-series router identify the intermittent subset in advance and route it to the classical fallback, and does that routing recover the accuracy that a single foundation model loses on intermittent series? The premise that classical and tree baselines beat foundation models on intermittent demand is already established (Rubczynski 2026). The open question is whether the router can detect and act on it per series.
 
 ## Artefact
 
@@ -96,7 +96,7 @@ Calibrate the router's confidence using the one-vs-all approach of Verma and Nal
 
 ### Intermittent demand
 
-Stratify the results by intermittency class. Test whether the router sends intermittent series to Croston, SBA, or TSB, and whether that choice is more reliable than sending them to a foundation model. This uses the Stage 1 corpus. It does not add a second project.
+Stratify the results by intermittency class. Test whether the router detects intermittent series in advance and sends them to Croston, SBA, or TSB, and whether that routing recovers the accuracy a single foundation model loses on those series. The premise that classical and tree baselines beat foundation models on intermittent demand is already established (Rubczynski 2026). This uses the Stage 1 corpus. It does not add a second project.
 
 ## Evaluation
 
@@ -104,7 +104,7 @@ Stratify the results by intermittency class. Test whether the router sends inter
 - Routing quality: routing accuracy and regret against an oracle selector that already knows the winner.
 - Calibration: expected calibration error, reliability diagrams, and coverage of the reliability score.
 - Cost: cost per forecast, including foundation-model forward passes.
-- Intermittency: results split by intermittency class, including whether the classical intermittent methods remain the better fallback.
+- Intermittency: results split by intermittency class, including whether the router detects and routes the intermittent subset, and whether that routing recovers the accuracy a single foundation model loses.
 - Validation: rolling-origin evaluation only, with an explicit check for training-data overlap and test leakage.
 - Ablations: feature groups; foundation-model pool size of one, two, and three; results stratified by domain.
 - Sanity check: a simple context-parroting baseline as an extra arm, so a foundation model is not credited for a pattern a trivial rule already captures.
