@@ -49,6 +49,11 @@ reports/submission/
 scratch/
 tmp/
 
+# Private working documents at the repository root
+proposal.docx
+proposal.pdf
+Master's thesis topic evaluation.md
+
 # Generated local outputs
 *.log
 *.bak
