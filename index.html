@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="COM7014 M1 research briefing: calibrated trust-or-defer routing between time-series foundation models and classical forecasters.">
+<meta name="description" content="COM7014 M1 research briefing: how the evaluation datasets were searched for and chosen, and the title that follows.">
 <meta name="color-scheme" content="light">
 <title>COM7014 · M1 Research Briefing</title>
 <style>
@@ -317,10 +317,10 @@
   <div class="wrap">
     <div class="kicker">COM7014 · Advanced Computing Project · M1 briefing</div>
     <h1>When should a time-series foundation model be trusted?</h1>
-    <p class="dek">The problem, what the literature already solves, how the remaining gap will be tested, and the decisions needed to close M1.</p>
+    <p class="dek">Which datasets can answer this question, how they were found and chosen, and what title follows from them.</p>
     <div class="status">
-      <span class="pill on"><i></i>Literature and dataset review drafted</span>
-      <span class="pill"><i></i>Dataset access still gated</span>
+      <span class="pill on"><i></i>Dataset search complete</span>
+      <span class="pill"><i></i>Licence and overlap checks open</span>
       <span class="pill"><i></i>No data downloaded · no models run</span>
       <span class="pill"><i></i>Updated 8 October 2026</span>
     </div>
@@ -328,47 +328,38 @@
 </header>
 
 <div class="navbar"><div class="wrap"><nav aria-label="Sections">
-  <a href="#answer">Answer</a><a href="#evidence">Evidence</a><a href="#questions">Questions</a><a href="#datasets">Datasets</a><a href="#method">Method</a><a href="#discovery">Search</a><a href="#decisions">Decisions</a>
+  <a href="#summary">Summary</a><a href="#problem">Problem</a><a href="#search">Search</a><a href="#papers">Papers</a><a href="#datasets">Datasets</a><a href="#title">Title</a><a href="#tests">Tests</a><a href="#decisions">Decisions</a>
 </nav></div></div>
 
 <main id="main">
 
-<!-- 01 ANSWER -->
-<section id="answer"><div class="wrap">
-  <div class="label"><b>01</b>Answer</div>
-  <h2>Routing already exists. A router whose confidence can be checked does not.</h2>
-  <p class="lead">Published systems already choose, series by series, between foundation models and classical forecasters. None shows that its confidence can be relied on. This project builds and tests one that does.</p>
+<!-- 01 SUMMARY -->
+<section id="summary"><div class="wrap">
+  <div class="label"><b>01</b>Summary</div>
+  <h2>M1 had to settle two things: the datasets and the title.</h2>
+  <p class="lead">The datasets were chosen by a systematic search across fields, first in benchmark registries and then in the papers that use the data. The search did more than produce a list. It showed that routing on the obvious retail datasets is already published, which changed both the corpus and the title.</p>
 
-  <div class="thesis"><p>When the router says “trust the foundation model, 80% confident”, it should be right about 80% of the time. When it is not confident enough, it falls back to a cheaper classical model, including on a field it never saw in training.</p></div>
-
-  <h3>How one series is handled</h3>
-  <div class="flow" role="list">
-    <div class="step" role="listitem"><span class="n">1</span><b>Describe</b><span>Length, seasonality, trend, entropy, intermittency.</span></div>
-    <div class="arrow" aria-hidden="true">→</div>
-    <div class="step" role="listitem"><span class="n">2</span><b>Estimate</b><span>Probability that trusting the foundation model is right.</span></div>
-    <div class="arrow" aria-hidden="true">→</div>
-    <div class="step" role="listitem"><span class="n">3</span><b>Decide</b><span>Compare it with a threshold τ fixed in advance.</span></div>
+  <div class="pipeline" aria-label="Search funnel">
+    <div><b>28</b><span>candidate datasets and collections across eight fields</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><b>15</b><span>article-to-dataset records from the literature</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><b>6</b><span>shortlisted datasets in three layers</span></div>
   </div>
 
-  <figure class="scale" aria-label="Probability scale with threshold: below the threshold defer to the classical fallback, above it trust the foundation model">
-    <div class="scale-bar"><div class="defer">Defer → classical fallback</div><div class="trust">Trust → FM</div></div>
-    <div class="scale-axis"><span>0</span><span class="t">τ</span><span class="r">1</span></div>
-    <figcaption>Probability that trusting the FM is the right choice. τ is set on validation data to meet a target error rate. Deferral is what separates this from plain routing: the test is whether that target still holds on unseen data.</figcaption>
-  </figure>
-
-  <div class="stats">
-    <div><b>42</b><span>logged searches</span></div>
-    <div><b>15</b><span>article-to-dataset records</span></div>
-    <div><b>6</b><span>shortlisted datasets</span></div>
-    <div><b>4</b><span>fields in layers 2 and 3</span></div>
+  <div class="tiles">
+    <div class="tile"><span class="k">Recommended corpus</span><p style="margin-top:8px"><b>Breadth:</b> GIFT-Eval<br><b>Sparse demand:</b> M5, Favorita, Car Parts, NN5<br><b>Held-out field:</b> Ausgrid energy</p></div>
+    <div class="tile"><span class="k">Recommended title</span><p style="margin-top:8px;color:var(--ink)">When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</p></div>
   </div>
+
+  <div class="thesis"><p>What the search changed: per-series routing between foundation models and classical forecasters already exists, on M5 and Favorita. The open part is whether a router's confidence can be trusted, including on a field it never saw. So the corpus needs a held-out field, and the title needs to name calibration.</p></div>
 
   <details>
     <summary>Terms used on this page</summary>
     <div class="dbody"><table class="t"><tbody>
       <tr><td>Foundation model (FM)</td><td>A pretrained time-series model used without further training (zero-shot), such as Chronos-2.</td></tr>
       <tr><td>Classical fallback</td><td>Seasonal Naive, ETS, ARIMA and Theta, plus Croston, SBA and TSB on demand series.</td></tr>
-      <tr><td>Router</td><td>The small model that reads series characteristics and outputs the trust probability.</td></tr>
+      <tr><td>Router</td><td>A small model that decides, per series, whether to trust the FM, and how confident it is.</td></tr>
       <tr><td>Calibrated</td><td>Decisions made at 80% confidence are right about 80% of the time.</td></tr>
       <tr><td>Field</td><td>An application area such as retail, energy or banking. A held-out field is never seen in router training.</td></tr>
       <tr><td>Overlap</td><td>A test series that was in an FM's pretraining data, which would inflate its zero-shot score.</td></tr>
@@ -376,11 +367,11 @@
   </details>
 </div></section>
 
-<!-- 02 EVIDENCE -->
-<section id="evidence"><div class="wrap">
-  <div class="label"><b>02</b>Evidence and gap</div>
-  <h2>Foundation models win on average and lose on particular series.</h2>
-  <p class="lead">Benchmark averages favour foundation models, sparse demand produces clear failures, and existing routers already exploit that. What is missing is evidence that a router's confidence can be relied on.</p>
+<!-- 02 PROBLEM -->
+<section id="problem"><div class="wrap">
+  <div class="label"><b>02</b>Problem</div>
+  <h2>Why the choice of datasets decides the result.</h2>
+  <p class="lead">Foundation models win on benchmark averages and lose on particular series. A router that decides when to trust them can only learn from, and be tested on, the variety in its data. Data from one field would make it look better or worse than it is.</p>
 
   <div class="tiles">
     <div class="tile"><span class="k">Broad benchmark</span><span class="v">144K series</span><p>GIFT-Eval spans seven fields and ten frequencies; FMs are among its strongest entries.</p></div>
@@ -391,15 +382,70 @@
         <div class="minibar"><span>LightGBM</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="num">0.52</span></div>
       </div>
       <p>WRMSSE on intermittent M5, as reported in the same review. Lower is better.</p></div>
-    <div class="tile"><span class="k">Routing already works</span>
-      <div class="minibars" role="img" aria-label="Share of series for which FAME calls Chronos: M5 8.6 percent, Favorita 10.9 percent">
-        <div class="minibar"><span>M5</span><div class="track"><div class="fill accent" style="width:8.6%"></div></div><span class="num">8.6%</span></div>
-        <div class="minibar"><span>Favorita</span><div class="track"><div class="fill accent" style="width:10.9%"></div></div><span class="num">10.9%</span></div>
-      </div>
-      <p>Share of series for which FAME calls Chronos. Selective FM use is already practical.</p></div>
+    <div class="tile"><span class="k">What the data must offer</span><p style="margin-top:8px">Several fields, sparse demand where FMs fail, published results to compare against, and one field kept back for testing.</p></div>
   </div>
 
-  <h3>What exists, and what does not</h3>
+  <h3>What the router will do with each series</h3>
+  <div class="flow" role="list">
+    <div class="step" role="listitem"><span class="n">1</span><b>Describe</b><span>Length, seasonality, trend, entropy, intermittency.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step" role="listitem"><span class="n">2</span><b>Estimate</b><span>Probability that trusting the foundation model is right.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step" role="listitem"><span class="n">3</span><b>Decide</b><span>Compare it with a threshold τ fixed in advance.</span></div>
+  </div>
+  <figure class="scale" aria-label="Probability scale with threshold: below the threshold defer to the classical fallback, above it trust the foundation model">
+    <div class="scale-bar"><div class="defer">Defer → classical fallback</div><div class="trust">Trust → FM</div></div>
+    <div class="scale-axis"><span>0</span><span class="t">τ</span><span class="r">1</span></div>
+    <figcaption>τ is set on validation data to meet a target error rate. The question for the datasets is whether that promise still holds on data the router has not seen.</figcaption>
+  </figure>
+</div></section>
+
+<!-- 03 SEARCH -->
+<section id="search"><div class="wrap">
+  <div class="label"><b>03</b>Search</div>
+  <h2>A protocol first, then two passes of search.</h2>
+  <p class="lead">Before searching, the selection rules were written down: which fields to cover, what makes a dataset usable, and when to stop. Pass 1 searched registries, repositories and field archives. Pass 2 went to the literature and extracted, paper by paper, which datasets model-selection and routing studies actually use.</p>
+
+  <h3>Rules set before the search</h3>
+  <div class="ground">
+    <div><b>Cover several fields</b><span>At least three distinct fields; eight were reached.</span></div>
+    <div><b>Include sparse demand</b><span>At least one intermittency-heavy collection.</span></div>
+    <div><b>Share common ground</b><span>Enough shared structure to evaluate together.</span></div>
+    <div><b>Stop at saturation</b><span>Three consecutive searches with no new candidate.</span></div>
+  </div>
+  <p class="note">Twelve recorded criteria in total, including licence, access and size, provenance, overlap with FM training data, published baselines and prior use in model-selection studies.</p>
+
+  <h3>Searches per route</h3>
+  <div class="routes">
+    <div class="route"><span class="id">R1</span><div class="what"><b>Confirm known leads</b><em>10</em></div><div class="bar" style="width:77%"></div><div class="out">GIFT-Eval, Monash and Car Parts confirmed</div></div>
+    <div class="route"><span class="id">R2</span><div class="what"><b>FM training data and overlap</b><em>6</em></div><div class="bar" style="width:46%"></div><div class="out">Overlap risk is checkpoint- and dataset-specific</div></div>
+    <div class="route"><span class="id">R3</span><div class="what"><b>Benchmark registries</b><em>5</em></div><div class="bar" style="width:38%"></div><div class="out">fev retail sets found; no strong UCI/OpenML addition</div></div>
+    <div class="route"><span class="id">R4</span><div class="what"><b>Search by field</b><em>4</em></div><div class="bar" style="width:31%"></div><div class="out">Retail meta-analysis and cross-field candidates</div></div>
+    <div class="route"><span class="id">R5</span><div class="what"><b>Citation snowballing</b><em>3</em></div><div class="bar" style="width:23%"></div><div class="out">TW3Cast identified and read</div></div>
+    <div class="route"><span class="id">R6</span><div class="what"><b>Competitions</b><em>1</em></div><div class="bar" style="width:8%"></div><div class="out">M5 retained; competition terms flagged</div></div>
+    <div class="route r7"><span class="id">R7</span><div class="what"><b>Article-to-dataset extraction · Pass 2</b><em>13</em></div><div class="bar" style="width:100%"></div><div class="out">15 records; direct precedents and held-out-field candidates</div></div>
+  </div>
+  <p class="note">42 logged searches. Principal Scholar query: <code>"forecast model selection" time series dataset</code>, about 358 results at search time. Pass 2 sources: Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview.</p>
+
+  <h3>What was extracted from each paper</h3>
+  <div class="chips">
+    <span class="chip">Dataset and access route</span><span class="chip">Forecasting unit</span><span class="chip">Number of series</span><span class="chip">Frequency and length</span><span class="chip">Horizon and split</span><span class="chip">Sparsity</span><span class="chip">Covariates</span><span class="chip">Availability</span><span class="chip">How the paper used it</span>
+  </div>
+
+  <h3>Limits</h3>
+  <ul>
+    <li>Full institutional Scopus search was not available; Scopus Preview was used for access checks only.</li>
+    <li>The 15 records are a purposive extraction around routing and dataset choice, not an exhaustive systematic review.</li>
+    <li>Reported sizes, zero rates and splits come from the sources and have not yet been recomputed locally.</li>
+  </ul>
+</div></section>
+
+<!-- 04 PAPERS -->
+<section id="papers"><div class="wrap">
+  <div class="label"><b>04</b>Papers</div>
+  <h2>The papers showed which datasets are already taken.</h2>
+  <p class="lead">Reading how datasets are used turned up three studies that already route individual series between model families on M5 and Favorita. Those datasets stay useful for comparison, but they cannot carry a claim of novelty. What none of the studies reports is a checked confidence, or a test on a field the router never saw.</p>
+
   <figure>
     <table class="matrix">
       <thead><tr><th>As reported</th><th>Classical selection<br>FFORMS line</th><th>FM-only routing<br>TimeRouter, TW3Cast</th><th>Cross-family<br>Zhang, CARFS, FAME</th><th class="us">This project</th></tr></thead>
@@ -411,6 +457,179 @@
       </tbody>
     </table>
     <div class="legend"><span><i class="dot yes"></i>Reported</span><span><i class="dot part"></i>Partly (CARFS: retail to retail)</span><span><i class="dot no"></i>Not reported</span><span><i class="dot plan"></i>Planned here</span></div>
+  </figure>
+
+  <h3>Studies that shaped the dataset choice</h3>
+  <div class="studies">
+    <div class="study"><div class="top"><b>FAME</b><span class="who">2026 · preprint</span><span class="tag accent">Closest overlap</span></div><p class="data">Sparse expert routing on SNBC, M5 and Favorita; calls Chronos for 8.6% and 10.9% of series.</p><p class="use">M5 and Favorita allow direct comparison, but cannot show originality.</p></div>
+    <div class="study"><div class="top"><b>Zhang</b><span class="who">2025</span><span class="tag">Direct precedent</span></div><p class="data">24,646 Favorita item–store series; 57.2% mean zero sales; 34 features; 14- and 30-day horizons.</p><p class="use">Its Favorita protocol is the comparison point for cross-family routing.</p></div>
+    <div class="study"><div class="top"><b>CARFS</b><span class="who">2023</span><span class="tag">Transfer precedent</span></div><p class="data">Model shortlist learned on M5, tested on 1,000 Favorita series.</p><p class="use">Retail-to-retail transfer is done; a stronger test leaves out a whole field.</p></div>
+    <div class="study"><div class="top"><b>Werling et al.</b><span class="who">2023</span><span class="tag accent">Held-out field</span></div><p class="data">Ausgrid: 300 homes over three years; selector trained on 200, evaluated on 100.</p><p class="use">An energy dataset with a ready-made split for testing on unseen entities.</p></div>
+    <div class="study"><div class="top"><b>Barak et al.</b><span class="who">2019</span><span class="tag">Compact demand</span></div><p class="data">NN5: 111 daily ATM series, 791 observations each, 56-day horizon.</p><p class="use">Non-retail demand, usable if missing observations can be separated from true zeros.</p></div>
+    <div class="study"><div class="top"><b>FFORMPP</b><span class="who">2022</span><span class="tag">Method anchor</span></div><p class="data">M1 and M3 plus 10,000 GRATIS series per frequency; evaluated on M4.</p><p class="use">Build and evaluate the router on separate data; synthetic series only as support.</p></div>
+    <div class="study"><div class="top"><b>AutoForecast</b><span class="tag">Breadth source</span></div><p class="data">348 datasets, 625 series and 322 model configurations across fields.</p><p class="use">A candidate source only after per-source provenance and licence checks.</p></div>
+  </div>
+
+  <details>
+    <summary>All 15 article-to-dataset records</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>ID</th><th>Study or source</th><th>Dataset</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr><td>A2D-001</td><td data-l="Study">Zhang sparse-demand routing</td><td data-l="Data">Favorita</td><td data-l="Decision">Comparator</td></tr>
+        <tr><td>A2D-002</td><td data-l="Study">FAME</td><td data-l="Data">SNBC, M5, Favorita</td><td data-l="Decision">Closest precedent</td></tr>
+        <tr><td>A2D-003</td><td data-l="Study">CARFS</td><td data-l="Data">M5, Favorita</td><td data-l="Decision">Transfer comparator</td></tr>
+        <tr><td>A2D-004</td><td data-l="Study">FFORMPP</td><td data-l="Data">M1, M3, GRATIS, M4</td><td data-l="Decision">Method anchor</td></tr>
+        <tr><td>A2D-005</td><td data-l="Study">AutoForecast</td><td data-l="Data">348-dataset corpus, Adobe traces</td><td data-l="Decision">Candidate source</td></tr>
+        <tr><td>A2D-006</td><td data-l="Study">Supply-chain model selection</td><td data-l="Data">M3, private industrial data</td><td data-l="Decision">M3 only</td></tr>
+        <tr><td>A2D-007</td><td data-l="Study">M5 competition studies</td><td data-l="Data">M5</td><td data-l="Decision">Comparator</td></tr>
+        <tr><td>A2D-008</td><td data-l="Study">Intermittent-demand literature</td><td data-l="Data">Car Parts</td><td data-l="Decision">Sparse anchor</td></tr>
+        <tr><td>A2D-009</td><td data-l="Study">Forecast stability</td><td data-l="Data">M3, M4, M5, Favorita</td><td data-l="Decision">Protocol evidence</td></tr>
+        <tr><td>A2D-010</td><td data-l="Study">Werling et al.</td><td data-l="Data">Ausgrid</td><td data-l="Decision">Held-out field</td></tr>
+        <tr><td>A2D-011</td><td data-l="Study">Barak et al.</td><td data-l="Data">NN5</td><td data-l="Decision">Verify zeros</td></tr>
+        <tr><td>A2D-012</td><td data-l="Study">LA transport selection</td><td data-l="Data">Private traffic speeds</td><td data-l="Decision">Evidence only</td></tr>
+        <tr><td>A2D-013</td><td data-l="Study">Clinical adaptive selection</td><td data-l="Data">Cardiac CBC EHR</td><td data-l="Decision">Evidence only</td></tr>
+        <tr><td>A2D-014</td><td data-l="Study">Mind the Baseline</td><td data-l="Data">FluSight, COVID hubs</td><td data-l="Decision">Reserve</td></tr>
+        <tr><td>A2D-015</td><td data-l="Study">SpectraNet</td><td data-l="Data">Alibaba, vmCloud</td><td data-l="Decision">Reserve</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</div></section>
+
+<!-- 05 DATASETS -->
+<section id="datasets"><div class="wrap">
+  <div class="label"><b>05</b>Datasets</div>
+  <h2>From candidates to a corpus where every dataset has one job.</h2>
+  <p class="lead">Each candidate had to pass the gates, and then earn a role: breadth for comparability, sparse demand with published routing results, or a field kept back for testing. Candidates that added nothing new, or could not be checked, were held in reserve or dropped.</p>
+
+  <h3>Options considered</h3>
+  <div class="dbody" style="padding:0"><table class="t">
+    <thead><tr><th>Candidate</th><th>Field</th><th>Outcome</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>GIFT-Eval</td><td data-l="Field">Seven fields</td><td data-l="Outcome"><span class="tag accent">Shortlisted</span></td><td data-l="Reason">Broadest standard benchmark; FM routers already report on it</td></tr>
+      <tr><td>M5 · Favorita</td><td data-l="Field">Retail</td><td data-l="Outcome"><span class="tag accent">Shortlisted</span></td><td data-l="Reason">Published routing results to compare against (FAME, Zhang, CARFS)</td></tr>
+      <tr><td>Car Parts</td><td data-l="Field">Spare parts</td><td data-l="Outcome"><span class="tag accent">Shortlisted</span></td><td data-l="Reason">The classic intermittent-demand collection; compact</td></tr>
+      <tr><td>NN5</td><td data-l="Field">Banking</td><td data-l="Outcome"><span class="tag accent">Shortlisted</span></td><td data-l="Reason">Non-retail demand with a model-selection precedent; zeros to verify</td></tr>
+      <tr><td>Ausgrid</td><td data-l="Field">Energy</td><td data-l="Outcome"><span class="tag accent">Shortlisted</span></td><td data-l="Reason">Entity-level selector split already published; outside retail</td></tr>
+      <tr><td>Rossmann · Walmart · Rohlik</td><td data-l="Field">Retail</td><td data-l="Outcome"><span class="tag">Reserve</span></td><td data-l="Reason">Retail already covered by datasets with routing results; wrapper licence is not the upstream licence</td></tr>
+      <tr><td>ENTSO-E · EPF</td><td data-l="Field">Energy</td><td data-l="Outcome"><span class="tag">Reserve</span></td><td data-l="Reason">Ausgrid preferred: it comes with a published per-series selection split</td></tr>
+      <tr><td>Alibaba 2018</td><td data-l="Field">Cloud</td><td data-l="Outcome"><span class="tag">Reserve</span></td><td data-l="Reason">Public, but short and large; needs a fixed subset</td></tr>
+      <tr><td>FluSight · COVID hubs</td><td data-l="Field">Healthcare</td><td data-l="Outcome"><span class="tag">Reserve</span></td><td data-l="Reason">Forecast archive; needs transforming into router-ready series</td></tr>
+      <tr><td>BOOM · Redset</td><td data-l="Field">Cloud (not retail)</td><td data-l="Outcome"><span class="tag">Reserve</span></td><td data-l="Reason">First listed as retail; verified as cloud workload data</td></tr>
+      <tr><td>M1 · M3 · M4</td><td data-l="Field">Mixed</td><td data-l="Outcome"><span class="tag">Control only</span></td><td data-l="Reason">Heavy exposure in FM pretraining; frequency comparators at most</td></tr>
+      <tr><td>Dominick</td><td data-l="Field">Retail</td><td data-l="Outcome"><span class="tag">Not shortlisted</span></td><td data-l="Reason">Very many short weekly series</td></tr>
+      <tr><td>Chronos training sets</td><td data-l="Field">Mixed</td><td data-l="Outcome"><span class="tag">Dropped</span></td><td data-l="Reason">Used to train Chronos, so zero-shot results would be inflated</td></tr>
+      <tr><td>TSFM-Bench</td><td data-l="Field">Mixed</td><td data-l="Outcome"><span class="tag">Dropped for now</span></td><td data-l="Reason">Licence unclear</td></tr>
+      <tr><td>SNBC · LA traffic · cardiac EHR</td><td data-l="Field">Vending, transport, health</td><td data-l="Outcome"><span class="tag">Evidence only</span></td><td data-l="Reason">Not public; shows the problem is real, cannot be reproduced</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The recommended corpus</h3>
+  <figure aria-label="Shortlisted datasets by size on a log scale, grouped by role">
+    <div class="dsgroup">Layer 1 · Breadth</div>
+    <div class="ds"><div class="name"><b>GIFT-Eval</b><span>Seven fields · 10 frequencies</span></div><div class="bar"><i style="width:100%"></i><em>144K series</em></div><div class="role">Comparability and main router training data</div></div>
+    <div class="dsgroup">Layer 2 · Sparse demand, compared with published routers</div>
+    <div class="ds"><div class="name"><b>M5</b><span>Retail · daily</span></div><div class="bar"><i style="width:87%"></i><em>30,490</em></div><div class="role">Compared with FAME and CARFS</div></div>
+    <div class="ds"><div class="name"><b>Favorita</b><span>Grocery · daily</span></div><div class="bar"><i style="width:85%"></i><em>24,646</em></div><div class="role">Compared with Zhang, FAME and CARFS</div></div>
+    <div class="ds"><div class="name"><b>Car Parts</b><span>Spare parts · monthly</span></div><div class="bar"><i style="width:66%"></i><em>2,674</em></div><div class="role">Classic intermittent-demand anchor</div></div>
+    <div class="ds"><div class="name"><b>NN5</b><span>ATM cash · daily</span></div><div class="bar"><i style="width:40%"></i><em>111</em></div><div class="role">Non-retail demand, if missing values can be told apart from true zeros</div></div>
+    <div class="dsgroup">Layer 3 · Held-out field</div>
+    <div class="ds"><div class="name"><b>Ausgrid</b><span>Energy · 30-min</span></div><div class="bar"><i class="accent" style="width:48%"></i><em>300 homes</em></div><div class="role">Never seen in router training; 200/100-home split as in Werling et al.</div></div>
+    <figcaption>Bar length is on a log scale. Fields covered: the seven in GIFT-Eval, plus retail, spare parts, banking and energy as separate datasets.</figcaption>
+  </figure>
+
+  <h3>What makes them comparable</h3>
+  <div class="ground">
+    <div><b>Univariate</b><span>Each series is forecast on its own history at its native frequency.</span></div>
+    <div><b>Scale-free features</b><span>The router sees shape, not units, so fields can be mixed.</span></div>
+    <div><b>Scaled error</b><span>MASE lets errors be pooled across datasets.</span></div>
+    <div><b>Published horizons</b><span>Each dataset keeps the protocol of its precedent study.</span></div>
+  </div>
+  <p class="note">Proposed. Covariates such as prices and promotions stay outside the core comparison because not every model and dataset supports them.</p>
+
+  <details>
+    <summary>Frequencies, horizons and comparators</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>Dataset</th><th>Field</th><th>Frequency</th><th>Published protocol</th><th>Comparator</th></tr></thead>
+      <tbody>
+        <tr><td>GIFT-Eval</td><td data-l="Field">Seven fields</td><td data-l="Frequency">10 frequencies</td><td data-l="Protocol">Benchmark configurations</td><td data-l="Comparator">TimeRouter, FM leaderboard</td></tr>
+        <tr><td>M5</td><td data-l="Field">Retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">28-day horizon</td><td data-l="Comparator">FAME, CARFS</td></tr>
+        <tr><td>Favorita</td><td data-l="Field">Grocery retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">14- and 30-day horizons</td><td data-l="Comparator">Zhang, FAME, CARFS</td></tr>
+        <tr><td>Car Parts</td><td data-l="Field">Spare parts</td><td data-l="Frequency">Monthly</td><td data-l="Protocol">Final 6 months held out</td><td data-l="Comparator">Intermittent-demand studies</td></tr>
+        <tr><td>NN5</td><td data-l="Field">Banking (ATM cash)</td><td data-l="Frequency">Daily</td><td data-l="Protocol">56-day horizon</td><td data-l="Comparator">Barak et al.</td></tr>
+        <tr><td>Ausgrid</td><td data-l="Field">Energy</td><td data-l="Frequency">30-min, hourly in study</td><td data-l="Protocol">Final year test; 200/100 homes</td><td data-l="Comparator">Werling et al.</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+
+  <h3>Five gates still to pass before download</h3>
+  <ol class="gates">
+    <li><div><b>Rights</b>Licence and attribution</div></li>
+    <li><div><b>Provenance</b>Source and version</div></li>
+    <li><div><b>Overlap</b>Checkpoint training data</div></li>
+    <li><div><b>Semantics</b>Zeros vs missing values</div></li>
+    <li><div><b>Feasibility</b>Memory and runtime</div></li>
+  </ol>
+  <div class="callout"><p>A benchmark wrapper's licence does not grant the same rights for every dataset inside it. A “clean” flag on GIFT-Eval does not show that a checkpoint is clean on M5, Favorita, NN5 or Ausgrid.</p></div>
+
+  <details>
+    <summary>Key dataset facts and unresolved risks</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>Dataset</th><th>Scale</th><th>Why retained</th><th>Main unresolved risk</th></tr></thead>
+      <tbody>
+        <tr><td>GIFT-Eval</td><td data-l="Scale">144K series, 177M points</td><td data-l="Why">Broad standard benchmark</td><td data-l="Risk">Terms and overlap apply per constituent dataset and checkpoint</td></tr>
+        <tr><td>M5</td><td data-l="Scale">30,490 bottom-level series</td><td data-l="Why">Direct FAME/CARFS comparator</td><td data-l="Risk">Competition terms and extensive pretraining exposure</td></tr>
+        <tr><td>Favorita</td><td data-l="Scale">24,646-series Zhang protocol</td><td data-l="Why">Direct Zhang/FAME/CARFS comparator</td><td data-l="Risk">Upstream terms and model overlap</td></tr>
+        <tr><td>Car Parts</td><td data-l="Scale">2,674 × 51 months</td><td data-l="Why">Compact spare-parts intermittency anchor</td><td data-l="Risk">Short histories and training overlap</td></tr>
+        <tr><td>NN5</td><td data-l="Scale">111 × 791 days</td><td data-l="Why">Non-retail demand, direct selection precedent</td><td data-l="Risk">Missing observations versus true zero demand</td></tr>
+        <tr><td>Ausgrid</td><td data-l="Scale">300 homes × 3 years</td><td data-l="Why">Held-out energy field</td><td data-l="Risk">Authoritative upstream terms and checkpoint overlap</td></tr>
+        <tr><td>Alibaba 2018</td><td data-l="Scale">4,000+ machines × 8 days</td><td data-l="Why">Reserve cloud stress test</td><td data-l="Risk">Duration, size and preprocessing</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</div></section>
+
+<!-- 06 TITLE -->
+<section id="title"><div class="wrap">
+  <div class="label"><b>06</b>Title</div>
+  <h2>The title follows from what the search found.</h2>
+  <p class="lead">The registered title can be refined after M1. The search gave four tests for a better one: keep the question “when to trust”, name what is actually new (checked confidence), avoid implying that routing itself is new, and stay true to all three dataset layers rather than one.</p>
+
+  <div class="studies">
+    <div class="study"><div class="top"><b>Registered</b><span class="tag">Current</span></div><p class="data">When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</p><p class="use">Keeps the question, but “reliability framework for routing” does not say confidence will be checked.</p></div>
+    <div class="study"><div class="top"><b>Recommended</b><span class="tag accent">Proposed after M1</span></div><p class="data">When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</p><p class="use">Keeps the question and names calibration as the contribution; fits every dataset layer.</p></div>
+    <div class="study"><div class="top"><b>Alternative</b><span class="tag">Considered</span></div><p class="data">When to Trust a Time-Series Foundation Model: A Calibrated Reliability Framework for Cross-Family Forecasting Routing</p><p class="use">Names calibration, but puts weight on cross-family routing, which the papers show is not new.</p></div>
+    <div class="study"><div class="top"><b>Alternative</b><span class="tag">Considered</span></div><p class="data">Cost-Calibrated Per-Series Routing: Balancing Foundation Models and Classical Baselines in Operational Time-Series Forecasting</p><p class="use">Leads with cost, which is one scorecard rather than the main question.</p></div>
+    <div class="study"><div class="top"><b>Alternative</b><span class="tag">Considered</span></div><p class="data">Selective Trust in Time-Series Forecasting: Routing Edge Cases and Intermittent Series Between Foundation Models and Classical Specialists</p><p class="use">Fits the sparse-demand layer, but narrows the scope below the corpus.</p></div>
+    <div class="study"><div class="top"><b>Alternative</b><span class="tag">Considered</span></div><p class="data">A Risk-Aware Per-Series Dispatcher: Calibrated Routing Across Classical and Pretrained Time-Series Foundation Models</p><p class="use">Frames the work as a system build rather than a research question.</p></div>
+  </div>
+  <p class="note">Any change must also be made in the university ethics system so the two titles match.</p>
+</div></section>
+
+<!-- 07 TESTS -->
+<section id="tests"><div class="wrap">
+  <div class="label"><b>07</b>Tests</div>
+  <h2>What the corpus will be used to test.</h2>
+  <div class="mainq"><span class="h">Main research question</span><p>Can a per-series router give a calibrated probability that trusting a time-series foundation model is the right choice, and does that probability still hold on datasets and fields it was not trained on?</p></div>
+  <div class="rqs">
+    <div class="rq"><span class="id">RQ1</span><div><b>Signals · Which series characteristics predict that the FM will win?</b><p class="fail"><em>Fails if</em> feature-based prediction does no better than always predicting the majority outcome on held-out datasets.</p></div></div>
+    <div class="rq"><span class="id">RQ2</span><div><b>Value · Can routing match or beat the best single model at lower cost?</b><p class="fail"><em>Fails if</em> always-FM or always-classical matches or beats the router on error at equal or lower measured cost.</p></div></div>
+    <div class="rq central"><span class="id">RQ3 ★</span><div><b>Trust · Is the trust probability calibrated, including on the held-out field?</b><p class="fail"><em>Fails if</em> held-out calibration error exceeds a pre-declared bound, or error does not fall as coverage is reduced.</p></div></div>
+    <div class="rq"><span class="id">RQ4</span><div><b>Sparse demand · Can the router spot intermittent series in advance and send them to the fallback?</b><p class="fail"><em>Fails if</em> it does no better than the fixed Syntetos–Boylan rule, on demand series only.</p></div></div>
+  </div>
+
+  <h3>How each layer is used</h3>
+  <figure>
+    <div class="folds" role="table" aria-label="Validation design: two example leave-one-dataset-out folds and the held-out field test">
+      <div class="hd" role="columnheader">Data</div><div class="hd" role="columnheader">Fold · M5 out</div><div class="hd" role="columnheader">Fold · NN5 out</div><div class="hd" role="columnheader">Field test</div>
+      <div class="rl">GIFT-Eval, other fields</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">GIFT-Eval, energy</div><div class="c tr">train</div><div class="c tr">train</div><div class="c ex">removed</div>
+      <div class="rl">M5</div><div class="c te">test</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">Favorita</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">Car Parts</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">NN5</div><div class="c tr">train</div><div class="c te">test</div><div class="c tr">train</div>
+      <div class="rl">Ausgrid</div><div class="c na">unused</div><div class="c na">unused</div><div class="c te">test</div>
+    </div>
+    <figcaption>Each dataset takes a turn as the unseen test set (two folds shown). Ausgrid is kept out until the final field test, and GIFT-Eval's energy data is removed for that test so the field is truly unseen.</figcaption>
   </figure>
 
   <h3>What “checked confidence” means</h3>
@@ -445,6 +664,47 @@
   </div>
   <p class="note">Schematics explain the tests. They are not results.</p>
 
+  <details>
+    <summary>Models, scorecards and rules</summary>
+    <div class="dbody">
+      <div class="pool">
+        <div><div class="h">Foundation models · provisional</div><div class="chips"><span class="chip fm">Chronos-2</span><span class="chip fm">TimesFM-2.5</span><span class="chip fm">MOIRAI</span></div></div>
+        <div><div class="h">Classical fallback</div><div class="chips"><span class="chip">Seasonal Naive</span><span class="chip">ETS</span><span class="chip">ARIMA</span><span class="chip">Theta</span><span class="chip">Croston<sup>*</sup></span><span class="chip">SBA<sup>*</sup></span><span class="chip">TSB<sup>*</sup></span></div></div>
+        <div><div class="h">Reference baselines · not routed</div><div class="chips"><span class="chip dim">LightGBM (global)</span><span class="chip dim">Always FM</span><span class="chip dim">Always classical</span><span class="chip dim">FFORMS-style selector</span><span class="chip dim">Syntetos–Boylan rule</span></div></div>
+      </div>
+      <p class="note">* Demand series only. The router uses one-vs-all classifiers for the probability that each choice is correct; post-hoc calibration is an ablation.</p>
+      <div class="scores">
+        <div><b>Accuracy</b><span>Per-series MASE; CRPS or quantile loss where available</span></div>
+        <div><b>Regret</b><span>Gap from an oracle that always picks the per-series winner</span></div>
+        <div><b>Trust</b><span>ECE, Brier score, reliability and risk–coverage curves</span></div>
+        <div><b>Cost</b><span>Wall-clock inference on declared hardware</span></div>
+      </div>
+      <ul class="rules">
+        <li><div><b>Fix “winner” in advance.</b> Primary metric and tie margin declared before evaluation; near-ties go to the cheaper model.</div></li>
+        <li><div><b>Check overlap per checkpoint and dataset.</b> Uncertain pairs are left out of headline results.</div></li>
+        <li><div><b>Use intermittency classes only on demand.</b> Not on energy, temperature or prices. sMAPE only on strictly positive series.</div></li>
+        <li><div><b>Size the run first.</b> A smoke test on the project laptop sets a stratified subsample if needed.</div></li>
+        <li><div><b>Report failure as a result.</b> If confidence cannot be calibrated or does not transfer, that is a valid finding.</div></li>
+      </ul>
+      <figure class="quad">
+        <svg viewBox="0 0 320 240" role="img" aria-label="Syntetos–Boylan classification: four quadrants by average inter-demand interval p (threshold 1.32) and CV squared of demand size (threshold 0.49): smooth, erratic, intermittent, lumpy">
+          <rect class="q-fill" x="40" y="10" width="135" height="95" rx="6"/>
+          <rect class="q-fill" x="179" y="10" width="135" height="95" rx="6"/>
+          <rect class="q-fill" x="40" y="109" width="135" height="95" rx="6"/>
+          <rect class="q-fill-a" x="179" y="109" width="135" height="95" rx="6"/>
+          <text class="q-name" x="107" y="52" text-anchor="middle">Erratic</text><text class="q-sub" x="107" y="70" text-anchor="middle">frequent, variable size</text>
+          <text class="q-name" x="246" y="52" text-anchor="middle">Lumpy</text><text class="q-sub" x="246" y="70" text-anchor="middle">rare, variable · hardest</text>
+          <text class="q-name" x="107" y="151" text-anchor="middle">Smooth</text><text class="q-sub" x="107" y="169" text-anchor="middle">frequent, stable</text>
+          <text class="q-name" x="246" y="151" text-anchor="middle">Intermittent</text><text class="q-sub" x="246" y="169" text-anchor="middle">rare, stable size</text>
+          <text class="s-lab" x="177" y="222" text-anchor="middle">p = 1.32</text>
+          <text class="s-lab" x="177" y="236" text-anchor="middle">avg. interval between demands →</text>
+          <text class="s-lab" x="14" y="107" text-anchor="middle" transform="rotate(-90 14 107)">CV² = 0.49 · size variation →</text>
+        </svg>
+        <figcaption>Syntetos–Boylan classes for non-negative demand, the fixed rule RQ4 compares against.</figcaption>
+      </figure>
+    </div>
+  </details>
+
   <div class="claims">
     <div class="panel yes"><span class="h">Defensible to investigate</span><ul>
       <li>A calibrated probability that the routing choice is correct</li>
@@ -463,258 +723,24 @@
   </div>
 </div></section>
 
-<!-- 03 QUESTIONS -->
-<section id="questions"><div class="wrap">
-  <div class="label"><b>03</b>Questions</div>
-  <h2>One main question, four ways it can fail.</h2>
-  <div class="mainq"><span class="h">Main research question</span><p>Can a per-series router give a calibrated probability that trusting a time-series foundation model is the right choice, and does that probability still hold on datasets and fields it was not trained on?</p></div>
-  <div class="rqs">
-    <div class="rq"><span class="id">RQ1</span><div><b>Signals · Which series characteristics predict that the FM will win?</b><p class="fail"><em>Fails if</em> feature-based prediction does no better than always predicting the majority outcome on held-out datasets.</p></div></div>
-    <div class="rq"><span class="id">RQ2</span><div><b>Value · Can routing match or beat the best single model at lower cost?</b><p class="fail"><em>Fails if</em> always-FM or always-classical matches or beats the router on error at equal or lower measured cost.</p></div></div>
-    <div class="rq central"><span class="id">RQ3 ★</span><div><b>Trust · Is the trust probability calibrated, including on a held-out field?</b><p class="fail"><em>Fails if</em> held-out calibration error exceeds a pre-declared bound, or error does not fall as coverage is reduced.</p></div></div>
-    <div class="rq"><span class="id">RQ4</span><div><b>Sparse demand · Can the router spot intermittent series in advance and send them to the fallback?</b><p class="fail"><em>Fails if</em> it does no better than the fixed Syntetos–Boylan rule, on demand series only.</p></div></div>
-  </div>
-  <p class="note">★ Central question. Each question can stand as a result even if a later one is weaker.</p>
-</div></section>
-
-<!-- 04 DATASETS -->
-<section id="datasets"><div class="wrap">
-  <div class="label"><b>04</b>Datasets</div>
-  <h2>Every dataset has one job.</h2>
-  <p class="lead">The questions need breadth for comparability, sparse demand with published routing results for direct comparison, and one field the router never trains on.</p>
-
-  <figure aria-label="Shortlisted datasets by size on a log scale, grouped by role">
-    <div class="dsgroup">Layer 1 · Breadth</div>
-    <div class="ds"><div class="name"><b>GIFT-Eval</b><span>Seven fields · 10 frequencies</span></div><div class="bar"><i style="width:100%"></i><em>144K series</em></div><div class="role">Comparability and main router training data</div></div>
-    <div class="dsgroup">Layer 2 · Sparse demand, compared with published routers</div>
-    <div class="ds"><div class="name"><b>M5</b><span>Retail · daily</span></div><div class="bar"><i style="width:87%"></i><em>30,490</em></div><div class="role">Compared with FAME and CARFS</div></div>
-    <div class="ds"><div class="name"><b>Favorita</b><span>Grocery · daily</span></div><div class="bar"><i style="width:85%"></i><em>24,646</em></div><div class="role">Compared with Zhang, FAME and CARFS</div></div>
-    <div class="ds"><div class="name"><b>Car Parts</b><span>Spare parts · monthly</span></div><div class="bar"><i style="width:66%"></i><em>2,674</em></div><div class="role">Classic intermittent-demand anchor</div></div>
-    <div class="ds"><div class="name"><b>NN5</b><span>ATM cash · daily</span></div><div class="bar"><i style="width:40%"></i><em>111</em></div><div class="role">Non-retail demand, if missing values can be told apart from true zeros</div></div>
-    <div class="dsgroup">Layer 3 · Held-out field</div>
-    <div class="ds"><div class="name"><b>Ausgrid</b><span>Energy · 30-min</span></div><div class="bar"><i class="accent" style="width:48%"></i><em>300 homes</em></div><div class="role">Never seen in router training; 200/100-home split as in Werling et al.</div></div>
-    <figcaption>Bar length is on a log scale. Reserve if gates fail: Alibaba cloud traces or public epidemiological archives.</figcaption>
-  </figure>
-
-  <h3>What makes them comparable</h3>
-  <div class="ground">
-    <div><b>Univariate</b><span>Each series is forecast on its own history at its native frequency.</span></div>
-    <div><b>Scale-free features</b><span>The router sees shape, not units, so fields can be mixed.</span></div>
-    <div><b>Scaled error</b><span>MASE lets errors be pooled across datasets.</span></div>
-    <div><b>Published horizons</b><span>Each dataset keeps the protocol of its precedent study.</span></div>
-  </div>
-  <p class="note">Proposed. Covariates such as prices and promotions stay outside the core comparison because not every model and dataset supports them.</p>
-
-  <details>
-    <summary>Frequencies, horizons and comparators</summary>
-    <div class="dbody"><table class="t">
-      <thead><tr><th>Dataset</th><th>Field</th><th>Frequency</th><th>Published protocol</th><th>Comparator</th></tr></thead>
-      <tbody>
-        <tr><td>GIFT-Eval</td><td data-l="Field">Seven fields</td><td data-l="Frequency">10 frequencies</td><td data-l="Protocol">Benchmark configurations</td><td data-l="Comparator">TimeRouter, FM leaderboard</td></tr>
-        <tr><td>M5</td><td data-l="Field">Retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">28-day horizon</td><td data-l="Comparator">FAME, CARFS</td></tr>
-        <tr><td>Favorita</td><td data-l="Field">Grocery retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">14- and 30-day horizons</td><td data-l="Comparator">Zhang, FAME, CARFS</td></tr>
-        <tr><td>Car Parts</td><td data-l="Field">Spare parts</td><td data-l="Frequency">Monthly</td><td data-l="Protocol">Final 6 months held out</td><td data-l="Comparator">Intermittent-demand studies</td></tr>
-        <tr><td>NN5</td><td data-l="Field">Banking (ATM cash)</td><td data-l="Frequency">Daily</td><td data-l="Protocol">56-day horizon</td><td data-l="Comparator">Barak et al.</td></tr>
-        <tr><td>Ausgrid</td><td data-l="Field">Energy</td><td data-l="Frequency">30-min, hourly in study</td><td data-l="Protocol">Final year test; 200/100 homes</td><td data-l="Comparator">Werling et al.</td></tr>
-      </tbody>
-    </table></div>
-  </details>
-
-  <h3>The studies behind each choice</h3>
-  <div class="studies">
-    <div class="study"><div class="top"><b>FAME</b><span class="who">2026 · preprint</span><span class="tag accent">Closest overlap</span></div><p class="data">Sparse expert routing on SNBC, M5 and Favorita; calls Chronos for 8.6% and 10.9% of series.</p><p class="use">M5 and Favorita allow direct comparison, but cannot show originality.</p></div>
-    <div class="study"><div class="top"><b>Zhang</b><span class="who">2025</span><span class="tag">Direct precedent</span></div><p class="data">24,646 Favorita item–store series; 57.2% mean zero sales; 34 features; 14- and 30-day horizons.</p><p class="use">Its Favorita protocol is the comparison point for cross-family routing.</p></div>
-    <div class="study"><div class="top"><b>CARFS</b><span class="who">2023</span><span class="tag">Transfer precedent</span></div><p class="data">Model shortlist learned on M5, tested on 1,000 Favorita series.</p><p class="use">Retail-to-retail transfer is done; a stronger test leaves out a whole field.</p></div>
-    <div class="study"><div class="top"><b>FFORMPP</b><span class="who">2022</span><span class="tag">Method anchor</span></div><p class="data">M1 and M3 plus 10,000 GRATIS series per frequency; evaluated on M4.</p><p class="use">Build and evaluate the router on separate data; synthetic series only as support.</p></div>
-    <div class="study"><div class="top"><b>AutoForecast</b><span class="tag">Breadth source</span></div><p class="data">348 datasets, 625 series and 322 model configurations across fields.</p><p class="use">A candidate source only after per-source provenance and licence checks.</p></div>
-    <div class="study"><div class="top"><b>Werling et al.</b><span class="who">2023</span><span class="tag accent">Held-out field</span></div><p class="data">Ausgrid: 300 homes over three years; selector trained on 200, evaluated on 100.</p><p class="use">The strongest article-derived energy candidate.</p></div>
-    <div class="study"><div class="top"><b>Barak et al.</b><span class="who">2019</span><span class="tag">Compact demand</span></div><p class="data">NN5: 111 daily ATM series, 791 observations each, 56-day horizon.</p><p class="use">Usable only if missing observations can be separated from true zeros.</p></div>
-  </div>
-
-  <details>
-    <summary>All 15 article-to-dataset records</summary>
-    <div class="dbody"><table class="t">
-      <thead><tr><th>ID</th><th>Study or source</th><th>Dataset</th><th>Decision</th></tr></thead>
-      <tbody>
-        <tr><td>A2D-001</td><td data-l="Study">Zhang sparse-demand routing</td><td data-l="Data">Favorita</td><td data-l="Decision">Comparator</td></tr>
-        <tr><td>A2D-002</td><td data-l="Study">FAME</td><td data-l="Data">SNBC, M5, Favorita</td><td data-l="Decision">Closest precedent</td></tr>
-        <tr><td>A2D-003</td><td data-l="Study">CARFS</td><td data-l="Data">M5, Favorita</td><td data-l="Decision">Transfer comparator</td></tr>
-        <tr><td>A2D-004</td><td data-l="Study">FFORMPP</td><td data-l="Data">M1, M3, GRATIS, M4</td><td data-l="Decision">Method anchor</td></tr>
-        <tr><td>A2D-005</td><td data-l="Study">AutoForecast</td><td data-l="Data">348-dataset corpus, Adobe traces</td><td data-l="Decision">Candidate source</td></tr>
-        <tr><td>A2D-006</td><td data-l="Study">Supply-chain model selection</td><td data-l="Data">M3, private industrial data</td><td data-l="Decision">M3 only</td></tr>
-        <tr><td>A2D-007</td><td data-l="Study">M5 competition studies</td><td data-l="Data">M5</td><td data-l="Decision">Comparator</td></tr>
-        <tr><td>A2D-008</td><td data-l="Study">Intermittent-demand literature</td><td data-l="Data">Car Parts</td><td data-l="Decision">Sparse anchor</td></tr>
-        <tr><td>A2D-009</td><td data-l="Study">Forecast stability</td><td data-l="Data">M3, M4, M5, Favorita</td><td data-l="Decision">Protocol evidence</td></tr>
-        <tr><td>A2D-010</td><td data-l="Study">Werling et al.</td><td data-l="Data">Ausgrid</td><td data-l="Decision">Held-out field</td></tr>
-        <tr><td>A2D-011</td><td data-l="Study">Barak et al.</td><td data-l="Data">NN5</td><td data-l="Decision">Verify zeros</td></tr>
-        <tr><td>A2D-012</td><td data-l="Study">LA transport selection</td><td data-l="Data">Private traffic speeds</td><td data-l="Decision">Evidence only</td></tr>
-        <tr><td>A2D-013</td><td data-l="Study">Clinical adaptive selection</td><td data-l="Data">Cardiac CBC EHR</td><td data-l="Decision">Evidence only</td></tr>
-        <tr><td>A2D-014</td><td data-l="Study">Mind the Baseline</td><td data-l="Data">FluSight, COVID hubs</td><td data-l="Decision">Reserve</td></tr>
-        <tr><td>A2D-015</td><td data-l="Study">SpectraNet</td><td data-l="Data">Alibaba, vmCloud</td><td data-l="Decision">Reserve</td></tr>
-      </tbody>
-    </table></div>
-  </details>
-
-  <h3>Five gates before a dataset enters</h3>
-  <ol class="gates">
-    <li><div><b>Rights</b>Licence and attribution</div></li>
-    <li><div><b>Provenance</b>Source and version</div></li>
-    <li><div><b>Overlap</b>Checkpoint training data</div></li>
-    <li><div><b>Semantics</b>Zeros vs missing values</div></li>
-    <li><div><b>Feasibility</b>Memory and runtime</div></li>
-  </ol>
-  <div class="callout"><p>A benchmark wrapper's licence does not grant the same rights for every dataset inside it. A “clean” flag on GIFT-Eval does not show that a checkpoint is clean on M5, Favorita, NN5 or Ausgrid.</p></div>
-
-  <details>
-    <summary>Key dataset facts and unresolved risks</summary>
-    <div class="dbody"><table class="t">
-      <thead><tr><th>Dataset</th><th>Scale</th><th>Why retained</th><th>Main unresolved risk</th></tr></thead>
-      <tbody>
-        <tr><td>GIFT-Eval</td><td data-l="Scale">144K series, 177M points</td><td data-l="Why">Broad standard benchmark</td><td data-l="Risk">Terms and overlap apply per constituent dataset and checkpoint</td></tr>
-        <tr><td>M5</td><td data-l="Scale">30,490 bottom-level series</td><td data-l="Why">Direct FAME/CARFS comparator</td><td data-l="Risk">Competition terms and extensive pretraining exposure</td></tr>
-        <tr><td>Favorita</td><td data-l="Scale">24,646-series Zhang protocol</td><td data-l="Why">Direct Zhang/FAME/CARFS comparator</td><td data-l="Risk">Upstream terms and model overlap</td></tr>
-        <tr><td>Car Parts</td><td data-l="Scale">2,674 × 51 months</td><td data-l="Why">Compact spare-parts intermittency anchor</td><td data-l="Risk">Short histories and training overlap</td></tr>
-        <tr><td>NN5</td><td data-l="Scale">111 × 791 days</td><td data-l="Why">Non-retail demand, direct selection precedent</td><td data-l="Risk">Missing observations versus true zero demand</td></tr>
-        <tr><td>Ausgrid</td><td data-l="Scale">300 homes × 3 years</td><td data-l="Why">Held-out energy field</td><td data-l="Risk">Authoritative upstream terms and checkpoint overlap</td></tr>
-        <tr><td>Alibaba 2018</td><td data-l="Scale">4,000+ machines × 8 days</td><td data-l="Why">Reserve cloud stress test</td><td data-l="Risk">Duration, size and preprocessing</td></tr>
-      </tbody>
-    </table></div>
-  </details>
-</div></section>
-
-<!-- 05 METHOD -->
-<section id="method"><div class="wrap">
-  <div class="label"><b>05</b>Method</div>
-  <h2>A small router, a mixed model pool, and a test it cannot memorise.</h2>
-  <p class="lead">The router sees series characteristics, never future outcomes. It has to generalise across datasets, report its uncertainty honestly and justify the compute it spends.</p>
-
-  <div class="flow">
-    <div class="step"><span class="n">1</span><b>Features</b><span>Length, seasonal strength, trend, entropy, ADI, CV², zero share.</span></div>
-    <div class="arrow" aria-hidden="true">→</div>
-    <div class="step"><span class="n">2</span><b>Calibrated router</b><span>One-vs-all classifiers give the probability each choice is correct.</span></div>
-    <div class="arrow" aria-hidden="true">→</div>
-    <div class="step"><span class="n">3</span><b>Policy</b><span>Trust or defer at τ; near-ties go to the cheaper model.</span></div>
-  </div>
-  <p class="note">Post-hoc calibration (Platt or isotonic) is tested as an ablation.</p>
-
-  <h3>Model pool</h3>
-  <div class="pool">
-    <div><div class="h">Foundation models · provisional</div><div class="chips"><span class="chip fm">Chronos-2</span><span class="chip fm">TimesFM-2.5</span><span class="chip fm">MOIRAI</span></div></div>
-    <div><div class="h">Classical fallback</div><div class="chips"><span class="chip">Seasonal Naive</span><span class="chip">ETS</span><span class="chip">ARIMA</span><span class="chip">Theta</span><span class="chip">Croston<sup>*</sup></span><span class="chip">SBA<sup>*</sup></span><span class="chip">TSB<sup>*</sup></span></div></div>
-    <div><div class="h">Reference baselines · not routed</div><div class="chips"><span class="chip dim">LightGBM (global)</span><span class="chip dim">Always FM</span><span class="chip dim">Always classical</span><span class="chip dim">FFORMS-style selector</span><span class="chip dim">Syntetos–Boylan rule</span></div></div>
-  </div>
-  <p class="note">* Demand series only. An FM enters the pool only with open academic-use terms, local feasibility and a dataset-specific overlap audit. LightGBM is the strongest reported M5 baseline, so it is reported alongside the router.</p>
-
-  <h3>How the router is validated</h3>
-  <figure>
-    <div class="folds" role="table" aria-label="Validation design: two example leave-one-dataset-out folds and the held-out field test">
-      <div class="hd" role="columnheader">Data</div><div class="hd" role="columnheader">Fold · M5 out</div><div class="hd" role="columnheader">Fold · NN5 out</div><div class="hd" role="columnheader">Field test</div>
-      <div class="rl">GIFT-Eval, other fields</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
-      <div class="rl">GIFT-Eval, energy</div><div class="c tr">train</div><div class="c tr">train</div><div class="c ex">removed</div>
-      <div class="rl">M5</div><div class="c te">test</div><div class="c tr">train</div><div class="c tr">train</div>
-      <div class="rl">Favorita</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
-      <div class="rl">Car Parts</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
-      <div class="rl">NN5</div><div class="c tr">train</div><div class="c te">test</div><div class="c tr">train</div>
-      <div class="rl">Ausgrid</div><div class="c na">unused</div><div class="c na">unused</div><div class="c te">test</div>
-    </div>
-    <figcaption>Leave-one-dataset-out: each dataset takes a turn as the unseen test set (two folds shown). Ausgrid is kept out of every fold until the final field test, and GIFT-Eval's energy data is removed for that test so the field is truly unseen.</figcaption>
-  </figure>
-
-  <h3>Four scorecards</h3>
-  <div class="scores">
-    <div><b>Accuracy</b><span>Per-series MASE; CRPS or quantile loss where models give distributions</span></div>
-    <div><b>Regret</b><span>Gap from an oracle that always picks the per-series winner</span></div>
-    <div><b>Trust</b><span>ECE, Brier score, reliability and risk–coverage curves</span></div>
-    <div><b>Cost</b><span>Wall-clock inference on declared hardware</span></div>
-  </div>
-
-  <h3>Rules that protect the result</h3>
-  <ul class="rules">
-    <li><div><b>Fix “winner” in advance.</b> Primary metric and tie margin are declared before evaluation; near-ties go to the cheaper model.</div></li>
-    <li><div><b>Split by dataset, not by row.</b> Leave-one-dataset-out for the router; rolling-origin for the forecasts.</div></li>
-    <li><div><b>Check overlap per checkpoint and dataset.</b> Uncertain pairs are left out of headline results and reported separately.</div></li>
-    <li><div><b>Use intermittency classes only on demand.</b> Not on energy, temperature or prices. sMAPE only on strictly positive series.</div></li>
-    <li><div><b>Size the run first.</b> A smoke test on the project laptop sets a stratified subsample if the full corpus does not fit.</div></li>
-    <li><div><b>Report failure as a result.</b> If confidence cannot be calibrated or does not transfer, that is a valid finding.</div></li>
-  </ul>
-
-  <h3>Intermittent demand at a glance</h3>
-  <figure class="quad">
-    <svg viewBox="0 0 320 240" role="img" aria-label="Syntetos–Boylan classification: four quadrants by average inter-demand interval p (threshold 1.32) and CV squared of demand size (threshold 0.49): smooth, erratic, intermittent, lumpy">
-      <rect class="q-fill" x="40" y="10" width="135" height="95" rx="6"/>
-      <rect class="q-fill" x="179" y="10" width="135" height="95" rx="6"/>
-      <rect class="q-fill" x="40" y="109" width="135" height="95" rx="6"/>
-      <rect class="q-fill-a" x="179" y="109" width="135" height="95" rx="6"/>
-      <text class="q-name" x="107" y="52" text-anchor="middle">Erratic</text><text class="q-sub" x="107" y="70" text-anchor="middle">frequent, variable size</text>
-      <text class="q-name" x="246" y="52" text-anchor="middle">Lumpy</text><text class="q-sub" x="246" y="70" text-anchor="middle">rare, variable · hardest</text>
-      <text class="q-name" x="107" y="151" text-anchor="middle">Smooth</text><text class="q-sub" x="107" y="169" text-anchor="middle">frequent, stable</text>
-      <text class="q-name" x="246" y="151" text-anchor="middle">Intermittent</text><text class="q-sub" x="246" y="169" text-anchor="middle">rare, stable size</text>
-      <text class="s-lab" x="177" y="222" text-anchor="middle">p = 1.32</text>
-      <text class="s-lab" x="177" y="236" text-anchor="middle">avg. interval between demands →</text>
-      <text class="s-lab" x="14" y="107" text-anchor="middle" transform="rotate(-90 14 107)">CV² = 0.49 · size variation →</text>
-    </svg>
-    <figcaption>Syntetos–Boylan classes for non-negative demand. RQ4 asks whether the learned router beats this fixed rule at spotting where the FM should not be trusted.</figcaption>
-  </figure>
-</div></section>
-
-<!-- 06 SEARCH -->
-<section id="discovery"><div class="wrap">
-  <div class="label"><b>06</b>Search method</div>
-  <h2>Registries first, then the papers that use the data.</h2>
-  <p class="lead">Pass 1 searched benchmark registries, model repositories and field archives. Pass 2 asked which datasets model-selection and routing studies actually use, at what scale and under which protocol. Pass 2 is what narrowed the contribution from routing to calibrated trust.</p>
-
-  <div class="pipeline">
-    <div><b>42</b><span>logged searches across 7 routes</span></div>
-    <span class="arrow" aria-hidden="true">→</span>
-    <div><b>15</b><span>article-to-dataset records</span></div>
-    <span class="arrow" aria-hidden="true">→</span>
-    <div><b>6</b><span>shortlisted datasets, plus reserves</span></div>
-  </div>
-
-  <h3>Searches per route</h3>
-  <div class="routes">
-    <div class="route"><span class="id">R1</span><div class="what"><b>Confirm known leads</b><em>10</em></div><div class="bar" style="width:77%"></div><div class="out">GIFT-Eval, Monash and Car Parts confirmed</div></div>
-    <div class="route"><span class="id">R2</span><div class="what"><b>Training data and overlap</b><em>6</em></div><div class="bar" style="width:46%"></div><div class="out">Overlap risk is checkpoint-specific</div></div>
-    <div class="route"><span class="id">R3</span><div class="what"><b>Benchmark registries</b><em>5</em></div><div class="bar" style="width:38%"></div><div class="out">fev retail sets found; no strong UCI/OpenML addition</div></div>
-    <div class="route"><span class="id">R4</span><div class="what"><b>Search by field</b><em>4</em></div><div class="bar" style="width:31%"></div><div class="out">Retail meta-analysis and cross-field candidates</div></div>
-    <div class="route"><span class="id">R5</span><div class="what"><b>Citation snowballing</b><em>3</em></div><div class="bar" style="width:23%"></div><div class="out">TW3Cast identified and read</div></div>
-    <div class="route"><span class="id">R6</span><div class="what"><b>Competitions</b><em>1</em></div><div class="bar" style="width:8%"></div><div class="out">M5 retained; competition terms flagged</div></div>
-    <div class="route r7"><span class="id">R7</span><div class="what"><b>Article-to-dataset extraction · Pass 2</b><em>13</em></div><div class="bar" style="width:100%"></div><div class="out">15 records; direct precedents and held-out-field candidates</div></div>
-  </div>
-  <p class="note">Principal Scholar query: <code>"forecast model selection" time series dataset</code>, about 358 results at search time. Pass 2 sources: Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview.</p>
-
-  <h3>Limits</h3>
-  <ul>
-    <li>Full institutional Scopus search was not available; Scopus Preview was used for access checks only.</li>
-    <li>The 15 records are a purposive extraction around routing and dataset choice, not an exhaustive systematic review.</li>
-    <li>Reported sizes, zero rates and splits come from the sources and have not yet been recomputed locally.</li>
-  </ul>
-  <p class="note">Full evidence: <a href="research/dataset-discovery-v2-scholar-article-extraction.md">technical report</a>.</p>
-</div></section>
-
-<!-- 07 DECISIONS -->
+<!-- 08 DECISIONS -->
 <section id="decisions"><div class="wrap">
-  <div class="label"><b>07</b>Decisions</div>
-  <h2>Six decisions to close M1.</h2>
+  <div class="label"><b>08</b>Decisions</div>
+  <h2>Decisions to close M1.</h2>
   <ol class="decisions">
-    <li><div><b>Contribution</b>Calibrated trust-or-defer, tested for transfer, as the distinction from FAME, Zhang, CARFS, TimeRouter and TW3Cast.</div></li>
-    <li><div><b>Corpus</b>GIFT-Eval for breadth; M5, Favorita, Car Parts and NN5 for comparison; Ausgrid as the held-out field.</div></li>
+    <li><div><b>Corpus</b>GIFT-Eval for breadth; M5, Favorita, Car Parts and NN5 for comparison; Ausgrid as the held-out field; the listed reserves if a gate fails.</div></li>
+    <li><div><b>Title</b>Adopt the recommended title after M1, or keep the registered one.</div></li>
     <li><div><b>Common ground</b>A univariate core comparison with scaled errors and each dataset's published horizon; covariates outside the core.</div></li>
+    <li><div><b>Contribution</b>Calibrated trust-or-defer, tested for transfer, as the distinction from FAME, Zhang, CARFS, TimeRouter and TW3Cast.</div></li>
     <li><div><b>Validation</b>Leave-one-dataset-out testing, energy-free router training for the Ausgrid test, and uncertain overlap pairs excluded from headline results.</div></li>
-    <li><div><b>Scope</b>LightGBM as a required reference baseline outside the routing pool; further neural or hybrid models optional.</div></li>
-    <li><div><b>Rights</b>Model licences, Kaggle terms and the verified upstream conditions of each added dataset.</div></li>
+    <li><div><b>Scope and rights</b>LightGBM as a required reference baseline outside the routing pool; model licences, Kaggle terms and upstream conditions of each dataset confirmed.</div></li>
   </ol>
 
-  <div class="titles">
-    <p><span>Registered title</span>When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</p>
-    <p><span>Proposed after M1</span>When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</p>
-  </div>
-
-  <div class="boundary"><strong>Current boundary.</strong> No dataset has been downloaded, no model has been run, and no experimental result is claimed. Next: licence, provenance, overlap and feasibility checks, then proposal and ethics approval.</div>
+  <div class="boundary"><strong>Current boundary.</strong> No dataset has been downloaded, no model has been run, and no experimental result is claimed. Next: licence, provenance, overlap and feasibility checks on the six shortlisted datasets, then proposal and ethics approval.</div>
 </div></section>
 
 </main>
 
-<footer><div class="wrap"><span>COM7014 Advanced Computing Project · M1 research briefing</span><span><a href="research/dataset-discovery-v2-scholar-article-extraction.md">Technical report</a> · <a href="#answer">Back to top</a></span></div></footer>
+<footer><div class="wrap"><span>COM7014 Advanced Computing Project · M1 research briefing</span><span><a href="research/dataset-discovery-v2-scholar-article-extraction.md">Technical report</a> · <a href="#summary">Back to top</a></span></div></footer>
 </body>
 </html>
