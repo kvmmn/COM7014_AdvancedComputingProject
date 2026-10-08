@@ -3,409 +3,727 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>When to Trust a Time-Series Foundation Model · COM7014 M1 Briefing</title>
+<meta name="description" content="COM7014 M1 research briefing: calibrated trust-or-defer routing between time-series foundation models and classical forecasters.">
+<meta name="color-scheme" content="light dark">
+<title>COM7014 · M1 Research Briefing</title>
 <style>
-  @font-face { font-family: 'Aptos'; src: local('Aptos'), local('Aptos Display'); font-weight: 100 900; }
+  @font-face { font-family: "Aptos"; src: local("Aptos"), local("Aptos Display"); font-weight: 100 900; }
   :root {
-    --font: 'Aptos', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-    --ink: #111827; --ink2: #4b5563; --muted: #9ca3af;
-    --line: #e5e7eb; --soft: #f6f7f9; --accent: #1e3a8a;
-    --green: #15803d; --amber: #b45309; --red: #b91c1c;
+    --font: "Aptos", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --bg: #ffffff; --soft: #f5f6f7; --soft-2: #eceef0;
+    --ink: #121418; --ink-2: #474d57; --muted: #80868f;
+    --line: #e4e6e9; --line-2: #cfd3d8;
+    --accent: #2f5bd3; --accent-soft: #eef2fc; --accent-ink: #ffffff;
+    --bar: #c5cad1;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); color: var(--ink); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-  .page { max-width: 760px; margin: 0 auto; padding: 64px 24px 48px; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1113; --soft: #171a1e; --soft-2: #20242a;
+      --ink: #eceef1; --ink-2: #b4b9c1; --muted: #7f858e;
+      --line: #262a30; --line-2: #4a505a;
+      --accent: #7f9ef2; --accent-soft: #1a2236; --accent-ink: #0f1113;
+      --bar: #4a505a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.62; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  p { margin: 0 0 16px; }
+  ul, ol { margin: 0 0 16px; padding-left: 20px; }
+  li { margin-bottom: 8px; color: var(--ink-2); }
+  strong, b { color: var(--ink); font-weight: 650; }
+  code { font-family: var(--mono); font-size: .84em; background: var(--soft); border-radius: 5px; padding: 1px 5px; }
+  .wrap { width: min(760px, 100% - 32px); margin: 0 auto; }
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 16px; top: 12px; z-index: 10; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 6px; }
 
   /* Header */
-  .eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-  h1 { font-size: 34px; line-height: 1.15; letter-spacing: -.025em; margin: 10px 0 12px; }
-  .lead { font-size: 18px; color: var(--ink2); }
-  .meta { margin-top: 18px; font-size: 13px; color: var(--muted); }
+  header { padding: 64px 0 36px; }
+  .kicker { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  h1 { margin: 12px 0 16px; font-size: clamp(34px, 7.4vw, 56px); line-height: 1.05; letter-spacing: -.04em; font-weight: 680; }
+  .dek { color: var(--ink-2); font-size: clamp(18px, 2.6vw, 21px); line-height: 1.5; margin-bottom: 22px; }
+  .status { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); font-size: 13px; }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .pill.on i { background: var(--accent); }
+
+  /* Nav */
+  .navbar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav { display: flex; gap: 4px; overflow-x: auto; padding: 8px 0; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  nav a { flex: 0 0 auto; padding: 6px 11px; border-radius: 999px; color: var(--ink-2); font-size: 14px; font-weight: 600; text-decoration: none; }
+  nav a:hover, nav a:focus-visible { background: var(--soft); color: var(--ink); }
 
   /* Sections */
-  section { margin-top: 64px; }
-  .num { font-size: 12px; font-weight: 600; letter-spacing: .1em; color: var(--accent); text-transform: uppercase; }
-  h2 { font-size: 24px; letter-spacing: -.015em; margin: 4px 0 14px; }
-  p { color: var(--ink2); font-size: 16px; margin-bottom: 12px; }
-  strong { color: var(--ink); font-weight: 600; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { color: var(--ink2); font-size: 16px; margin-bottom: 6px; }
-  code { font-family: var(--mono); font-size: 13px; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+  section { scroll-margin-top: 56px; padding: 56px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: 0; }
+  .label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .label b { color: var(--accent); }
+  h2 { margin: 0 0 16px; font-size: clamp(26px, 5vw, 36px); line-height: 1.15; letter-spacing: -.03em; font-weight: 660; }
+  h3 { margin: 40px 0 14px; font-size: 19px; line-height: 1.3; letter-spacing: -.01em; }
+  .lead { color: var(--ink-2); font-size: 19px; line-height: 1.58; }
+  .note { color: var(--muted); font-size: 14px; line-height: 1.55; }
+  .tag { display: inline-block; padding: 1px 8px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--ink-2); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .tag.accent { border-color: var(--accent); color: var(--accent); }
 
-  /* TL;DR */
-  .tldr { margin-top: 36px; border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; }
-  .tldr h3 { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .tldr li { margin-bottom: 8px; }
+  figure { margin: 26px 0; }
+  figcaption { margin-top: 10px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .panel { border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .soft { background: var(--soft); border-color: transparent; }
 
-  /* Flow */
-  .flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-  .flow .box { flex: 1; min-width: 130px; border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-size: 14px; color: var(--ink2); }
-  .flow .box b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 2px; }
-  .flow .arrow { align-self: center; color: var(--muted); font-size: 18px; }
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .split .box { border-radius: 10px; padding: 14px; font-size: 14px; }
-  .yes { background: #f0f6ff; border: 1px solid #cfe0fb; }
-  .no { background: #f2f8f4; border: 1px solid #cfe8d7; }
+  /* Answer: thesis + stats */
+  .thesis { margin: 24px 0; padding: 22px; border-radius: 14px; background: var(--accent-soft); }
+  .thesis p { margin: 0; font-size: 20px; line-height: 1.45; letter-spacing: -.01em; color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 24px 0 8px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .stats div { background: var(--bg); padding: 14px 16px; }
+  .stats b { display: block; font-size: 26px; line-height: 1; letter-spacing: -.03em; }
+  .stats span { display: block; margin-top: 6px; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
 
-  /* Cards */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }
-  .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
-  .card .k { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-  .card p { font-size: 15px; margin: 0; }
-  .card .t { font-size: 15.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.35; }
-  .card .s { font-size: 13.5px; color: var(--ink2); }
+  /* Flow (HTML) */
+  .flow { display: flex; align-items: stretch; gap: 8px; }
+  .flow .step { flex: 1; padding: 15px; border: 1px solid var(--line); border-radius: 12px; }
+  .flow .step .n { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-bottom: 8px; border-radius: 50%; background: var(--soft-2); color: var(--ink); font-size: 12px; font-weight: 700; }
+  .flow .step b { display: block; margin-bottom: 3px; font-size: 15px; }
+  .flow .step span { color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+  .flow .arrow { align-self: center; color: var(--muted); }
 
-  /* Stats */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0; }
-  .stat { background: var(--soft); border-radius: 10px; padding: 14px; text-align: center; }
-  .stat b { display: block; font-size: 26px; letter-spacing: -.02em; color: var(--ink); }
-  .stat span { font-size: 12.5px; color: var(--ink2); }
-  @media (max-width: 600px) { .stats { grid-template-columns: 1fr 1fr; } .split { grid-template-columns: 1fr; } h1 { font-size: 28px; } }
+  /* Trust scale */
+  .scale { margin-top: 18px; }
+  .scale-bar { position: relative; display: flex; height: 46px; border-radius: 10px; overflow: hidden; font-size: 13.5px; font-weight: 600; }
+  .scale-bar .defer { flex: 0 0 66%; display: flex; align-items: center; padding: 0 14px; background: var(--soft-2); color: var(--ink-2); }
+  .scale-bar .trust { flex: 1; display: flex; align-items: center; justify-content: flex-end; padding: 0 14px; background: var(--accent); color: var(--accent-ink); }
+  .scale-axis { position: relative; height: 22px; margin-top: 6px; color: var(--muted); font-size: 12px; }
+  .scale-axis span { position: absolute; top: 0; }
+  .scale-axis .t { left: 66%; transform: translateX(-50%); color: var(--ink); font-weight: 700; }
+  .scale-axis .r { right: 0; }
 
-  /* Checklist table */
-  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 14px 0; }
-  th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-  td { padding: 10px; border-bottom: 1px solid var(--line); color: var(--ink2); vertical-align: top; }
-  td.c { text-align: center; white-space: nowrap; }
-  .y { color: var(--green); font-weight: 700; } .n { color: var(--red); font-weight: 700; } .p { color: var(--amber); font-weight: 700; }
+  /* Evidence tiles */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0; }
+  .tile { padding: 18px; border: 1px solid var(--line); border-radius: 12px; }
+  .tile .k { color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .tile .v { display: block; margin: 6px 0 4px; font-size: 28px; font-weight: 660; letter-spacing: -.03em; line-height: 1.1; }
+  .tile p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+  .minibars { margin: 12px 0 10px; }
+  .minibar { display: grid; grid-template-columns: 74px 1fr 40px; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12.5px; color: var(--ink-2); }
+  .minibar .track { height: 10px; border-radius: 5px; background: var(--soft-2); overflow: hidden; }
+  .minibar .fill { height: 100%; border-radius: 5px; background: var(--bar); }
+  .minibar .fill.accent { background: var(--accent); }
+  .minibar .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
 
-  /* Callout */
-  .callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin: 18px 0; }
-  .callout p { margin: 0; color: var(--ink); }
-  .callout.warn { border-color: var(--amber); }
+  /* Capability matrix */
+  .matrix { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .matrix th { padding: 10px 6px; color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-align: center; vertical-align: bottom; line-height: 1.3; }
+  .matrix th:first-child { text-align: left; }
+  .matrix th.us { color: var(--accent); }
+  .matrix td { padding: 12px 6px; border-top: 1px solid var(--line); text-align: center; color: var(--ink-2); }
+  .matrix td:first-child { text-align: left; color: var(--ink); font-weight: 600; }
+  .dot { display: inline-block; width: 13px; height: 13px; border-radius: 50%; vertical-align: middle; }
+  .dot.yes { background: var(--ink-2); }
+  .dot.no { border: 1.5px solid var(--line-2); }
+  .dot.part { background: linear-gradient(90deg, var(--ink-2) 50%, transparent 50%); border: 1.5px solid var(--ink-2); }
+  .dot.plan { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; color: var(--muted); font-size: 12.5px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .dot { width: 11px; height: 11px; }
 
-  /* Tags */
-  .tag { display: inline-block; font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; margin: 0 4px 6px 0; color: var(--ink2); }
-  .tag.g { border-color: #bfe3cb; color: var(--green); } .tag.a { border-color: #f1d4a8; color: var(--amber); } .tag.r { border-color: #f3c4c4; color: var(--red); }
+  /* Three schematics */
+  .schematics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0 8px; }
+  .schem { padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+  .schem b { display: block; font-size: 15px; }
+  .schem p { margin: 4px 0 10px; color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
+  .schem svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: var(--font); fill: var(--muted); }
+  .s-axis { stroke: var(--line-2); stroke-width: 1.2; fill: none; }
+  .s-ideal { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 4 4; fill: none; }
+  .s-curve { stroke: var(--accent); stroke-width: 2.4; fill: none; stroke-linecap: round; }
+  .s-dot { fill: var(--accent); }
+  .s-box { fill: var(--soft-2); }
+  .s-box-a { fill: var(--accent); }
+  .s-box-o { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 3 3; }
+  .s-lab { font-size: 10px; }
+  .s-lab-ink { font-size: 10.5px; fill: var(--ink-2); font-weight: 600; }
+  .s-lab-on { font-size: 10.5px; fill: var(--accent-ink); font-weight: 650; }
 
-  /* Quadrant */
-  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 6px; }
-  .quad div { background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: var(--ink2); }
-  .quad b { display: block; color: var(--ink); }
-  .cap { font-size: 13px; color: var(--muted); }
+  /* Claims */
+  .claims { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 26px 0 0; }
+  .claims .panel ul { margin: 8px 0 0; padding-left: 0; list-style: none; }
+  .claims li { position: relative; padding-left: 22px; font-size: 14.5px; margin-bottom: 7px; }
+  .claims li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+  .claims .yes li::before { content: "✓"; color: var(--accent); }
+  .claims .no li::before { content: "×"; color: var(--muted); }
+  .claims .h { color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 
-  /* Steps */
-  .steps { counter-reset: s; margin: 14px 0; }
-  .steps div { counter-increment: s; position: relative; padding: 0 0 16px 40px; color: var(--ink2); font-size: 15.5px; }
-  .steps div::before { content: counter(s); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); text-align: center; line-height: 25px; font-size: 13px; color: var(--accent); font-weight: 600; }
-  .steps b { color: var(--ink); }
+  /* Questions */
+  .mainq { margin: 18px 0 20px; padding: 20px 22px; border-left: 3px solid var(--accent); background: var(--soft); border-radius: 0 12px 12px 0; }
+  .mainq .h { color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .mainq p { margin: 6px 0 0; font-size: 19px; line-height: 1.45; color: var(--ink); }
+  .rqs { display: grid; gap: 10px; }
+  .rq { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .rq .id { font-size: 13px; font-weight: 750; color: var(--muted); }
+  .rq.central .id { color: var(--accent); }
+  .rq b { display: block; margin-bottom: 4px; line-height: 1.4; }
+  .rq .fail { color: var(--ink-2); font-size: 14.5px; }
+  .rq .fail em { font-style: normal; font-weight: 650; color: var(--ink); }
 
-  /* Details */
-  details { border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
-  summary { cursor: pointer; padding: 12px 16px; font-size: 14.5px; font-weight: 600; color: var(--ink); list-style: none; }
+  /* Dataset bars */
+  .dsgroup { margin: 18px 0 4px; color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .ds { display: grid; grid-template-columns: 150px 1fr; gap: 6px 16px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .ds .name b { display: block; font-size: 15px; }
+  .ds .name span { color: var(--muted); font-size: 12.5px; }
+  .ds .bar { display: flex; align-items: center; gap: 10px; }
+  .ds .bar i { display: block; height: 12px; border-radius: 6px; background: var(--bar); }
+  .ds .bar i.accent { background: var(--accent); }
+  .ds .bar em { font-style: normal; font-size: 13px; color: var(--ink); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ds .role { grid-column: 2; color: var(--ink-2); font-size: 13.5px; line-height: 1.4; }
+
+  .ground { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .ground div { padding: 14px 16px; border-radius: 12px; background: var(--soft); }
+  .ground b { display: block; font-size: 14.5px; }
+  .ground span { color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
+
+  .studies { margin: 10px 0; }
+  .study { padding: 16px 0; border-top: 1px solid var(--line); }
+  .study .top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 4px; }
+  .study .top b { font-size: 15.5px; }
+  .study .top .who { color: var(--muted); font-size: 13px; }
+  .study .data { color: var(--ink-2); font-size: 14px; margin: 0 0 4px; }
+  .study .use { color: var(--ink); font-size: 14px; margin: 0; }
+  .study .use::before { content: "→ "; color: var(--accent); font-weight: 700; }
+
+  .gates { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 14px 0; padding: 0; list-style: none; counter-reset: g; }
+  .gates li { counter-increment: g; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; line-height: 1.35; }
+  .gates li::before { content: counter(g); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-bottom: 6px; border-radius: 50%; background: var(--soft-2); color: var(--ink); font-size: 11px; font-weight: 700; }
+  .gates b { display: block; font-size: 14px; }
+
+  .callout { margin: 18px 0; padding: 15px 18px; border-radius: 12px; background: var(--soft); color: var(--ink-2); font-size: 15px; }
+  .callout p { margin: 0; }
+
+  /* Method */
+  .pool { display: grid; gap: 14px; margin: 14px 0; }
+  .pool .h { color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--ink-2); font-size: 13px; }
+  .chip.fm { border-color: var(--accent); color: var(--accent); }
+  .chip.dim { border-style: dashed; }
+  .chip sup { color: var(--muted); }
+
+  .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .scores div { padding: 14px; border-radius: 12px; background: var(--soft); }
+  .scores b { display: block; font-size: 15px; margin-bottom: 3px; }
+  .scores span { color: var(--ink-2); font-size: 13px; line-height: 1.4; }
+
+  .folds { display: grid; grid-template-columns: minmax(96px, 1.3fr) repeat(3, 1fr); gap: 4px; font-size: 12.5px; }
+  .folds .hd { padding: 4px 2px 8px; color: var(--muted); font-size: 11.5px; font-weight: 700; line-height: 1.3; text-align: center; }
+  .folds .hd:first-child { text-align: left; }
+  .folds .rl { display: flex; align-items: center; padding-right: 6px; color: var(--ink); font-weight: 600; line-height: 1.25; }
+  .folds .c { display: grid; place-items: center; height: 30px; border-radius: 6px; font-size: 11.5px; font-weight: 650; }
+  .c.tr { background: var(--soft-2); color: var(--ink-2); }
+  .c.te { background: var(--accent); color: var(--accent-ink); }
+  .c.ex { border: 1.5px dashed var(--line-2); color: var(--muted); }
+  .c.na { color: var(--muted); }
+
+  .rules { margin: 10px 0; padding: 0; list-style: none; }
+  .rules li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 12px 0; margin: 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .rules li::before { content: ""; width: 8px; height: 8px; margin: 8px 0 0 6px; border-radius: 50%; background: var(--accent); }
+
+  .quad svg { max-width: 460px; }
+  .q-fill { fill: var(--soft); }
+  .q-fill-a { fill: var(--accent-soft); }
+  .q-name { font-size: 13px; fill: var(--ink); font-weight: 650; }
+  .q-sub { font-size: 10.5px; fill: var(--ink-2); }
+
+  /* Search */
+  .pipeline { display: flex; align-items: stretch; gap: 8px; margin: 18px 0; }
+  .pipeline div { flex: 1; padding: 14px 16px; border-radius: 12px; background: var(--soft); }
+  .pipeline b { display: block; font-size: 28px; line-height: 1; letter-spacing: -.03em; }
+  .pipeline span { display: block; margin-top: 6px; color: var(--ink-2); font-size: 13px; }
+  .pipeline .arrow { flex: 0 0 auto; align-self: center; padding: 0; background: none; color: var(--muted); }
+  .routes { margin: 14px 0; }
+  .route { display: grid; grid-template-columns: 34px 1fr; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .route .id { font-size: 13px; font-weight: 750; color: var(--muted); padding-top: 1px; }
+  .route .what { display: flex; justify-content: space-between; gap: 10px; font-size: 14.5px; }
+  .route .what b { font-weight: 600; }
+  .route .what em { font-style: normal; color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .route .bar { grid-column: 2; height: 6px; border-radius: 3px; background: var(--bar); }
+  .route.r7 .bar { background: var(--accent); }
+  .route .out { grid-column: 2; color: var(--ink-2); font-size: 13.5px; }
+
+  /* Decisions */
+  .decisions { margin: 14px 0; padding: 0; list-style: none; counter-reset: d; }
+  .decisions li { counter-increment: d; display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 14px 0; margin: 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .decisions li::before { content: counter(d); display: grid; place-items: center; width: 26px; height: 26px; border: 1.5px solid var(--line-2); border-radius: 50%; color: var(--ink); font-size: 12px; font-weight: 700; }
+  .decisions b { display: block; }
+  .titles { margin: 22px 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 12px; }
+  .titles p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--ink); }
+  .titles p + p { margin-top: 12px; }
+  .titles span { display: block; color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
+  .boundary { margin-top: 18px; padding: 15px 18px; border: 1px solid var(--line-2); border-radius: 12px; font-size: 14.5px; color: var(--ink-2); }
+
+  /* Details + tables */
+  details { margin: 14px 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  summary { position: relative; cursor: pointer; list-style: none; padding: 14px 46px 14px 16px; font-weight: 650; font-size: 15px; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; float: right; color: var(--muted); }
-  details[open] summary::after { content: "–"; }
-  details .inner { padding: 0 16px 14px; overflow-x: auto; }
-  details table { font-size: 13.5px; }
+  summary::after { content: "+"; position: absolute; right: 16px; top: 11px; color: var(--muted); font-size: 20px; font-weight: 400; transition: transform 160ms ease; }
+  details[open] summary { border-bottom: 1px solid var(--line); }
+  details[open] summary::after { transform: rotate(45deg); }
+  .dbody { padding: 6px 16px 14px; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .t th { padding: 10px 8px 8px 0; border-bottom: 1px solid var(--line-2); color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-align: left; text-transform: uppercase; }
+  .t td { padding: 10px 8px 10px 0; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+  .t tr:last-child td { border-bottom: 0; }
+  .t td:first-child { color: var(--ink); font-weight: 600; }
 
-  /* Titles */
-  .title { border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
-  .title.best { border-color: #cfe0fb; background: #f8fbff; }
-  .title .t { font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--ink); margin: 4px 0; }
-  .title .s { font-size: 14px; color: var(--ink2); }
+  footer { padding: 28px 0 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
 
-  footer { margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  /* Mobile */
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    header { padding: 44px 0 28px; }
+    section { padding: 44px 0; }
+    .lead { font-size: 17.5px; }
+    .thesis p, .mainq p { font-size: 18px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .flow, .pipeline { flex-direction: column; }
+    .flow .arrow, .pipeline .arrow { transform: rotate(90deg); align-self: center; line-height: 1; }
+    .tiles, .claims, .ground, .scores { grid-template-columns: 1fr; }
+    .schematics { grid-template-columns: 1fr; }
+    .schem { display: grid; grid-template-columns: 1fr 130px; gap: 0 14px; align-items: center; }
+    .schem svg { grid-row: 1 / span 2; grid-column: 2; }
+    .schem p { margin-bottom: 0; }
+    .gates { grid-template-columns: 1fr; }
+    .gates li { display: grid; grid-template-columns: 28px 1fr; align-items: center; padding: 10px 12px; }
+    .gates li::before { margin: 0; }
+    .gates li b { display: block; }
+    .flow .step { display: grid; grid-template-columns: 30px 1fr; column-gap: 8px; padding: 13px 14px; }
+    .flow .step .n { grid-row: 1 / span 2; margin: 1px 0 0; }
+    .ds { grid-template-columns: 1fr; gap: 4px; }
+    .ds .role { grid-column: 1; }
+    .rq { grid-template-columns: 1fr; gap: 4px; }
+    .matrix { font-size: 13px; }
+    .matrix th { font-size: 10.5px; padding: 8px 2px; }
+    .matrix td { padding: 11px 2px; }
+    .scale-bar { font-size: 12.5px; }
+    /* stacked tables */
+    table.t thead { display: none; }
+    table.t, .t tbody, .t tr, .t td { display: block; width: 100%; }
+    .t tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .t tr:last-child { border-bottom: 0; }
+    .t td { padding: 2px 0; border: 0; }
+    .t td[data-l]::before { content: attr(data-l) " · "; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .t td:first-child { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } summary::after { transition: none; } }
+  @media print { .navbar { display: none; } section, details, figure { break-inside: avoid; } }
 </style>
 </head>
 <body>
-<div class="page">
+<a class="skip" href="#main">Skip to content</a>
 
 <header>
-  <div class="eyebrow">COM7014 · Advanced Computing Project · Phase M1</div>
-  <h1>When to Trust a Time-Series Foundation Model</h1>
-  <p class="lead">For any single time series: should we use a big pre-trained model, or a simple classical one? And how sure can we be?</p>
-  <div class="meta">Kaveh Momeni · Working briefing · Updated 8 October 2026 · No data downloaded or models run</div>
+  <div class="wrap">
+    <div class="kicker">COM7014 · Advanced Computing Project · M1 briefing</div>
+    <h1>When should a time-series foundation model be trusted?</h1>
+    <p class="dek">The problem, what the literature already solves, how the remaining gap will be tested, and the decisions needed to close M1.</p>
+    <div class="status">
+      <span class="pill on"><i></i>Literature and dataset review drafted</span>
+      <span class="pill"><i></i>Dataset access still gated</span>
+      <span class="pill"><i></i>No data downloaded · no models run</span>
+      <span class="pill"><i></i>Updated 8 October 2026</span>
+    </div>
+  </div>
 </header>
 
-<div class="tldr">
-  <h3>In 30 seconds</h3>
-  <ul>
-    <li><strong>Problem:</strong> benchmarks report averages, but in practice you pick a model for each series separately.</li>
-    <li><strong>What changed:</strong> the new article search found that per-series routing across classical, ML and deep models already exists on M5 and Favorita.</li>
-    <li><strong>Gap:</strong> the defensible contribution is now narrower: a calibrated probability that trusting a foundation model is the right decision, with an explicit classical fallback and held-out-field testing.</li>
-    <li><strong>So far:</strong> 42 logged searches, 15 article-to-dataset extractions, 8 fields covered, and a model–dataset leakage problem identified.</li>
-  </ul>
-</div>
+<div class="navbar"><div class="wrap"><nav aria-label="Sections">
+  <a href="#answer">Answer</a><a href="#evidence">Evidence</a><a href="#questions">Questions</a><a href="#datasets">Datasets</a><a href="#method">Method</a><a href="#discovery">Search</a><a href="#decisions">Decisions</a>
+</nav></div></div>
 
-<!-- The idea -->
-<section>
-  <div class="num">The idea</div>
-  <h2>One decision, per series</h2>
-  <div class="flow">
-    <div class="box"><b>A time series</b>e.g. daily sales of one product</div>
-    <div class="arrow">→</div>
-    <div class="box"><b>Quick profile</b>about 30 simple statistics</div>
-    <div class="arrow">→</div>
-    <div class="box"><b>Confidence score</b>“how likely is the big model to win here?”</div>
+<main id="main">
+
+<!-- 01 ANSWER -->
+<section id="answer"><div class="wrap">
+  <div class="label"><b>01</b>Answer</div>
+  <h2>Routing already exists. A router whose confidence can be checked does not.</h2>
+  <p class="lead">Published systems already choose, series by series, between foundation models and classical forecasters. None shows that its confidence can be relied on. This project builds and tests one that does.</p>
+
+  <div class="thesis"><p>When the router says “trust the foundation model, 80% confident”, it should be right about 80% of the time. When it is not confident enough, it falls back to a cheaper classical model, including on a field it never saw in training.</p></div>
+
+  <h3>How one series is handled</h3>
+  <div class="flow" role="list">
+    <div class="step" role="listitem"><span class="n">1</span><b>Describe</b><span>Length, seasonality, trend, entropy, intermittency.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step" role="listitem"><span class="n">2</span><b>Estimate</b><span>Probability that trusting the foundation model is right.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step" role="listitem"><span class="n">3</span><b>Decide</b><span>Compare it with a threshold τ fixed in advance.</span></div>
   </div>
-  <div class="split">
-    <div class="box yes"><b>High score → trust it</b><br>Use the foundation model.</div>
-    <div class="box no"><b>Low score → fall back</b><br>Use a cheap classical or sparse-demand method.</div>
-  </div>
-  <p style="margin-top:14px" class="cap">Glossary: <strong>foundation model (FM)</strong> = large model pre-trained on millions of series, used without retraining. <strong>Classical</strong> = simple statistical methods such as ETS, ARIMA, Croston.</p>
-</section>
 
-<!-- Why -->
-<section>
-  <div class="num">01 · Why</div>
-  <h2>Averages hide failures</h2>
-  <div class="cards">
-    <div class="card"><div class="k">Good news</div><p>FMs are among the strongest forecasters on the main benchmark, GIFT-Eval.</p></div>
-    <div class="card"><div class="k">Bad news</div><p>On sparse retail demand (M5) an FM scored 0.97 vs 0.52 for a tuned LightGBM (error, lower is better).</p></div>
-    <div class="card"><div class="k">Missing</div><p>No one tells you <em>which</em> series will fail, or how far to trust a model's choice.</p></div>
-  </div>
-  <p class="cap">Source for the first two: Rubczynski (2026), a review of 543 model comparisons in retail. It finds a real overall FM advantage, so the picture is mixed, not one-sided.</p>
-</section>
+  <figure class="scale" aria-label="Probability scale with threshold: below the threshold defer to the classical fallback, above it trust the foundation model">
+    <div class="scale-bar"><div class="defer">Defer → classical fallback</div><div class="trust">Trust → FM</div></div>
+    <div class="scale-axis"><span>0</span><span class="t">τ</span><span class="r">1</span></div>
+    <figcaption>Probability that trusting the FM is the right choice. τ is set on validation data to meet a target error rate. Deferral is what separates this from plain routing: the test is whether that target still holds on unseen data.</figcaption>
+  </figure>
 
-<!-- Gap -->
-<section>
-  <div class="num">02 · What exists</div>
-  <h2>Routing is established. Reliable trust decisions are not.</h2>
-  <table>
-    <thead><tr><th></th><th class="c">Closest prior work*</th><th class="c">Proposed focus</th></tr></thead>
-    <tbody>
-      <tr><td>Picks a model per series</td><td class="c y">✓</td><td class="c y">✓</td></tr>
-      <tr><td>Routes across classical, ML and deep experts</td><td class="c y">✓</td><td class="c y">✓</td></tr>
-      <tr><td>Includes intermittent-demand features or methods</td><td class="c y">✓</td><td class="c y">✓</td></tr>
-      <tr><td>Can invoke a foundation model selectively</td><td class="c y">✓</td><td class="c y">✓</td></tr>
-      <tr><td>Calibrates probability that the routing decision is correct</td><td class="c n">not shown</td><td class="c y">core test</td></tr>
-      <tr><td>Tests transfer to a held-out field or dataset family</td><td class="c p">limited</td><td class="c y">required</td></tr>
-    </tbody>
-  </table>
-  <p class="cap">* FAME, Zhang's sparse-demand router, CARFS, AutoForecast, FFORMPP, TimeRouter and TW3Cast. Their selection units, expert pools and evaluation targets differ.</p>
-  <div class="callout"><p>The project will <strong>not</strong> claim that per-series routing is new. The contribution under investigation is a verified trust/defer probability, cross-family fallback, and generalisation beyond the retail datasets used by the closest studies.</p></div>
-</section>
-
-<!-- RQs -->
-<section>
-  <div class="num">03 · Questions</div>
-  <h2>Four questions</h2>
-  <div class="cards">
-    <div class="card"><div class="k">RQ1 · Signals</div><div class="t">Which series properties predict that an FM will win?</div><div class="s">Fails if the properties predict no better than guessing.</div></div>
-    <div class="card"><div class="k">RQ2 · Value</div><div class="t">Does routing match the best single model at lower cost?</div><div class="s">Fails if “always use the FM” wins on accuracy and cost.</div></div>
-    <div class="card"><div class="k">RQ3 · Trust</div><div class="t">When the router says 80% sure, is it right about 80% of the time?</div><div class="s">Measured with reliability diagrams and calibration error.</div></div>
-    <div class="card"><div class="k">RQ4 · Sparse demand</div><div class="t">Can it spot sparse series by itself and route them well?</div><div class="s">Must beat a simple hand-written rule to count.</div></div>
-  </div>
-  <p class="cap">A negative answer is still a result: finding the minority of series where FMs fail is useful on its own.</p>
-</section>
-
-<!-- Search -->
-<section>
-  <div class="num">04 · How the data was found</div>
-  <h2>A logged, repeatable search</h2>
   <div class="stats">
-    <div class="stat"><b>7</b><span>search routes</span></div>
-    <div class="stat"><b>42</b><span>logged searches</span></div>
-    <div class="stat"><b>8</b><span>fields covered</span></div>
-    <div class="stat"><b>12</b><span>selection criteria</span></div>
+    <div><b>42</b><span>logged searches</span></div>
+    <div><b>15</b><span>article-to-dataset records</span></div>
+    <div><b>6</b><span>shortlisted datasets</span></div>
+    <div><b>4</b><span>fields in layers 2 and 3</span></div>
   </div>
-  <div class="steps">
-    <div><b>Discover</b> through Google Scholar, Scopus access checks, publishers, citation indexes, benchmark registries and official repositories.</div>
-    <div><b>Read</b> the evaluation and data sections, then extract the unit, scale, frequency, horizon, sparsity, covariates, access and experimental role.</div>
-    <div><b>Decide</b> only after separating comparability value from novelty value and applying licence, leakage and compute gates.</div>
-  </div>
+
   <details>
-    <summary>The seven routes in detail</summary>
-    <div class="inner"><table>
-      <thead><tr><th>Route</th><th>Where</th><th>Main result</th></tr></thead>
-      <tbody>
-        <tr><td>R1 · known leads</td><td>HuggingFace, GitHub, Zenodo, Monash repository</td><td>GIFT-Eval and Monash confirmed</td></tr>
-        <tr><td>R2 · model training data</td><td>Model repositories, GIFT-Eval leaderboard</td><td>Found which models already saw the test data</td></tr>
-        <tr><td>R3 · registries</td><td>HuggingFace, UCI, OpenML</td><td>Extra retail sets (fev); UCI/OpenML empty</td></tr>
-        <tr><td>R4 · by field</td><td>OpenAlex</td><td>Found the 2026 retail review</td></tr>
-        <tr><td>R5 · citations</td><td>OpenAlex, arXiv</td><td>Found TW3Cast</td></tr>
-        <tr><td>R6 · competitions</td><td>Kaggle</td><td>Mostly weak; M5 licence needs care</td></tr>
-        <tr><td>R7 · article extraction</td><td>Google Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview</td><td>15 datasets/studies extracted; direct routing precedents and held-out-field candidates identified</td></tr>
-      </tbody>
-    </table></div>
+    <summary>Terms used on this page</summary>
+    <div class="dbody"><table class="t"><tbody>
+      <tr><td>Foundation model (FM)</td><td>A pretrained time-series model used without further training (zero-shot), such as Chronos-2.</td></tr>
+      <tr><td>Classical fallback</td><td>Seasonal Naive, ETS, ARIMA and Theta, plus Croston, SBA and TSB on demand series.</td></tr>
+      <tr><td>Router</td><td>The small model that reads series characteristics and outputs the trust probability.</td></tr>
+      <tr><td>Calibrated</td><td>Decisions made at 80% confidence are right about 80% of the time.</td></tr>
+      <tr><td>Field</td><td>An application area such as retail, energy or banking. A held-out field is never seen in router training.</td></tr>
+      <tr><td>Overlap</td><td>A test series that was in an FM's pretraining data, which would inflate its zero-shot score.</td></tr>
+    </tbody></table></div>
   </details>
-  <div class="callout"><p><strong>Completed in this pass:</strong> article-to-dataset extraction is now explicit. The next gate is not another broad search; it is authoritative licence, provenance, checkpoint-overlap and local-feasibility verification for the shortlist.</p></div>
-</section>
+</div></section>
 
-<!-- Article extraction -->
-<section>
-  <div class="num">05 · What the papers changed</div>
-  <h2>The datasets are evidence — and a warning</h2>
-  <p>The same retail datasets recur across the closest model-selection studies. That makes them excellent for comparison, but weak as evidence of originality.</p>
-  <div class="cards">
-    <div class="card"><div class="k">Favorita · Zhang 2025</div><div class="t">24,646 daily item–store series</div><div class="s">19,646 training and 5,000 disjoint holdout series; 57.2% mean zero-sales; seven experts and three routers.</div></div>
-    <div class="card"><div class="k">M5 + Favorita · FAME 2026</div><div class="t">Sparse, cost-aware expert routing</div><div class="s">Classical, ML and deep experts; optional Chronos used on 8.6% of M5 and 10.9% of Favorita series.</div></div>
-    <div class="card"><div class="k">M5 → Favorita · CARFS 2023</div><div class="t">Ranked model shortlisting already transfers</div><div class="s">M5 builds the benchmark knowledge base; a 1,000-series Favorita subset tests implementation.</div></div>
-    <div class="card"><div class="k">348 datasets · AutoForecast</div><div class="t">Cross-domain model-selection corpus</div><div class="s">625 series, 308 univariate and 40 multivariate datasets, with results from 322 model configurations.</div></div>
-  </div>
-  <div class="callout warn"><p><strong>Novelty boundary:</strong> “route each series to a model” is already done. The proposed work must show calibrated trust, a clear defer/fallback policy, and generalisation to a dataset family or field not used to train the router.</p></div>
+<!-- 02 EVIDENCE -->
+<section id="evidence"><div class="wrap">
+  <div class="label"><b>02</b>Evidence and gap</div>
+  <h2>Foundation models win on average and lose on particular series.</h2>
+  <p class="lead">Benchmark averages favour foundation models, sparse demand produces clear failures, and existing routers already exploit that. What is missing is evidence that a router's confidence can be relied on.</p>
 
-  <h2 style="margin-top:28px">Best article-derived candidates</h2>
-  <table>
-    <thead><tr><th>Candidate</th><th>What the article provides</th><th>Current role</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Ausgrid</strong></td><td>300 buildings, three years, 30-minute load and PV; selector trained on 200 buildings and tested on 100</td><td>Leading held-out energy candidate</td></tr>
-      <tr><td><strong>NN5</strong></td><td>111 daily ATM-demand series, 791 observations, 56-day horizon; direct meta-learning selection precedent</td><td>Compact non-retail demand candidate</td></tr>
-      <tr><td><strong>Alibaba 2018</strong></td><td>More than 4,000 cloud machines over eight days with resource telemetry</td><td>Reserve cloud-domain candidate</td></tr>
-      <tr><td><strong>FluSight / COVID hubs</strong></td><td>Weekly hospitalisation forecasts across US locations and horizons</td><td>Calibration-method reserve</td></tr>
-      <tr><td><strong>SNBC, LA traffic, cardiac CBC</strong></td><td>Strong real-world evidence but confidential or without a public release route</td><td>Problem evidence only; not experimental data</td></tr>
-    </tbody>
-  </table>
-  <p class="cap">Full extraction, source links, access decisions and the consolidated matrix: <a href="research/dataset-discovery-v2-scholar-article-extraction.md">Dataset Discovery V2 technical record</a>.</p>
-</section>
-
-<!-- Data -->
-<section>
-  <div class="num">06 · The data</div>
-  <h2>Three layers</h2>
-  <div class="cards">
-    <div class="card"><div class="k">Main benchmark</div><div class="t">GIFT-Eval</div><div class="s">144K series · 7 fields · 10 time scales · upstream terms checked per dataset</div></div>
-    <div class="card"><div class="k">Comparability</div><div class="t">M5 and Favorita</div><div class="s">Used because direct routing baselines exist — not because the datasets are novel</div></div>
-    <div class="card"><div class="k">Held-out field</div><div class="t">Ausgrid first; cloud/health reserves</div><div class="s">Tests whether trust decisions transfer beyond retail</div></div>
+  <div class="tiles">
+    <div class="tile"><span class="k">Broad benchmark</span><span class="v">144K series</span><p>GIFT-Eval spans seven fields and ten frequencies; FMs are among its strongest entries.</p></div>
+    <div class="tile"><span class="k">Retail meta-analysis</span><span class="v">543 comparisons</span><p>Rubczynski (2026) reports an overall FM advantage, stronger for distributional than point metrics.</p></div>
+    <div class="tile"><span class="k">Sparse-demand failure</span>
+      <div class="minibars" role="img" aria-label="WRMSSE on intermittent M5: foundation model 0.97, LightGBM 0.52; lower is better">
+        <div class="minibar"><span>FM</span><div class="track"><div class="fill accent" style="width:97%"></div></div><span class="num">0.97</span></div>
+        <div class="minibar"><span>LightGBM</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="num">0.52</span></div>
+      </div>
+      <p>WRMSSE on intermittent M5, as reported in the same review. Lower is better.</p></div>
+    <div class="tile"><span class="k">Routing already works</span>
+      <div class="minibars" role="img" aria-label="Share of series for which FAME calls Chronos: M5 8.6 percent, Favorita 10.9 percent">
+        <div class="minibar"><span>M5</span><div class="track"><div class="fill accent" style="width:8.6%"></div></div><span class="num">8.6%</span></div>
+        <div class="minibar"><span>Favorita</span><div class="track"><div class="fill accent" style="width:10.9%"></div></div><span class="num">10.9%</span></div>
+      </div>
+      <p>Share of series for which FAME calls Chronos. Selective FM use is already practical.</p></div>
   </div>
 
-  <p><strong>Sorting sparse demand.</strong> Each demand series lands in one of four boxes, based on how often sales happen and how much their size varies:</p>
-  <div class="quad">
-    <div><b>Erratic</b>frequent · size jumps</div>
-    <div><b>Lumpy</b>rare · size jumps</div>
-    <div><b>Smooth</b>frequent · steady size</div>
-    <div><b>Intermittent</b>rare · steady size</div>
-  </div>
-  <p class="cap">Syntetos–Boylan classification. Only for demand data, not for energy or temperature. Expectation to test: FMs do best on “smooth”, worst on “intermittent” and “lumpy”.</p>
-
-  <details>
-    <summary>Dataset details</summary>
-    <div class="inner"><table>
-      <thead><tr><th>Dataset</th><th>Field</th><th>Size</th><th>Note</th></tr></thead>
+  <h3>What exists, and what does not</h3>
+  <figure>
+    <table class="matrix">
+      <thead><tr><th>As reported</th><th>Classical selection<br>FFORMS line</th><th>FM-only routing<br>TimeRouter, TW3Cast</th><th>Cross-family<br>Zhang, CARFS, FAME</th><th class="us">This project</th></tr></thead>
       <tbody>
-        <tr><td>GIFT-Eval</td><td>7 fields</td><td>144K series</td><td>Standard benchmark; flags models that saw the test data</td></tr>
-        <tr><td>Car Parts</td><td>Spare parts</td><td>2,674 × 51 months</td><td>Classic sparse set; inside GIFT-Eval</td></tr>
-        <tr><td>M5</td><td>Retail</td><td>30,490 × ~1,941 days</td><td>~70% zero days (reported); Kaggle licence</td></tr>
-        <tr><td>Favorita</td><td>Grocery retail</td><td>24,646-series protocol in Zhang (2025)</td><td>Direct routing benchmark; 57.2% mean zero-sales in that sample</td></tr>
-        <tr><td>NN5</td><td>ATM cash</td><td>111 × 791 days</td><td>56-day horizon; distinguish missing values from real zero demand</td></tr>
-        <tr><td>Ausgrid</td><td>Energy</td><td>300 buildings × 3 years</td><td>30-minute load and PV; strongest held-out-field candidate</td></tr>
-        <tr><td>Alibaba 2018</td><td>Cloud operations</td><td>4,000+ machines × 8 days</td><td>Reserve candidate; requires a bounded, reproducible subset</td></tr>
+        <tr><td>Per-series choice</td><td><i class="dot yes" title="Yes"></i></td><td><i class="dot yes" title="Yes"></i></td><td><i class="dot yes" title="Yes"></i></td><td><i class="dot plan" title="Planned"></i></td></tr>
+        <tr><td>FM and classical in one pool</td><td><i class="dot no" title="No"></i></td><td><i class="dot no" title="No"></i></td><td><i class="dot yes" title="Yes"></i></td><td><i class="dot plan" title="Planned"></i></td></tr>
+        <tr><td>Calibrated confidence checked</td><td><i class="dot no" title="No"></i></td><td><i class="dot no" title="No"></i></td><td><i class="dot no" title="No"></i></td><td><i class="dot plan" title="Planned"></i></td></tr>
+        <tr><td>Tested on a held-out field</td><td><i class="dot no" title="No"></i></td><td><i class="dot no" title="No"></i></td><td><i class="dot part" title="Partly: retail to retail"></i></td><td><i class="dot plan" title="Planned"></i></td></tr>
       </tbody>
-    </table><p class="cap">Zero shares and sizes not listed are computed once data access is approved.</p></div>
-  </details>
+    </table>
+    <div class="legend"><span><i class="dot yes"></i>Reported</span><span><i class="dot part"></i>Partly (CARFS: retail to retail)</span><span><i class="dot no"></i>Not reported</span><span><i class="dot plan"></i>Planned here</span></div>
+  </figure>
 
-  <div class="callout warn"><p><strong>The big pitfall: test data the model has already seen.</strong> Some models were trained on the very datasets used to test them, so their scores look better than they are. Older Chronos, TimesFM 1–2 and TinyTimeMixer are flagged. Chronos-2, TimesFM-2.5 and MOIRAI are clean <em>on GIFT-Eval</em>. For datasets outside GIFT-Eval this still has to be checked.</p></div>
-  <details>
-    <summary>If a check fails</summary>
-    <div class="inner"><ul>
-      <li>Test only on time periods after the model's release.</li>
-      <li>Prefer datasets published after the model was trained.</li>
-      <li>Report results with and without the doubtful datasets.</li>
+  <h3>What “checked confidence” means</h3>
+  <div class="schematics">
+    <div class="schem"><b>Calibration</b><p>Stated confidence should match how often the choice is right.</p>
+      <svg viewBox="0 0 140 120" role="img" aria-label="Schematic reliability diagram: dashed diagonal is perfect calibration, the curve shows a router close to it">
+        <path class="s-axis" d="M18 8 V100 H134"/>
+        <path class="s-ideal" d="M18 100 L134 8"/>
+        <path class="s-curve" d="M18 100 C50 86 70 66 96 42 S124 16 134 12"/>
+        <text class="s-lab" x="76" y="115" text-anchor="middle">stated confidence</text>
+        <text class="s-lab" x="8" y="56" text-anchor="middle" transform="rotate(-90 8 56)">correct</text>
+      </svg></div>
+    <div class="schem"><b>Deferral</b><p>Trusting the FM on fewer series should mean fewer errors.</p>
+      <svg viewBox="0 0 140 120" role="img" aria-label="Schematic risk-coverage curve: error rises as coverage increases; the threshold sets the operating point">
+        <path class="s-axis" d="M18 8 V100 H134"/>
+        <path class="s-curve" d="M22 94 C60 90 90 70 110 46 S128 18 134 14"/>
+        <circle class="s-dot" cx="98" cy="60" r="4"/>
+        <text class="s-lab-ink" x="92" y="78" text-anchor="end">τ</text>
+        <text class="s-lab" x="76" y="115" text-anchor="middle">share trusted to FM</text>
+        <text class="s-lab" x="8" y="56" text-anchor="middle" transform="rotate(-90 8 56)">error</text>
+      </svg></div>
+    <div class="schem"><b>Transfer</b><p>The same check must hold on a field the router never saw.</p>
+      <svg viewBox="0 0 140 120" role="img" aria-label="Schematic: router trained on several fields, tested on a separate held-out field">
+        <rect class="s-box" x="6" y="26" width="24" height="22" rx="4"/><rect class="s-box" x="34" y="26" width="24" height="22" rx="4"/><rect class="s-box" x="62" y="26" width="24" height="22" rx="4"/>
+        <rect class="s-box" x="6" y="52" width="24" height="22" rx="4"/><rect class="s-box" x="34" y="52" width="24" height="22" rx="4"/><rect class="s-box" x="62" y="52" width="24" height="22" rx="4"/>
+        <path class="s-axis" d="M89 50 H98"/><path class="s-axis" d="M94 46 L98 50 L94 54"/>
+        <rect class="s-box-a" x="102" y="38" width="30" height="24" rx="4"/>
+        <text class="s-lab-on" x="117" y="54" text-anchor="middle">test</text>
+        <text class="s-lab" x="46" y="92" text-anchor="middle">train fields</text>
+        <text class="s-lab" x="114" y="78" text-anchor="middle">new field</text>
+      </svg></div>
+  </div>
+  <p class="note">Schematics explain the tests. They are not results.</p>
+
+  <div class="claims">
+    <div class="panel yes"><span class="h">Defensible to investigate</span><ul>
+      <li>A calibrated probability that the routing choice is correct</li>
+      <li>Explicit trust/defer operating points</li>
+      <li>FM versus classical fallback, including on sparse demand</li>
+      <li>Transfer to a held-out dataset and a held-out field</li>
+      <li>Accuracy, regret and compute trade-offs</li>
     </ul></div>
-  </details>
-</section>
+    <div class="panel no soft"><span class="h">Not claimed</span><ul>
+      <li>Per-series routing is new</li>
+      <li>Cross-family model selection is new</li>
+      <li>M5 or Favorita is a novel testbed</li>
+      <li>A wrapper licence covers all source data</li>
+      <li>A benchmark-level leakage flag proves a model is clean on other datasets</li>
+    </ul></div>
+  </div>
+</div></section>
 
-<!-- Models -->
-<section>
-  <div class="num">07 · The models</div>
-  <h2>Who is in the pool</h2>
-  <p><span class="tag">Foundation</span> Chronos-2 · TimesFM-2.5 · MOIRAI</p>
-  <p><span class="tag g">Classical</span> Seasonal Naive · ETS · ARIMA · Theta</p>
-  <p><span class="tag g">Sparse demand</span> Croston · SBA · TSB</p>
-  <p><span class="tag a">Strong baseline</span> LightGBM (best known result on M5)</p>
+<!-- 03 QUESTIONS -->
+<section id="questions"><div class="wrap">
+  <div class="label"><b>03</b>Questions</div>
+  <h2>One main question, four ways it can fail.</h2>
+  <div class="mainq"><span class="h">Main research question</span><p>Can a per-series router give a calibrated probability that trusting a time-series foundation model is the right choice, and does that probability still hold on datasets and fields it was not trained on?</p></div>
+  <div class="rqs">
+    <div class="rq"><span class="id">RQ1</span><div><b>Signals · Which series characteristics predict that the FM will win?</b><p class="fail"><em>Fails if</em> feature-based prediction does no better than always predicting the majority outcome on held-out datasets.</p></div></div>
+    <div class="rq"><span class="id">RQ2</span><div><b>Value · Can routing match or beat the best single model at lower cost?</b><p class="fail"><em>Fails if</em> always-FM or always-classical matches or beats the router on error at equal or lower measured cost.</p></div></div>
+    <div class="rq central"><span class="id">RQ3 ★</span><div><b>Trust · Is the trust probability calibrated, including on a held-out field?</b><p class="fail"><em>Fails if</em> held-out calibration error exceeds a pre-declared bound, or error does not fall as coverage is reduced.</p></div></div>
+    <div class="rq"><span class="id">RQ4</span><div><b>Sparse demand · Can the router spot intermittent series in advance and send them to the fallback?</b><p class="fail"><em>Fails if</em> it does no better than the fixed Syntetos–Boylan rule, on demand series only.</p></div></div>
+  </div>
+  <p class="note">★ Central question. Each question can stand as a result even if a later one is weaker.</p>
+</div></section>
 
-  <p style="margin-top:16px"><strong>A foundation model gets in only if it is:</strong></p>
-  <ul>
-    <li>clean (has not seen the test data)</li>
-    <li>openly licensed for academic use</li>
-    <li>able to run on a 16 GB laptop</li>
-    <li>different in design from the others</li>
-  </ul>
+<!-- 04 DATASETS -->
+<section id="datasets"><div class="wrap">
+  <div class="label"><b>04</b>Datasets</div>
+  <h2>Every dataset has one job.</h2>
+  <p class="lead">The questions need breadth for comparability, sparse demand with published routing results for direct comparison, and one field the router never trains on.</p>
+
+  <figure aria-label="Shortlisted datasets by size on a log scale, grouped by role">
+    <div class="dsgroup">Layer 1 · Breadth</div>
+    <div class="ds"><div class="name"><b>GIFT-Eval</b><span>Seven fields · 10 frequencies</span></div><div class="bar"><i style="width:100%"></i><em>144K series</em></div><div class="role">Comparability and main router training data</div></div>
+    <div class="dsgroup">Layer 2 · Sparse demand, compared with published routers</div>
+    <div class="ds"><div class="name"><b>M5</b><span>Retail · daily</span></div><div class="bar"><i style="width:87%"></i><em>30,490</em></div><div class="role">Compared with FAME and CARFS</div></div>
+    <div class="ds"><div class="name"><b>Favorita</b><span>Grocery · daily</span></div><div class="bar"><i style="width:85%"></i><em>24,646</em></div><div class="role">Compared with Zhang, FAME and CARFS</div></div>
+    <div class="ds"><div class="name"><b>Car Parts</b><span>Spare parts · monthly</span></div><div class="bar"><i style="width:66%"></i><em>2,674</em></div><div class="role">Classic intermittent-demand anchor</div></div>
+    <div class="ds"><div class="name"><b>NN5</b><span>ATM cash · daily</span></div><div class="bar"><i style="width:40%"></i><em>111</em></div><div class="role">Non-retail demand, if missing values can be told apart from true zeros</div></div>
+    <div class="dsgroup">Layer 3 · Held-out field</div>
+    <div class="ds"><div class="name"><b>Ausgrid</b><span>Energy · 30-min</span></div><div class="bar"><i class="accent" style="width:48%"></i><em>300 homes</em></div><div class="role">Never seen in router training; 200/100-home split as in Werling et al.</div></div>
+    <figcaption>Bar length is on a log scale. Reserve if gates fail: Alibaba cloud traces or public epidemiological archives.</figcaption>
+  </figure>
+
+  <h3>What makes them comparable</h3>
+  <div class="ground">
+    <div><b>Univariate</b><span>Each series is forecast on its own history at its native frequency.</span></div>
+    <div><b>Scale-free features</b><span>The router sees shape, not units, so fields can be mixed.</span></div>
+    <div><b>Scaled error</b><span>MASE lets errors be pooled across datasets.</span></div>
+    <div><b>Published horizons</b><span>Each dataset keeps the protocol of its precedent study.</span></div>
+  </div>
+  <p class="note">Proposed. Covariates such as prices and promotions stay outside the core comparison because not every model and dataset supports them.</p>
 
   <details>
-    <summary>Left out, and why</summary>
-    <div class="inner"><table>
+    <summary>Frequencies, horizons and comparators</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>Dataset</th><th>Field</th><th>Frequency</th><th>Published protocol</th><th>Comparator</th></tr></thead>
       <tbody>
-        <tr><td>Chronos (original), TimesFM 1–2, TinyTimeMixer</td><td><span class="tag r">saw test data</span></td></tr>
-        <tr><td>TimesFM 3.0</td><td><span class="tag a">non-commercial licence</span></td></tr>
-        <tr><td>LLM-based forecasters</td><td><span class="tag a">too heavy for a laptop</span></td></tr>
-        <tr><td>TiRex, Toto, Sundial, Moirai-2</td><td><span class="tag">not yet checked; possible later</span></td></tr>
+        <tr><td>GIFT-Eval</td><td data-l="Field">Seven fields</td><td data-l="Frequency">10 frequencies</td><td data-l="Protocol">Benchmark configurations</td><td data-l="Comparator">TimeRouter, FM leaderboard</td></tr>
+        <tr><td>M5</td><td data-l="Field">Retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">28-day horizon</td><td data-l="Comparator">FAME, CARFS</td></tr>
+        <tr><td>Favorita</td><td data-l="Field">Grocery retail</td><td data-l="Frequency">Daily</td><td data-l="Protocol">14- and 30-day horizons</td><td data-l="Comparator">Zhang, FAME, CARFS</td></tr>
+        <tr><td>Car Parts</td><td data-l="Field">Spare parts</td><td data-l="Frequency">Monthly</td><td data-l="Protocol">Final 6 months held out</td><td data-l="Comparator">Intermittent-demand studies</td></tr>
+        <tr><td>NN5</td><td data-l="Field">Banking (ATM cash)</td><td data-l="Frequency">Daily</td><td data-l="Protocol">56-day horizon</td><td data-l="Comparator">Barak et al.</td></tr>
+        <tr><td>Ausgrid</td><td data-l="Field">Energy</td><td data-l="Frequency">30-min, hourly in study</td><td data-l="Protocol">Final year test; 200/100 homes</td><td data-l="Comparator">Werling et al.</td></tr>
       </tbody>
     </table></div>
   </details>
 
-  <div class="callout"><p><strong>What about LSTM, CNN-LSTM or hybrid ARIMA-LSTM?</strong> They are neither zero-shot nor cheap, so they don't fit the router's choice between “big pre-trained” and “simple fallback”. They can still be <em>reported alongside</em> it: one trained neural model (e.g. N-HiTS) and a hybrid ARIMA-LSTM on a subset. CNN-LSTM is left out.</p></div>
-</section>
-
-<!-- Router -->
-<section>
-  <div class="num">08 · The router</div>
-  <h2>Three rules that keep it honest</h2>
-  <div class="steps">
-    <div><b>Define “win” in advance.</b> One error measure, fixed before running. Near-ties go to the cheaper model.</div>
-    <div><b>No hand-written shortcuts.</b> Sparsity is an <em>input</em>, not a hard rule. The hand-written rule becomes a baseline it must beat.</div>
-    <div><b>Test on unseen datasets.</b> Train on some datasets, test on others, so it can't memorise.</div>
+  <h3>The studies behind each choice</h3>
+  <div class="studies">
+    <div class="study"><div class="top"><b>FAME</b><span class="who">2026 · preprint</span><span class="tag accent">Closest overlap</span></div><p class="data">Sparse expert routing on SNBC, M5 and Favorita; calls Chronos for 8.6% and 10.9% of series.</p><p class="use">M5 and Favorita allow direct comparison, but cannot show originality.</p></div>
+    <div class="study"><div class="top"><b>Zhang</b><span class="who">2025</span><span class="tag">Direct precedent</span></div><p class="data">24,646 Favorita item–store series; 57.2% mean zero sales; 34 features; 14- and 30-day horizons.</p><p class="use">Its Favorita protocol is the comparison point for cross-family routing.</p></div>
+    <div class="study"><div class="top"><b>CARFS</b><span class="who">2023</span><span class="tag">Transfer precedent</span></div><p class="data">Model shortlist learned on M5, tested on 1,000 Favorita series.</p><p class="use">Retail-to-retail transfer is done; a stronger test leaves out a whole field.</p></div>
+    <div class="study"><div class="top"><b>FFORMPP</b><span class="who">2022</span><span class="tag">Method anchor</span></div><p class="data">M1 and M3 plus 10,000 GRATIS series per frequency; evaluated on M4.</p><p class="use">Build and evaluate the router on separate data; synthetic series only as support.</p></div>
+    <div class="study"><div class="top"><b>AutoForecast</b><span class="tag">Breadth source</span></div><p class="data">348 datasets, 625 series and 322 model configurations across fields.</p><p class="use">A candidate source only after per-source provenance and licence checks.</p></div>
+    <div class="study"><div class="top"><b>Werling et al.</b><span class="who">2023</span><span class="tag accent">Held-out field</span></div><p class="data">Ausgrid: 300 homes over three years; selector trained on 200, evaluated on 100.</p><p class="use">The strongest article-derived energy candidate.</p></div>
+    <div class="study"><div class="top"><b>Barak et al.</b><span class="who">2019</span><span class="tag">Compact demand</span></div><p class="data">NN5: 111 daily ATM series, 791 observations each, 56-day horizon.</p><p class="use">Usable only if missing observations can be separated from true zeros.</p></div>
   </div>
-  <p class="cap">Why rule 1 matters: on sparse data, some error measures reward predicting zero, others reward predicting the average. The choice can flip the winner.</p>
-</section>
 
-<!-- Evaluation -->
-<section>
-  <div class="num">09 · How we judge it</div>
-  <h2>Four scorecards</h2>
-  <div class="cards">
-    <div class="card"><div class="k">Accuracy</div><p>Forecast error per series (MASE, quantile loss).</p></div>
-    <div class="card"><div class="k">Regret</div><p>How much worse than a perfect chooser?</p></div>
-    <div class="card"><div class="k">Trust</div><p>Does 80% confidence mean right 80% of the time?</p></div>
-    <div class="card"><div class="k">Cost</div><p>Seconds per forecast on the project laptop.</p></div>
-  </div>
-  <p class="cap">Plus one curve: error vs share of series sent to the FM, as the confidence threshold moves. That curve is the answer to “when to trust”.</p>
-</section>
+  <details>
+    <summary>All 15 article-to-dataset records</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>ID</th><th>Study or source</th><th>Dataset</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr><td>A2D-001</td><td data-l="Study">Zhang sparse-demand routing</td><td data-l="Data">Favorita</td><td data-l="Decision">Comparator</td></tr>
+        <tr><td>A2D-002</td><td data-l="Study">FAME</td><td data-l="Data">SNBC, M5, Favorita</td><td data-l="Decision">Closest precedent</td></tr>
+        <tr><td>A2D-003</td><td data-l="Study">CARFS</td><td data-l="Data">M5, Favorita</td><td data-l="Decision">Transfer comparator</td></tr>
+        <tr><td>A2D-004</td><td data-l="Study">FFORMPP</td><td data-l="Data">M1, M3, GRATIS, M4</td><td data-l="Decision">Method anchor</td></tr>
+        <tr><td>A2D-005</td><td data-l="Study">AutoForecast</td><td data-l="Data">348-dataset corpus, Adobe traces</td><td data-l="Decision">Candidate source</td></tr>
+        <tr><td>A2D-006</td><td data-l="Study">Supply-chain model selection</td><td data-l="Data">M3, private industrial data</td><td data-l="Decision">M3 only</td></tr>
+        <tr><td>A2D-007</td><td data-l="Study">M5 competition studies</td><td data-l="Data">M5</td><td data-l="Decision">Comparator</td></tr>
+        <tr><td>A2D-008</td><td data-l="Study">Intermittent-demand literature</td><td data-l="Data">Car Parts</td><td data-l="Decision">Sparse anchor</td></tr>
+        <tr><td>A2D-009</td><td data-l="Study">Forecast stability</td><td data-l="Data">M3, M4, M5, Favorita</td><td data-l="Decision">Protocol evidence</td></tr>
+        <tr><td>A2D-010</td><td data-l="Study">Werling et al.</td><td data-l="Data">Ausgrid</td><td data-l="Decision">Held-out field</td></tr>
+        <tr><td>A2D-011</td><td data-l="Study">Barak et al.</td><td data-l="Data">NN5</td><td data-l="Decision">Verify zeros</td></tr>
+        <tr><td>A2D-012</td><td data-l="Study">LA transport selection</td><td data-l="Data">Private traffic speeds</td><td data-l="Decision">Evidence only</td></tr>
+        <tr><td>A2D-013</td><td data-l="Study">Clinical adaptive selection</td><td data-l="Data">Cardiac CBC EHR</td><td data-l="Decision">Evidence only</td></tr>
+        <tr><td>A2D-014</td><td data-l="Study">Mind the Baseline</td><td data-l="Data">FluSight, COVID hubs</td><td data-l="Decision">Reserve</td></tr>
+        <tr><td>A2D-015</td><td data-l="Study">SpectraNet</td><td data-l="Data">Alibaba, vmCloud</td><td data-l="Decision">Reserve</td></tr>
+      </tbody>
+    </table></div>
+  </details>
 
-<!-- Risks & plan -->
-<section>
-  <div class="num">10 · Risks and plan</div>
-  <h2>What could go wrong</h2>
-  <ul>
-    <li><strong>Leaked test data</strong> → per-dataset checks and later time periods.</li>
-    <li><strong>Noisy winners</strong> → tie margin; check stability across time windows.</li>
-    <li><strong>Laptop too slow</strong> → timing test first, then a balanced subsample.</li>
-  </ul>
-  <h2 style="margin-top:28px">Three stages, each useful alone</h2>
+  <h3>Five gates before a dataset enters</h3>
+  <ol class="gates">
+    <li><div><b>Rights</b>Licence and attribution</div></li>
+    <li><div><b>Provenance</b>Source and version</div></li>
+    <li><div><b>Overlap</b>Checkpoint training data</div></li>
+    <li><div><b>Semantics</b>Zeros vs missing values</div></li>
+    <li><div><b>Feasibility</b>Memory and runtime</div></li>
+  </ol>
+  <div class="callout"><p>A benchmark wrapper's licence does not grant the same rights for every dataset inside it. A “clean” flag on GIFT-Eval does not show that a checkpoint is clean on M5, Favorita, NN5 or Ausgrid.</p></div>
+
+  <details>
+    <summary>Key dataset facts and unresolved risks</summary>
+    <div class="dbody"><table class="t">
+      <thead><tr><th>Dataset</th><th>Scale</th><th>Why retained</th><th>Main unresolved risk</th></tr></thead>
+      <tbody>
+        <tr><td>GIFT-Eval</td><td data-l="Scale">144K series, 177M points</td><td data-l="Why">Broad standard benchmark</td><td data-l="Risk">Terms and overlap apply per constituent dataset and checkpoint</td></tr>
+        <tr><td>M5</td><td data-l="Scale">30,490 bottom-level series</td><td data-l="Why">Direct FAME/CARFS comparator</td><td data-l="Risk">Competition terms and extensive pretraining exposure</td></tr>
+        <tr><td>Favorita</td><td data-l="Scale">24,646-series Zhang protocol</td><td data-l="Why">Direct Zhang/FAME/CARFS comparator</td><td data-l="Risk">Upstream terms and model overlap</td></tr>
+        <tr><td>Car Parts</td><td data-l="Scale">2,674 × 51 months</td><td data-l="Why">Compact spare-parts intermittency anchor</td><td data-l="Risk">Short histories and training overlap</td></tr>
+        <tr><td>NN5</td><td data-l="Scale">111 × 791 days</td><td data-l="Why">Non-retail demand, direct selection precedent</td><td data-l="Risk">Missing observations versus true zero demand</td></tr>
+        <tr><td>Ausgrid</td><td data-l="Scale">300 homes × 3 years</td><td data-l="Why">Held-out energy field</td><td data-l="Risk">Authoritative upstream terms and checkpoint overlap</td></tr>
+        <tr><td>Alibaba 2018</td><td data-l="Scale">4,000+ machines × 8 days</td><td data-l="Why">Reserve cloud stress test</td><td data-l="Risk">Duration, size and preprocessing</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</div></section>
+
+<!-- 05 METHOD -->
+<section id="method"><div class="wrap">
+  <div class="label"><b>05</b>Method</div>
+  <h2>A small router, a mixed model pool, and a test it cannot memorise.</h2>
+  <p class="lead">The router sees series characteristics, never future outcomes. It has to generalise across datasets, report its uncertainty honestly and justify the compute it spends.</p>
+
   <div class="flow">
-    <div class="box"><b>1 · Compare</b>Every model on every series</div>
-    <div class="arrow">→</div>
-    <div class="box"><b>2 · Route</b>Train and test the router</div>
-    <div class="arrow">→</div>
-    <div class="box"><b>3 · Trust & cost</b>Check confidence and timing</div>
+    <div class="step"><span class="n">1</span><b>Features</b><span>Length, seasonal strength, trend, entropy, ADI, CV², zero share.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step"><span class="n">2</span><b>Calibrated router</b><span>One-vs-all classifiers give the probability each choice is correct.</span></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step"><span class="n">3</span><b>Policy</b><span>Trust or defer at τ; near-ties go to the cheaper model.</span></div>
   </div>
-</section>
+  <p class="note">Post-hoc calibration (Platt or isotonic) is tested as an ablation.</p>
 
-<!-- Titles -->
-<section>
-  <div class="num">11 · Title</div>
-  <h2>Options</h2>
-  <div class="title best"><span class="tag">Preferred</span>
-    <div class="t">When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</div>
-    <div class="s">Keeps the registered opening; names the two things others lack.</div></div>
-  <div class="title">
-    <div class="t">Trust or Fall Back? Calibrated Selective Forecasting with Time-Series Foundation Models and Classical Methods</div>
-    <div class="s">Shorter and catchier; less explicit about “per series”.</div></div>
-  <div class="title"><span class="tag">Current</span>
-    <div class="t">When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</div>
-    <div class="s">Accurate but long; no mention of calibration.</div></div>
-</section>
+  <h3>Model pool</h3>
+  <div class="pool">
+    <div><div class="h">Foundation models · provisional</div><div class="chips"><span class="chip fm">Chronos-2</span><span class="chip fm">TimesFM-2.5</span><span class="chip fm">MOIRAI</span></div></div>
+    <div><div class="h">Classical fallback</div><div class="chips"><span class="chip">Seasonal Naive</span><span class="chip">ETS</span><span class="chip">ARIMA</span><span class="chip">Theta</span><span class="chip">Croston<sup>*</sup></span><span class="chip">SBA<sup>*</sup></span><span class="chip">TSB<sup>*</sup></span></div></div>
+    <div><div class="h">Reference baselines · not routed</div><div class="chips"><span class="chip dim">LightGBM (global)</span><span class="chip dim">Always FM</span><span class="chip dim">Always classical</span><span class="chip dim">FFORMS-style selector</span><span class="chip dim">Syntetos–Boylan rule</span></div></div>
+  </div>
+  <p class="note">* Demand series only. An FM enters the pool only with open academic-use terms, local feasibility and a dataset-specific overlap audit. LightGBM is the strongest reported M5 baseline, so it is reported alongside the router.</p>
 
-<!-- Questions -->
-<section>
-  <div class="num">12 · For discussion</div>
-  <h2>Open questions</h2>
-  <ul>
-    <li>Given FAME, Zhang, CARFS, TimeRouter and TW3Cast, is calibrated confidence plus explicit deferral a distinct enough contribution?</li>
-    <li>Approve the three-role corpus: GIFT-Eval for breadth, M5/Favorita/Car Parts/NN5 for comparison, and Ausgrid as the held-out field?</li>
-    <li>Is LightGBM as the required baseline, with neural models optional, the right scope?</li>
-    <li>Should headline results exclude every model–dataset pair whose pre-training overlap remains uncertain?</li>
-    <li>Are MOIRAI's non-commercial weights, M5's Kaggle rules, and the verified upstream terms for the added datasets acceptable?</li>
-    <li>Change the title now, or after M1?</li>
+  <h3>How the router is validated</h3>
+  <figure>
+    <div class="folds" role="table" aria-label="Validation design: two example leave-one-dataset-out folds and the held-out field test">
+      <div class="hd" role="columnheader">Data</div><div class="hd" role="columnheader">Fold · M5 out</div><div class="hd" role="columnheader">Fold · NN5 out</div><div class="hd" role="columnheader">Field test</div>
+      <div class="rl">GIFT-Eval, other fields</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">GIFT-Eval, energy</div><div class="c tr">train</div><div class="c tr">train</div><div class="c ex">removed</div>
+      <div class="rl">M5</div><div class="c te">test</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">Favorita</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">Car Parts</div><div class="c tr">train</div><div class="c tr">train</div><div class="c tr">train</div>
+      <div class="rl">NN5</div><div class="c tr">train</div><div class="c te">test</div><div class="c tr">train</div>
+      <div class="rl">Ausgrid</div><div class="c na">unused</div><div class="c na">unused</div><div class="c te">test</div>
+    </div>
+    <figcaption>Leave-one-dataset-out: each dataset takes a turn as the unseen test set (two folds shown). Ausgrid is kept out of every fold until the final field test, and GIFT-Eval's energy data is removed for that test so the field is truly unseen.</figcaption>
+  </figure>
+
+  <h3>Four scorecards</h3>
+  <div class="scores">
+    <div><b>Accuracy</b><span>Per-series MASE; CRPS or quantile loss where models give distributions</span></div>
+    <div><b>Regret</b><span>Gap from an oracle that always picks the per-series winner</span></div>
+    <div><b>Trust</b><span>ECE, Brier score, reliability and risk–coverage curves</span></div>
+    <div><b>Cost</b><span>Wall-clock inference on declared hardware</span></div>
+  </div>
+
+  <h3>Rules that protect the result</h3>
+  <ul class="rules">
+    <li><div><b>Fix “winner” in advance.</b> Primary metric and tie margin are declared before evaluation; near-ties go to the cheaper model.</div></li>
+    <li><div><b>Split by dataset, not by row.</b> Leave-one-dataset-out for the router; rolling-origin for the forecasts.</div></li>
+    <li><div><b>Check overlap per checkpoint and dataset.</b> Uncertain pairs are left out of headline results and reported separately.</div></li>
+    <li><div><b>Use intermittency classes only on demand.</b> Not on energy, temperature or prices. sMAPE only on strictly positive series.</div></li>
+    <li><div><b>Size the run first.</b> A smoke test on the project laptop sets a stratified subsample if the full corpus does not fit.</div></li>
+    <li><div><b>Report failure as a result.</b> If confidence cannot be calibrated or does not transfer, that is a valid finding.</div></li>
   </ul>
-</section>
 
-<footer>
-  <span>Arden University · COM7014 Advanced Computing Project</span>
-  <span>Research update · 8 October 2026</span>
-</footer>
-</div>
+  <h3>Intermittent demand at a glance</h3>
+  <figure class="quad">
+    <svg viewBox="0 0 320 240" role="img" aria-label="Syntetos–Boylan classification: four quadrants by average inter-demand interval p (threshold 1.32) and CV squared of demand size (threshold 0.49): smooth, erratic, intermittent, lumpy">
+      <rect class="q-fill" x="40" y="10" width="135" height="95" rx="6"/>
+      <rect class="q-fill" x="179" y="10" width="135" height="95" rx="6"/>
+      <rect class="q-fill" x="40" y="109" width="135" height="95" rx="6"/>
+      <rect class="q-fill-a" x="179" y="109" width="135" height="95" rx="6"/>
+      <text class="q-name" x="107" y="52" text-anchor="middle">Erratic</text><text class="q-sub" x="107" y="70" text-anchor="middle">frequent, variable size</text>
+      <text class="q-name" x="246" y="52" text-anchor="middle">Lumpy</text><text class="q-sub" x="246" y="70" text-anchor="middle">rare, variable · hardest</text>
+      <text class="q-name" x="107" y="151" text-anchor="middle">Smooth</text><text class="q-sub" x="107" y="169" text-anchor="middle">frequent, stable</text>
+      <text class="q-name" x="246" y="151" text-anchor="middle">Intermittent</text><text class="q-sub" x="246" y="169" text-anchor="middle">rare, stable size</text>
+      <text class="s-lab" x="177" y="222" text-anchor="middle">p = 1.32</text>
+      <text class="s-lab" x="177" y="236" text-anchor="middle">avg. interval between demands →</text>
+      <text class="s-lab" x="14" y="107" text-anchor="middle" transform="rotate(-90 14 107)">CV² = 0.49 · size variation →</text>
+    </svg>
+    <figcaption>Syntetos–Boylan classes for non-negative demand. RQ4 asks whether the learned router beats this fixed rule at spotting where the FM should not be trusted.</figcaption>
+  </figure>
+</div></section>
+
+<!-- 06 SEARCH -->
+<section id="discovery"><div class="wrap">
+  <div class="label"><b>06</b>Search method</div>
+  <h2>Registries first, then the papers that use the data.</h2>
+  <p class="lead">Pass 1 searched benchmark registries, model repositories and field archives. Pass 2 asked which datasets model-selection and routing studies actually use, at what scale and under which protocol. Pass 2 is what narrowed the contribution from routing to calibrated trust.</p>
+
+  <div class="pipeline">
+    <div><b>42</b><span>logged searches across 7 routes</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><b>15</b><span>article-to-dataset records</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><b>6</b><span>shortlisted datasets, plus reserves</span></div>
+  </div>
+
+  <h3>Searches per route</h3>
+  <div class="routes">
+    <div class="route"><span class="id">R1</span><div class="what"><b>Confirm known leads</b><em>10</em></div><div class="bar" style="width:77%"></div><div class="out">GIFT-Eval, Monash and Car Parts confirmed</div></div>
+    <div class="route"><span class="id">R2</span><div class="what"><b>Training data and overlap</b><em>6</em></div><div class="bar" style="width:46%"></div><div class="out">Overlap risk is checkpoint-specific</div></div>
+    <div class="route"><span class="id">R3</span><div class="what"><b>Benchmark registries</b><em>5</em></div><div class="bar" style="width:38%"></div><div class="out">fev retail sets found; no strong UCI/OpenML addition</div></div>
+    <div class="route"><span class="id">R4</span><div class="what"><b>Search by field</b><em>4</em></div><div class="bar" style="width:31%"></div><div class="out">Retail meta-analysis and cross-field candidates</div></div>
+    <div class="route"><span class="id">R5</span><div class="what"><b>Citation snowballing</b><em>3</em></div><div class="bar" style="width:23%"></div><div class="out">TW3Cast identified and read</div></div>
+    <div class="route"><span class="id">R6</span><div class="what"><b>Competitions</b><em>1</em></div><div class="bar" style="width:8%"></div><div class="out">M5 retained; competition terms flagged</div></div>
+    <div class="route r7"><span class="id">R7</span><div class="what"><b>Article-to-dataset extraction · Pass 2</b><em>13</em></div><div class="bar" style="width:100%"></div><div class="out">15 records; direct precedents and held-out-field candidates</div></div>
+  </div>
+  <p class="note">Principal Scholar query: <code>"forecast model selection" time series dataset</code>, about 358 results at search time. Pass 2 sources: Scholar, Scopus Preview, ACM, ScienceDirect, Springer, Taylor &amp; Francis, PubMed, arXiv, OpenReview.</p>
+
+  <h3>Limits</h3>
+  <ul>
+    <li>Full institutional Scopus search was not available; Scopus Preview was used for access checks only.</li>
+    <li>The 15 records are a purposive extraction around routing and dataset choice, not an exhaustive systematic review.</li>
+    <li>Reported sizes, zero rates and splits come from the sources and have not yet been recomputed locally.</li>
+  </ul>
+  <p class="note">Full evidence: <a href="research/dataset-discovery-v2-scholar-article-extraction.md">technical report</a>.</p>
+</div></section>
+
+<!-- 07 DECISIONS -->
+<section id="decisions"><div class="wrap">
+  <div class="label"><b>07</b>Decisions</div>
+  <h2>Six decisions to close M1.</h2>
+  <ol class="decisions">
+    <li><div><b>Contribution</b>Calibrated trust-or-defer, tested for transfer, as the distinction from FAME, Zhang, CARFS, TimeRouter and TW3Cast.</div></li>
+    <li><div><b>Corpus</b>GIFT-Eval for breadth; M5, Favorita, Car Parts and NN5 for comparison; Ausgrid as the held-out field.</div></li>
+    <li><div><b>Common ground</b>A univariate core comparison with scaled errors and each dataset's published horizon; covariates outside the core.</div></li>
+    <li><div><b>Validation</b>Leave-one-dataset-out testing, energy-free router training for the Ausgrid test, and uncertain overlap pairs excluded from headline results.</div></li>
+    <li><div><b>Scope</b>LightGBM as a required reference baseline outside the routing pool; further neural or hybrid models optional.</div></li>
+    <li><div><b>Rights</b>Model licences, Kaggle terms and the verified upstream conditions of each added dataset.</div></li>
+  </ol>
+
+  <div class="titles">
+    <p><span>Registered title</span>When to Trust a Time-Series Foundation Model: A Per-Series Reliability Framework for Routing Between Foundation Models and Classical Forecasting Models</p>
+    <p><span>Proposed after M1</span>When to Trust a Time-Series Foundation Model: Calibrated Per-Series Routing Between Foundation Models and Classical Forecasters</p>
+  </div>
+
+  <div class="boundary"><strong>Current boundary.</strong> No dataset has been downloaded, no model has been run, and no experimental result is claimed. Next: licence, provenance, overlap and feasibility checks, then proposal and ethics approval.</div>
+</div></section>
+
+</main>
+
+<footer><div class="wrap"><span>COM7014 Advanced Computing Project · M1 research briefing</span><span><a href="research/dataset-discovery-v2-scholar-article-extraction.md">Technical report</a> · <a href="#answer">Back to top</a></span></div></footer>
 </body>
 </html>
