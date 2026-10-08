@@ -5,7 +5,7 @@
 - Merged the two HTML briefings into one page, rebuilt around a single thesis: routing exists; a router whose confidence can be checked does not.
 - Added a main research question, a defined deferral rule, a fields-and-common-ground table, and an energy-exclusion rule so the Ausgrid test field is truly unseen.
 - Aligned `TOPIC.md` and `README.md` with the briefing: contribution, related work, research questions, method and evaluation now make the same claims.
-- Redesigned the briefing for mobile reading: single column, near-monochrome palette with one accent, dark-mode support, and diagrams for the trust threshold, the state of the literature, dataset roles and sizes, the validation folds, intermittency classes and search coverage.
+- Redesigned the briefing for mobile reading: single column, near-monochrome light palette with one accent, and diagrams for the trust threshold, the state of the literature, dataset roles and sizes, the validation folds, intermittency classes and search coverage.
 - Added Dataset Discovery V2 with 42 logged searches across seven discovery routes.
 - Added a publication-safe technical report containing 15 article-to-dataset extractions, numerical descriptors, experimental roles, source links, limitations, and decision gates.
 - Revised the novelty statement after identifying Zhang et al., CARFS and FAME as direct cross-family routing precedents.
